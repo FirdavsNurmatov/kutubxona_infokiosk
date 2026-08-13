@@ -1,0 +1,553 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ══ Dizayn tokenlari ═══════════════════════════════════
+   Barcha o'lcham shu yerdan boshqariladi, shuning uchun
+   media query'lar bitta joyda qiymatni o'zgartirsa kifoya. */
+:root {
+  --header-h: 160px;
+  --footer-h: 110px;
+  --panel-head-h: 52px;
+  --logo-w: 320px;
+  --gap: 12px;
+  --clock-size: clamp(28px, 4.8vh, 52px);
+  --brand-size: clamp(13px, 1.5vh, 17px);
+  --nav-label-size: 11px;
+  --gold: #C9A84C;
+  --navy: #0D1B4B;
+}
+
+/* ══ Reset ══════════════════════════════════════════════ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+body {
+  font-family: 'Inter Variable', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  background-color: #ede0c4;
+  -webkit-font-smoothing: antialiased;
+  /* Kioskda matn belgilash va uzun bosishdagi menyu kerak emas */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  overscroll-behavior: none;
+}
+
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Qidiruv maydonida matn belgilanishi kerak */
+input,
+textarea {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Brauzerning o'z "tozalash" tugmasi — o'zimizniki bor, ikkitasi kerak emas */
+input[type='search']::-webkit-search-cancel-button,
+input[type='search']::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* ══ Ilova karkasi ══════════════════════════════════════ */
+.kiosk-root {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: linear-gradient(180deg, #ede0c4 0%, #e8d5b0 100%);
+}
+
+/* Bosh sahifa — uch ustunli panel to'ri */
+.kiosk-main {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  padding: var(--gap);
+}
+
+/* Ichki sahifalar — bitta aylanadigan maydon */
+.page-main {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--gap);
+}
+
+/* ══ Sarlavha (header) ══════════════════════════════════ */
+.hdr {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+  height: var(--header-h);
+  border-bottom: 3px solid var(--gold);
+}
+
+.hdr-logo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  width: var(--logo-w);
+  padding: 0 24px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0D1B4B 0%, #1a2f6e 100%);
+  border-right: 3px solid var(--gold);
+}
+
+.hdr-logo-mark {
+  width: clamp(40px, 6vh, 64px);
+  height: clamp(40px, 6vh, 64px);
+  flex-shrink: 0;
+}
+
+.hdr-brand {
+  font-size: var(--brand-size);
+  letter-spacing: 0.5px;
+  line-height: 1.15;
+}
+
+.hdr-tagline {
+  font-size: clamp(7px, 0.85vh, 8.5px);
+  letter-spacing: 1.5px;
+}
+
+.hdr-center {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(180deg, #f5ead6 0%, #ede0c4 100%);
+}
+
+.hdr-date {
+  font-size: clamp(11px, 1.4vh, 15px);
+}
+
+.hdr-day {
+  font-size: clamp(10px, 1.2vh, 13px);
+}
+
+.hdr-clock {
+  font-size: var(--clock-size);
+  line-height: 1;
+  letter-spacing: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hdr-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+  padding: 0 32px 0 16px;
+  background: linear-gradient(180deg, #f5ead6 0%, #ede0c4 100%);
+  border-left: 1px solid rgba(201, 168, 76, 0.25);
+}
+
+.hdr-control {
+  height: 48px;
+}
+
+.hdr-search {
+  width: 280px;
+  max-width: 100%;
+}
+
+/* ══ Panel (ustun) ══════════════════════════════════════ */
+.panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 24px rgba(13, 27, 75, 0.12);
+}
+
+.panel-head,
+.panel-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  height: var(--panel-head-h);
+  min-height: var(--panel-head-h);
+  padding: 0 16px;
+  font-size: clamp(11px, 1.25vh, 13px);
+  letter-spacing: 0.5px;
+}
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #f8f2e6;
+}
+
+/* ══ Pastki navigatsiya (footer) ════════════════════════ */
+.ftr {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 8px;
+  height: var(--footer-h);
+  padding: 0 24px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0D1B4B 0%, #091333 100%);
+  border-top: 2px solid var(--gold);
+}
+
+.ftr-nav {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex: 1;
+  gap: 4px;
+}
+
+.ftr-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 96px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.ftr-nav-label {
+  font-size: var(--nav-label-size);
+  letter-spacing: 0.3px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.ftr-side {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  padding: 0 16px;
+}
+
+.ftr-qr {
+  width: 72px;
+  height: 72px;
+  padding: 4px;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* ══ Skroll chiziqlari ══════════════════════════════════ */
+.panel-body::-webkit-scrollbar,
+.page-main::-webkit-scrollbar,
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.panel-body::-webkit-scrollbar-track,
+.page-main::-webkit-scrollbar-track,
+.modal-body::-webkit-scrollbar-track {
+  background: rgba(13, 27, 75, 0.06);
+  border-radius: 4px;
+}
+
+.panel-body::-webkit-scrollbar-thumb,
+.page-main::-webkit-scrollbar-thumb,
+.modal-body::-webkit-scrollbar-thumb {
+  background: rgba(13, 27, 75, 0.25);
+  border-radius: 4px;
+}
+
+.panel-body::-webkit-scrollbar-thumb:hover,
+.page-main::-webkit-scrollbar-thumb:hover,
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 27, 75, 0.4);
+}
+
+/* Ustunga xos skroll rangi */
+.scroll-emerald::-webkit-scrollbar-thumb {
+  background: rgba(13, 75, 62, 0.3);
+}
+.scroll-emerald::-webkit-scrollbar-thumb:hover {
+  background: rgba(13, 75, 62, 0.5);
+}
+.scroll-bronze::-webkit-scrollbar-thumb {
+  background: rgba(74, 48, 16, 0.3);
+}
+.scroll-bronze::-webkit-scrollbar-thumb:hover {
+  background: rgba(74, 48, 16, 0.5);
+}
+
+/* ══ Modal ══════════════════════════════════════════════ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(9, 19, 51, 0.6);
+  backdrop-filter: blur(3px);
+  animation: fade-in 0.15s ease-out;
+}
+
+.modal-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 720px;
+  max-height: 88vh;
+  min-height: 0;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #fdfaf4;
+  border: 1.5px solid var(--gold);
+  box-shadow: 0 24px 60px rgba(9, 19, 51, 0.4);
+  animation: pop-in 0.18s ease-out;
+}
+
+.modal-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ══ Katalog to'ri ══════════════════════════════════════ */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.card-grid-wide {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 12px;
+}
+
+/* ══ Sensorli ekran uchun ═══════════════════════════════ */
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+/* Bosish maydoni kamida 48px — faqat mustaqil tugmalar uchun */
+button:not(.btn-compact) {
+  min-height: 48px;
+}
+
+/* ══════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════ */
+
+/* Kengligi o'rtacha ekranlar — logotip va sarlavha kichrayadi */
+@media (max-width: 1280px) {
+  :root {
+    --header-h: 144px;
+    --logo-w: 276px;
+    --gap: 10px;
+  }
+  .hdr-search {
+    width: 220px;
+  }
+}
+
+/* Ikki ustun: afisha yuqorida to'liq kenglikda, kitoblar pastda.
+   Portret kiosk (masalan 1080×1920) shu holatga tushadi. */
+@media (max-width: 1100px) {
+  .kiosk-main {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .kiosk-main > :first-child {
+    grid-column: 1 / -1;
+  }
+  .ftr-qr {
+    display: none;
+  }
+  .hdr-search {
+    width: 190px;
+  }
+}
+
+/* Tor ekran: bitta ustun, panellar ichida aylantiriladi */
+@media (max-width: 900px) {
+  :root {
+    --logo-w: 240px;
+    --nav-label-size: 10px;
+  }
+  .ftr-side {
+    display: none;
+  }
+  .ftr-nav-btn {
+    min-width: 72px;
+    padding: 8px 8px;
+  }
+}
+
+@media (max-width: 780px) {
+  :root {
+    --header-h: auto;
+    --gap: 8px;
+  }
+
+  .hdr {
+    flex-direction: column;
+    height: auto;
+  }
+  .hdr-logo {
+    width: 100%;
+    padding: 10px 16px;
+    border-right: none;
+    border-bottom: 2px solid var(--gold);
+  }
+  .hdr-center {
+    padding: 8px 0;
+  }
+  .hdr-right {
+    justify-content: center;
+    flex-wrap: wrap;
+    padding: 0 16px 10px;
+    border-left: none;
+  }
+  .hdr-search {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .kiosk-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+    overflow-y: auto;
+  }
+  .kiosk-main > :first-child {
+    grid-column: auto;
+  }
+  .panel {
+    height: auto;
+    min-height: 320px;
+    max-height: 75vh;
+  }
+
+  .ftr {
+    height: auto;
+    padding: 8px 8px;
+  }
+  .ftr-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .card-grid,
+  .card-grid-wide {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-backdrop {
+    padding: 12px;
+  }
+  .modal-card {
+    max-height: 92vh;
+  }
+}
+
+/* Past bo'yli landshaft ekranlar — sarlavha va footer siqiladi */
+@media (max-height: 820px) and (min-width: 781px) {
+  :root {
+    --header-h: 128px;
+    --footer-h: 96px;
+    --panel-head-h: 46px;
+  }
+}
+
+@media (max-height: 660px) and (min-width: 781px) {
+  :root {
+    --header-h: 100px;
+    --footer-h: 82px;
+    --panel-head-h: 42px;
+    --nav-label-size: 10px;
+  }
+  .hdr-tagline {
+    display: none;
+  }
+  .ftr-side {
+    display: none;
+  }
+}
+
+/* Juda katta kiosk ekranlari (4K va h.k.) — hamma narsa kattalashadi */
+@media (min-width: 2000px) {
+  :root {
+    --header-h: 200px;
+    --footer-h: 140px;
+    --panel-head-h: 64px;
+    --logo-w: 400px;
+    --gap: 18px;
+    --nav-label-size: 14px;
+  }
+  .hdr-search {
+    width: 360px;
+  }
+  .ftr-qr {
+    width: 96px;
+    height: 96px;
+  }
+}
+
+/* Animatsiyani kamaytirish so'ralgan bo'lsa */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
