@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Globe, ChevronDown, Search, X, CalendarDays } from 'lucide-react';
+import { Globe, ChevronDown, CalendarDays } from 'lucide-react';
 import { useI18n } from '../i18n/context';
 import { LANGS, formatTime } from '../i18n/translations';
 import LibraryLogo from './LibraryLogo';
@@ -78,62 +78,7 @@ function LanguageSelector() {
   );
 }
 
-interface SearchBarProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSubmit: () => void;
-}
-
-function SearchBar({ value, onChange, onSubmit }: SearchBarProps) {
-  const { t } = useI18n();
-
-  return (
-    <form
-      className="hdr-control hdr-search flex items-center gap-2 px-3 rounded-xl bg-ink-500/70 border border-cyan-400/25 focus-within:border-cyan-400/60 transition-colors"
-      onSubmit={(e) => {
-        e.preventDefault();
-        onSubmit();
-      }}
-      role="search"
-    >
-      <input
-        type="search"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={t.searchPlaceholder}
-        aria-label={t.aria.search}
-        className="bg-transparent outline-none text-[15px] text-white placeholder-paper-400 w-full min-w-0 font-medium"
-      />
-      {value && (
-        <button
-          type="button"
-          onClick={() => onChange('')}
-          aria-label={t.aria.clearSearch}
-          className="btn-compact flex-shrink-0 text-paper-400 hover:text-white transition-colors"
-        >
-          <X size={15} />
-        </button>
-      )}
-      <button
-        type="submit"
-        aria-label={t.aria.search}
-        className="btn-compact flex-shrink-0 flex items-center justify-center rounded-lg bg-cyan-600/70 hover:bg-cyan-500 text-white transition-colors"
-        style={{ width: '34px', height: '34px' }}
-      >
-        <Search size={17} />
-      </button>
-    </form>
-  );
-}
-
-interface HeaderProps {
-  query: string;
-  onQueryChange: (value: string) => void;
-  onSearchSubmit: () => void;
-  onLogoClick: () => void;
-}
-
-export default function Header({ query, onQueryChange, onSearchSubmit, onLogoClick }: HeaderProps) {
+export default function Header() {
   const { t, formatDate, dayName } = useI18n();
   const [now, setNow] = useState(() => new Date());
 
@@ -144,16 +89,7 @@ export default function Header({ query, onQueryChange, onSearchSubmit, onLogoCli
 
   return (
     <header className="hdr">
-      {/* Logotip — bosilganda bosh sahifaga qaytaradi */}
-      <div
-        className="hdr-logo"
-        onClick={onLogoClick}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') onLogoClick();
-        }}
-      >
+      <div className="hdr-logo">
         <LibraryLogo className="hdr-logo-mark" />
         <div className="hdr-brand text-white font-extrabold">
           {t.libraryName[0]}
@@ -181,7 +117,6 @@ export default function Header({ query, onQueryChange, onSearchSubmit, onLogoCli
       </div>
 
       <LanguageSelector />
-      <SearchBar value={query} onChange={onQueryChange} onSubmit={onSearchSubmit} />
       <WeatherWidget />
     </header>
   );

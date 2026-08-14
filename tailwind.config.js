@@ -26,25 +26,6 @@ export default {
           800: '#0E5270',
           900: '#07617E',
         },
-        /* Yangi kitoblar ustuni — ko'k */
-        azure: {
-          200: '#B9D8F5',
-          300: '#7FB6E8',
-          400: '#4E9BDD',
-          500: '#378ACF',
-          600: '#2A6DAB',
-          700: '#06437A',
-          800: '#062F5C',
-        },
-        /* Tavsiya ustuni — siyoh */
-        iris: {
-          200: '#CFC9EC',
-          300: '#A79CD9',
-          400: '#8B7FD4',
-          500: '#6F6593',
-          600: '#4A4177',
-          700: '#2A2257',
-        },
         /* Reyting va diqqat */
         amber: {
           300: '#F8CE72',

@@ -1,4 +1,3 @@
-import { ChevronRight } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import BookRow from './BookRow';
 import { useI18n } from '../i18n/context';
@@ -18,7 +17,6 @@ interface BookListProps {
   /** Bosh sahifadagi to'r joylashuvi uchun klass. */
   className?: string;
   onSelectBook: (book: Book) => void;
-  onShowAll: () => void;
 }
 
 export default function BookList({
@@ -31,7 +29,6 @@ export default function BookList({
   variant,
   className = '',
   onSelectBook,
-  onShowAll,
 }: BookListProps) {
   const { t } = useI18n();
 
@@ -43,14 +40,7 @@ export default function BookList({
           <h2 className="text-white font-bold tracking-wide truncate">{title}</h2>
         </div>
 
-        <button
-          type="button"
-          onClick={onShowAll}
-          className="btn-compact flex items-center gap-1 px-2.5 py-1 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/35 border border-white/25 text-white text-[11.5px] font-bold tracking-wide transition-colors flex-shrink-0"
-        >
-          {t.top10}
-          <ChevronRight size={13} className="flex-shrink-0" />
-        </button>
+        <span className="panel-pill flex-shrink-0">{t.top10}</span>
       </header>
 
       <div className={`panel-body ${scrollClass}`}>

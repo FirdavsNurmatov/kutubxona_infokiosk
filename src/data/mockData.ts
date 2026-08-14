@@ -1229,19 +1229,19 @@ export interface CategoryShare {
   color: string;
 }
 
-/* Ranglar tasodifiy tanlanmagan: to'q fonda rang ko'rligi (protan/deutan)
-   va oddiy ko'rish uchun qo'shni bo'laklar farqlanishi tekshirilgan
-   (eng yomon juftlik ΔE 19.1 — me'yor ≥ 8). Tartibni o'zgartirmang. */
+/* Ranglar bitta cyan ohangining olti bosqichi (OKLCH hue 210), ulush bo'yicha
+   yorug'dan to'qqa. Tekshirilgan: monoton yorqinlik, qo'shni ΔL >= 0.06,
+   fonga kontrast >= 2:1. Tartibni o'zgartirmang — u ma'no tashiydi. */
 export const categoryShares: CategoryShare[] = [
-  { label: CAT.prose, percent: 38, color: '#059EB1' },
-  { label: CAT.science, percent: 20, color: '#93640C' },
-  { label: CAT.history, percent: 14, color: '#2F6BFF' },
-  { label: CAT.philosophy, percent: 10, color: '#068B45' },
-  { label: CAT.children, percent: 9, color: '#9838E2' },
+  { label: CAT.prose, percent: 38, color: '#93EFFF' },
+  { label: CAT.science, percent: 20, color: '#13DCF6' },
+  { label: CAT.history, percent: 14, color: '#17C0D6' },
+  { label: CAT.philosophy, percent: 10, color: '#19A4B7' },
+  { label: CAT.children, percent: 9, color: '#028A9B' },
   {
     label: { uz: 'Boshqalar', ru: 'Прочее', en: 'Other' },
     percent: 9,
-    color: '#D6004A',
+    color: '#06707E',
   },
 ];
 

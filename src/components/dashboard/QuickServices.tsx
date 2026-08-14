@@ -3,7 +3,7 @@ import type { LucideIcon } from 'lucide-react';
 import { useI18n } from '../../i18n/context';
 import { quickServices } from '../../data/mockData';
 import type { QuickService } from '../../data/mockData';
-import type { View } from '../../types';
+
 
 const ICONS: Record<QuickService['icon'], LucideIcon> = {
   wifi: Wifi,
@@ -14,21 +14,7 @@ const ICONS: Record<QuickService['icon'], LucideIcon> = {
   card: CreditCard,
 };
 
-/** Har bir plitka qaysi bo'limga olib boradi. */
-const TARGET: Record<QuickService['id'], View> = {
-  wifi: 'services',
-  audio: 'catalog',
-  catalog: 'catalog',
-  kids: 'services',
-  events: 'events',
-  membership: 'services',
-};
-
-interface QuickServicesProps {
-  onNavigate: (view: View) => void;
-}
-
-export default function QuickServices({ onNavigate }: QuickServicesProps) {
+export default function QuickServices() {
   const { t } = useI18n();
 
   return (
@@ -46,16 +32,14 @@ export default function QuickServices({ onNavigate }: QuickServicesProps) {
           const Icon = ICONS[service.icon];
 
           return (
-            <button
+            <div
               key={service.id}
-              type="button"
-              onClick={() => onNavigate(TARGET[service.id])}
-              className="btn-compact flex flex-col items-center justify-center gap-1 rounded-lg px-1 py-1 transition-colors hover:bg-white/10 active:bg-white/15"
+              className="flex flex-col items-center justify-center gap-1 rounded-lg px-1 py-1"
               style={{ background: 'rgba(255,255,255,0.04)' }}
             >
               <Icon
                 style={{
-                  color: service.accent,
+                  color: '#22C3E6',
                   width: 'clamp(22px, 3vh, 30px)',
                   height: 'auto',
                 }}
@@ -68,7 +52,7 @@ export default function QuickServices({ onNavigate }: QuickServicesProps) {
               >
                 {t.dash.quick[service.id]}
               </span>
-            </button>
+            </div>
           );
         })}
       </div>

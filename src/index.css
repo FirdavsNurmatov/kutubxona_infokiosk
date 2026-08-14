@@ -23,8 +23,9 @@
   --ink-400: #143A5C;
   --cyan-400: #22C3E6;
   --cyan-700: #016C89;
-  --azure-500: #378ACF;
-  --iris-400: #8B7FD4;
+  --cyan-600: #015C74;
+  --cyan-550: #0E7490;
+  --cyan-500b: #1E8FA8;
   --amber-400: #F0AB2A;
   --paper-100: #F5F9FC;
 }
@@ -84,7 +85,7 @@ input[type='search']::-webkit-search-cancel-button {
   overflow: hidden;
   background:
     radial-gradient(1200px 600px at 20% 0%, rgba(1, 108, 137, 0.18), transparent 60%),
-    radial-gradient(1000px 500px at 85% 10%, rgba(55, 138, 207, 0.14), transparent 60%),
+    radial-gradient(1000px 500px at 85% 10%, rgba(30, 143, 168, 0.16), transparent 60%),
     linear-gradient(180deg, var(--ink-900) 0%, var(--ink-800) 55%, var(--ink-950) 100%);
 }
 
@@ -182,7 +183,7 @@ input[type='search']::-webkit-search-cancel-button {
   flex-shrink: 0;
   padding: 8px 16px;
   border-radius: 14px;
-  background: linear-gradient(135deg, #07617E 0%, #0FA5C9 120%);
+  background: linear-gradient(135deg, #015C74 0%, #1E8FA8 120%);
   border: 1px solid rgba(159, 228, 245, 0.3);
 }
 
@@ -238,7 +239,7 @@ input[type='search']::-webkit-search-cancel-button {
   border-radius: 14px;
   overflow: hidden;
   background: linear-gradient(180deg, var(--ink-600) 0%, #061F3C 100%);
-  border: 1px solid rgba(55, 138, 207, 0.22);
+  border: 1px solid rgba(34, 195, 230, 0.20);
 }
 
 .dash-head {
@@ -252,7 +253,7 @@ input[type='search']::-webkit-search-cancel-button {
   letter-spacing: 0.8px;
   color: var(--cyan-300, #5FD3EC);
   background: rgba(1, 23, 50, 0.75);
-  border-bottom: 1px solid rgba(55, 138, 207, 0.18);
+  border-bottom: 1px solid rgba(34, 195, 230, 0.16);
 }
 
 .dash-body {
@@ -364,8 +365,8 @@ input[type='search']::-webkit-search-cancel-button {
 
 /* Ustunga xos skroll rangi */
 .scroll-cyan::-webkit-scrollbar-thumb { background: rgba(1, 108, 137, 0.4); }
-.scroll-azure::-webkit-scrollbar-thumb { background: rgba(55, 138, 207, 0.4); }
-.scroll-iris::-webkit-scrollbar-thumb { background: rgba(111, 101, 147, 0.45); }
+.scroll-mid::-webkit-scrollbar-thumb { background: rgba(14, 116, 144, 0.4); }
+.scroll-light::-webkit-scrollbar-thumb { background: rgba(30, 143, 168, 0.4); }
 
 /* ══ Modal ══════════════════════════════════════════════ */
 .modal-backdrop {
@@ -1345,4 +1346,18 @@ body[data-app='kiosk'] {
     position: static;
     max-height: none;
   }
+}
+
+/* Panel sarlavhasidagi statik yorliq (avval tugma edi — katta ekran
+   bosilmagani uchun endi shunchaki ko'rsatkich). */
+.panel-pill {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-size: clamp(10.5px, 1.25vh, 13px);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  font-variant-numeric: tabular-nums;
 }

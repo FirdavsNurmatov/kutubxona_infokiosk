@@ -13,13 +13,9 @@ const ICONS: Record<StatTile['icon'], LucideIcon> = {
   library: Library,
 };
 
-const ACCENTS: Record<StatTile['accent'], string> = {
-  cyan: '#22C3E6',
-  emerald: '#3FBF9F',
-  amber: '#F0AB2A',
-  iris: '#A79CD9',
-  azure: '#7FB6E8',
-};
+/* Barcha plitalar bitta aksentda — son va yorliq ma'noni tashiydi,
+   rang esa faqat guruhni bildiradi. */
+const ACCENT = '#22C3E6';
 
 export default function StatsPanel() {
   const { t } = useI18n();
@@ -34,7 +30,7 @@ export default function StatsPanel() {
       <div className="dash-body grid gap-1.5" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
         {todayStats.map((stat) => {
           const Icon = ICONS[stat.icon];
-          const accent = ACCENTS[stat.accent];
+          const accent = ACCENT;
 
           return (
             <div

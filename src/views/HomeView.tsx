@@ -8,23 +8,13 @@ import QuickServices from '../components/dashboard/QuickServices';
 import { useI18n } from '../i18n/context';
 import { events, newBooks, recommendedBooks, todayEventCount } from '../data/mockData';
 import type { Book, LibraryEvent } from '../data/mockData';
-import type { CollectionFilter, View } from '../types';
 
 interface HomeViewProps {
   onSelectBook: (book: Book) => void;
   onSelectEvent: (event: LibraryEvent) => void;
-  onShowEvents: () => void;
-  onShowCatalog: (filter: CollectionFilter) => void;
-  onNavigate: (view: View) => void;
 }
 
-export default function HomeView({
-  onSelectBook,
-  onSelectEvent,
-  onShowEvents,
-  onShowCatalog,
-  onNavigate,
-}: HomeViewProps) {
+export default function HomeView({ onSelectBook, onSelectEvent }: HomeViewProps) {
   const { t } = useI18n();
 
   return (
@@ -34,7 +24,6 @@ export default function HomeView({
         events={events}
         todayCount={todayEventCount()}
         onSelectEvent={onSelectEvent}
-        onShowAll={onShowEvents}
       />
 
       <BookList
@@ -42,12 +31,11 @@ export default function HomeView({
         title={t.newBooksTitle}
         books={newBooks}
         icon={Sparkles}
-        headBg="linear-gradient(135deg, #06437A 0%, #2A6DAB 100%)"
-        accent="#2A6DAB"
-        scrollClass="scroll-azure"
+        headBg="linear-gradient(135deg, #0E7490 0%, #0A5567 100%)"
+        accent="#0E7490"
+        scrollClass="scroll-mid"
         variant="badge"
         onSelectBook={onSelectBook}
-        onShowAll={() => onShowCatalog('new')}
       />
 
       <BookList
@@ -55,18 +43,17 @@ export default function HomeView({
         title={t.recommendedTitle}
         books={recommendedBooks}
         icon={Award}
-        headBg="linear-gradient(135deg, #2A2257 0%, #6F6593 100%)"
-        accent="#6F6593"
-        scrollClass="scroll-iris"
+        headBg="linear-gradient(135deg, #1E8FA8 0%, #156B7F 100%)"
+        accent="#1E8FA8"
+        scrollClass="scroll-light"
         variant="rating"
         onSelectBook={onSelectBook}
-        onShowAll={() => onShowCatalog('recommended')}
       />
 
       <StatsPanel />
       <CategoryChart />
       <WeeklyChart />
-      <QuickServices onNavigate={onNavigate} />
+      <QuickServices />
     </main>
   );
 }

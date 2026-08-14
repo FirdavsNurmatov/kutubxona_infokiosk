@@ -43,7 +43,7 @@ export default function BookRow({ book, variant, accent, onSelect }: BookRowProp
 
       {/* Nomi va muallifi */}
       <div className="flex-1 min-w-0">
-        <div className="font-semibold text-ink-800 text-[14px] leading-tight line-clamp-1 group-hover:text-azure-700 transition-colors">
+        <div className="font-semibold text-ink-800 text-[14px] leading-tight line-clamp-1 group-hover:text-cyan-700 transition-colors">
           {tr(book.title)}
         </div>
         <div className="text-paper-500 text-[12.5px] mt-0.5 truncate">{tr(book.author)}</div>

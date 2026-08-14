@@ -1,0 +1,1840 @@
+/* ══════════════════════════════════════════════════════════
+   /map — kutubxona binosining interaktiv xaritasi.
+
+   Alohida bo'lim bo'lgani uchun barcha uslub shu faylda va
+   `.m-` prefiksi ostida turadi — kiosk (`.k-`) va devor ekrani
+   (`.kiosk-`) uslublariga tegmaydi.
+
+   Qatlamlar tartibi:
+     .m-root::before → xiralashgan kutubxona surati
+     .m-root::after  → gradient parda (matn o'qilishi uchun)
+     kontent         → shaffof "shisha" kartochkalar
+   ══════════════════════════════════════════════════════════ */
+
+body[data-app='map'] {
+  background-color: #e8edf7;
+  color: #1b2559;
+}
+
+.m-root {
+  --m-ink: #0b1848;
+  --m-text: #1b2559;
+  --m-muted: #6b7a99;
+  --m-line: rgba(11, 24, 72, 0.08);
+  --m-accent: #4f52f6;
+  --m-accent-2: #6d5cf0;
+  --m-gold: #f0ab2a;
+  --m-radius: 20px;
+  --m-pad: clamp(12px, 1.6vh, 20px);
+  --m-header-h: clamp(68px, 8.4vh, 92px);
+  /* Rasmga qolgan bo'y: sarlavha + qavat tugmalari + pastki maslahat + oraliqlar */
+  --m-plan-off: 272px;
+
+  /* Takrorlanuvchi "shisha" retsepti */
+  --m-glass: linear-gradient(158deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.76) 100%);
+  --m-glass-edge: 1px solid rgba(255, 255, 255, 0.85);
+  --m-shadow:
+    0 1px 2px rgba(11, 24, 72, 0.04),
+    0 14px 34px -12px rgba(11, 24, 72, 0.22);
+
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  isolation: isolate;
+  background: #e8edf7;
+}
+
+/* Fon surati — kutubxona atriumi, xira va biroz kattalashtirilgan
+   (blur chekkasi ko'rinmasligi uchun inset manfiy va scale > 1) */
+.m-root::before {
+  content: '';
+  position: absolute;
+  inset: -3%;
+  z-index: -2;
+  background: url('/images/map/kutubxona_background.jpg') center 42% / cover no-repeat;
+  filter: blur(3.5px) saturate(1.06) brightness(1.06);
+  transform: scale(1.04);
+}
+
+/* Rangli parda — surat ko'rinib tursin, lekin matn va kartochkalar o'qilsin.
+   Tepada iltifot uchun issiq oltin shu'la, chekkalarda oqartiruvchi vinyetka. */
+.m-root::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(1000px 440px at 50% -8%, rgba(240, 171, 42, 0.16), transparent 62%),
+    radial-gradient(900px 520px at 6% 96%, rgba(79, 82, 246, 0.14), transparent 62%),
+    radial-gradient(820px 460px at 96% 90%, rgba(14, 147, 166, 0.12), transparent 60%),
+    linear-gradient(
+      92deg,
+      rgba(240, 243, 250, 0.55) 0%,
+      rgba(240, 243, 250, 0) 26%,
+      rgba(240, 243, 250, 0) 74%,
+      rgba(240, 243, 250, 0.55) 100%
+    ),
+    linear-gradient(
+      178deg,
+      rgba(246, 243, 237, 0.42) 0%,
+      rgba(239, 242, 249, 0.58) 46%,
+      rgba(230, 235, 246, 0.8) 100%
+    );
+}
+
+/* ── Yuqori panel ──────────────────────────────────── */
+.m-header {
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: var(--m-header-h);
+  padding: 0 clamp(14px, 1.6vw, 30px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.74) 100%);
+  -webkit-backdrop-filter: blur(20px) saturate(1.5);
+  backdrop-filter: blur(20px) saturate(1.5);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 10px 32px -18px rgba(11, 24, 72, 0.5);
+}
+
+.m-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.m-brand-mark {
+  width: clamp(34px, 4.4vh, 46px);
+  height: auto;
+  filter: drop-shadow(0 4px 10px rgba(11, 24, 72, 0.22));
+}
+
+.m-brand-name {
+  font-size: clamp(13px, 1.7vh, 18px);
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  line-height: 1.15;
+  background: linear-gradient(120deg, #0b1848 10%, #33499b 90%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.m-brand-sub {
+  font-size: clamp(9px, 1.1vh, 11.5px);
+  font-weight: 600;
+  letter-spacing: 1.1px;
+  color: var(--m-muted);
+  margin-top: 2px;
+}
+
+.m-nav {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(2px, 0.6vw, 12px);
+}
+
+.m-nav-btn {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 9px clamp(9px, 1vw, 18px);
+  border-radius: 13px;
+  color: var(--m-muted);
+  font-size: clamp(10px, 1.25vh, 13px);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.18s, background-color 0.18s, transform 0.18s;
+}
+
+.m-nav-btn:hover {
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--m-ink);
+  transform: translateY(-1px);
+}
+
+.m-nav-btn[aria-current='page'] {
+  color: var(--m-accent);
+  background: linear-gradient(180deg, rgba(79, 82, 246, 0.11) 0%, rgba(79, 82, 246, 0.02) 100%);
+}
+
+/* Faol bo'lim ostidagi gradient chiziq */
+.m-nav-btn[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: linear-gradient(90deg, var(--m-accent), var(--m-accent-2));
+  box-shadow: 0 -2px 12px rgba(79, 82, 246, 0.7);
+}
+
+.m-headmeta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.m-clock {
+  text-align: right;
+  line-height: 1.15;
+}
+
+.m-clock-time {
+  font-size: clamp(16px, 2.4vh, 26px);
+  font-weight: 800;
+  color: var(--m-ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.5px;
+}
+
+.m-clock-date {
+  font-size: clamp(10px, 1.25vh, 13px);
+  color: var(--m-muted);
+  font-weight: 600;
+}
+
+.m-lang {
+  display: flex;
+  gap: 3px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 24, 72, 0.07);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 2px rgba(11, 24, 72, 0.05);
+}
+
+.m-lang button {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: clamp(10px, 1.25vh, 12.5px);
+  font-weight: 700;
+  color: var(--m-muted);
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+
+.m-lang button:hover {
+  color: var(--m-ink);
+}
+
+.m-lang button[aria-pressed='true'] {
+  background: linear-gradient(135deg, var(--m-accent) 0%, var(--m-accent-2) 100%);
+  color: #fff;
+  box-shadow: 0 6px 16px -4px rgba(79, 82, 246, 0.75);
+}
+
+/* ── Ish maydoni ───────────────────────────────────── */
+.m-body {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+}
+
+.m-body-scroll {
+  overflow-y: auto;
+}
+
+.m-layout {
+  display: grid;
+  grid-template-columns: clamp(210px, 16vw, 272px) minmax(0, 1fr) clamp(250px, 19vw, 336px);
+  grid-template-areas: 'left stage right';
+  gap: var(--m-pad);
+  padding: var(--m-pad);
+  overflow: hidden;
+}
+
+.m-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--m-pad);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.m-col::-webkit-scrollbar {
+  width: 6px;
+}
+
+.m-col::-webkit-scrollbar-thumb {
+  background: rgba(11, 24, 72, 0.16);
+  border-radius: 8px;
+}
+
+/* Chap ustun o'zi aylanmaydi — xonalar ro'yxati qolgan bo'yni egallab,
+   ichida aylanadi. Shunda "Ish vaqti" doim ko'rinib turadi. */
+.m-col-left {
+  grid-area: left;
+  overflow: hidden;
+}
+
+.m-col-right {
+  grid-area: right;
+}
+
+.m-stage {
+  grid-area: stage;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  gap: 10px;
+}
+
+.m-stage-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+/* Sarlavha oldidagi gradient ustuncha */
+.m-stage-titlebox {
+  position: relative;
+  padding-left: 16px;
+}
+
+.m-stage-titlebox::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 4px;
+  bottom: 6px;
+  width: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--m-accent) 0%, var(--m-accent-2) 60%, var(--m-gold) 100%);
+  box-shadow: 0 6px 18px -4px rgba(79, 82, 246, 0.75);
+}
+
+.m-stage-title {
+  font-size: clamp(24px, 4vh, 44px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.02;
+  background: linear-gradient(118deg, #0b1848 8%, #2f3f8f 55%, #4f52f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.m-stage-sub {
+  font-size: clamp(10px, 1.35vh, 14px);
+  font-weight: 700;
+  letter-spacing: 2.4px;
+  color: var(--m-muted);
+  margin-top: 4px;
+}
+
+/* Qavat tanlash — yagona "shisha" o'ram ichida */
+.m-floors {
+  display: flex;
+  gap: 6px;
+  padding: 5px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--m-shadow);
+}
+
+.m-floor-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: clamp(34px, 4.7vh, 48px);
+  padding: 0 clamp(13px, 1.3vw, 24px);
+  border-radius: 12px;
+  color: var(--m-text);
+  font-size: clamp(12px, 1.6vh, 16px);
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s, transform 0.2s;
+}
+
+.m-floor-btn:hover {
+  background: rgba(255, 255, 255, 0.85);
+  transform: translateY(-1px);
+}
+
+.m-floor-btn[aria-pressed='true'] {
+  background: linear-gradient(135deg, #5b6bff 0%, #4f52f6 45%, #3f36d8 100%);
+  color: #fff;
+  box-shadow:
+    0 10px 26px -8px rgba(79, 82, 246, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+/* ── 3D chizma va yorliqlar ────────────────────────── */
+.m-stage-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* O'ram rasmga aniq mos tushadi — yorliq foizlari shunga nisbatan hisoblanadi */
+.m-plan-wrap {
+  position: relative;
+  line-height: 0;
+}
+
+/* Bino ostidagi yumshoq soya — "yerga qo'ngan" taassurot beradi */
+.m-plan-wrap::before {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: 1%;
+  height: 14%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(11, 24, 72, 0.3) 0%, transparent 70%);
+  filter: blur(16px);
+}
+
+.m-plan {
+  position: relative;
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100dvh - var(--m-plan-off));
+  filter: drop-shadow(0 22px 40px rgba(11, 24, 72, 0.22));
+  animation: m-plan-in 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  -webkit-user-drag: none;
+}
+
+@keyframes m-plan-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Kiosk turgan joy — bosilmaydi, faqat mo'ljal uchun */
+.m-here {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  pointer-events: none;
+  animation: m-here-in 0.5s 0.25s backwards cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes m-here-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -140%);
+  }
+}
+
+.m-here-label {
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #e0322f 0%, #b81f2c 100%);
+  color: #fff;
+  font-size: clamp(10.5px, 1.4vh, 14px);
+  font-weight: 800;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  box-shadow:
+    0 6px 16px -4px rgba(184, 31, 44, 0.75),
+    0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+
+/* Uchi pastga qaragan tomchi shaklidagi nishon */
+.m-here-pin {
+  order: 2;
+  position: relative;
+  width: 19px;
+  height: 19px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  background: linear-gradient(135deg, #e0322f 0%, #b81f2c 100%);
+  box-shadow:
+    0 4px 12px -2px rgba(184, 31, 44, 0.8),
+    0 0 0 2px rgba(255, 255, 255, 0.9);
+}
+
+.m-here-pin::before {
+  content: '';
+  position: absolute;
+  inset: 5.5px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* Sekin tarqaladigan halqa — ko'zni o'ziga tortadi */
+.m-here-pin::after {
+  content: '';
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid #e0322f;
+  animation: m-here-ping 2.4s ease-out infinite;
+}
+
+@keyframes m-here-ping {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.7);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+
+/* Pastki maslahat — suzuvchi shisha tasma */
+.m-hint {
+  flex-shrink: 0;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  max-width: 640px;
+  padding: 0 26px;
+  height: clamp(36px, 4.8vh, 48px);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: #4b5a7c;
+  font-size: clamp(11px, 1.4vh, 14.5px);
+  font-weight: 600;
+  box-shadow: var(--m-shadow);
+}
+
+.m-hint svg {
+  color: var(--m-accent);
+}
+
+/* ── Kartochkalar ──────────────────────────────────── */
+.m-card {
+  position: relative;
+  flex-shrink: 0;
+  padding: clamp(13px, 1.7vh, 19px);
+  border-radius: var(--m-radius);
+  background: var(--m-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  backdrop-filter: blur(18px) saturate(1.35);
+  border: var(--m-glass-edge);
+  box-shadow: var(--m-shadow);
+  overflow: hidden;
+}
+
+/* Yuqori chetdagi nozik yorug'lik chizig'i */
+.m-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.95), transparent);
+}
+
+.m-card-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(11px, 1.4vh, 14px);
+  font-weight: 800;
+  letter-spacing: 0.9px;
+  color: var(--m-ink);
+  margin-bottom: 12px;
+}
+
+/* Sarlavha yonidagi gradient belgi */
+.m-head-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(26px, 3.4vh, 32px);
+  height: clamp(26px, 3.4vh, 32px);
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--m-accent) 0%, var(--m-accent-2) 100%);
+  color: #fff;
+  box-shadow: 0 6px 16px -5px rgba(79, 82, 246, 0.9);
+}
+
+.m-welcome-body {
+  font-size: clamp(11px, 1.4vh, 14px);
+  line-height: 1.62;
+  color: #3b4a6b;
+}
+
+.m-text-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 12px;
+  font-size: clamp(11px, 1.4vh, 14px);
+  font-weight: 700;
+  color: var(--m-accent);
+  transition: gap 0.18s, color 0.18s;
+}
+
+.m-text-btn:hover {
+  gap: 9px;
+  color: #3335fa;
+}
+
+/* Ish vaqti — to'q gradient kartochka */
+.m-hours {
+  background: linear-gradient(158deg, #2b3c6d 0%, #182548 52%, #101a3a 100%);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(11, 24, 72, 0.2),
+    0 18px 38px -14px rgba(11, 24, 72, 0.7);
+}
+
+.m-hours::before {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.35), transparent);
+}
+
+/* Burchakdagi issiq yorug'lik */
+.m-hours::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  right: -25%;
+  width: 70%;
+  height: 110%;
+  background: radial-gradient(circle, rgba(240, 171, 42, 0.22) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.m-hours .m-card-head {
+  color: #fff;
+}
+
+.m-hours .m-head-badge {
+  background: linear-gradient(135deg, #f8ce72 0%, #f0ab2a 100%);
+  color: #2b2308;
+  box-shadow: 0 6px 16px -5px rgba(240, 171, 42, 0.85);
+}
+
+.m-hours-row {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 9px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+  font-size: clamp(10.5px, 1.3vh, 13px);
+  color: #b8c6e8;
+}
+
+.m-hours-row strong {
+  font-size: clamp(15px, 2vh, 21px);
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  background: linear-gradient(100deg, #f8ce72 0%, #f0ab2a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.m-hours-note {
+  position: relative;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.11);
+  font-size: clamp(10px, 1.2vh, 12px);
+  line-height: 1.55;
+  color: #9aa8ca;
+}
+
+/* Raqamlar — har qatorda o'z rangli belgisi */
+.m-stat-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: clamp(6px, 0.95vh, 10px) 0;
+  border-top: 1px solid var(--m-line);
+}
+
+.m-stat-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(30px, 3.9vh, 38px);
+  height: clamp(30px, 3.9vh, 38px);
+  border-radius: 11px;
+  background: #eef1fb;
+  background: color-mix(in srgb, var(--m-tone) 14%, #fff);
+  color: var(--m-tone);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+
+.m-stat-label {
+  font-size: clamp(9px, 1.1vh, 11px);
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: var(--m-muted);
+}
+
+.m-stat-value {
+  font-size: clamp(15px, 2vh, 21px);
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--m-ink);
+}
+
+.m-quick-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.m-quick-label svg {
+  flex-shrink: 0;
+  color: var(--m-muted);
+  transition: color 0.18s;
+}
+
+.m-quick-row:hover .m-quick-label svg {
+  color: var(--m-accent);
+}
+
+.m-quick-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: clamp(7px, 1.05vh, 12px) 4px;
+  border-top: 1px solid var(--m-line);
+  font-size: clamp(11px, 1.35vh, 14px);
+  font-weight: 600;
+  color: var(--m-text);
+  border-radius: 8px;
+  transition: color 0.18s, background 0.18s, padding-left 0.18s;
+}
+
+.m-quick-row:hover {
+  color: var(--m-accent);
+  padding-left: 10px;
+  background: linear-gradient(90deg, rgba(79, 82, 246, 0.09), transparent);
+}
+
+/* ── Xona kartochkasi (o'ng ustun) ─────────────────── */
+.m-detail {
+  --m-accent: #4f52f6;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-top: clamp(15px, 2vh, 21px);
+  animation: m-detail-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Yuqoridagi rangli gradient tasma — xona turi rangida */
+.m-detail::before {
+  height: 4px;
+  background: linear-gradient(90deg, var(--m-accent), transparent 85%);
+}
+
+/* Orqa fonda xona rangining nozik shu'lasi */
+.m-detail::after {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -20%;
+  width: 75%;
+  height: 80%;
+  background: radial-gradient(circle, var(--m-accent) 0%, transparent 70%);
+  opacity: 0.13;
+  pointer-events: none;
+}
+
+@keyframes m-detail-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.m-detail-top {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  margin-bottom: 11px;
+}
+
+.m-detail-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(40px, 5.2vh, 50px);
+  height: clamp(40px, 5.2vh, 50px);
+  border-radius: 14px;
+  background: linear-gradient(140deg, var(--m-accent) 0%, #ffffff00 190%);
+  color: #fff;
+  box-shadow:
+    0 10px 22px -8px var(--m-accent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.m-detail-tags {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding-top: 4px;
+}
+
+.m-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(11, 24, 72, 0.07);
+  background: rgba(255, 255, 255, 0.75);
+  font-size: clamp(9.5px, 1.15vh, 11.5px);
+  font-weight: 700;
+  color: var(--m-muted);
+  white-space: nowrap;
+}
+
+.m-chip-solid {
+  border-color: transparent;
+  /* color-mix ni qo'llamaydigan brauzerlarda oddiy och fon qoladi */
+  background: #f2f4ff;
+  background: color-mix(in srgb, var(--m-accent) 15%, #fff);
+  color: var(--m-accent);
+}
+
+.m-icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 10px;
+  color: var(--m-muted);
+  transition: background-color 0.18s, color 0.18s;
+}
+
+.m-icon-btn:hover {
+  background: rgba(11, 24, 72, 0.06);
+  color: var(--m-ink);
+}
+
+.m-detail-name {
+  position: relative;
+  font-size: clamp(16px, 2.4vh, 24px);
+  font-weight: 800;
+  line-height: 1.18;
+  letter-spacing: -0.4px;
+  color: var(--m-ink);
+}
+
+.m-detail-tagline {
+  position: relative;
+  margin-top: 5px;
+  font-size: clamp(10.5px, 1.3vh, 13px);
+  font-weight: 600;
+  color: var(--m-accent);
+  line-height: 1.45;
+}
+
+.m-detail-scroll {
+  position: relative;
+  min-height: 0;
+  overflow-y: auto;
+  margin-top: 13px;
+}
+
+.m-detail-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.m-detail-scroll::-webkit-scrollbar-thumb {
+  background: rgba(11, 24, 72, 0.16);
+  border-radius: 8px;
+}
+
+/* "Qanday borish" — kartochkadagi eng muhim ma'lumot, shuning uchun
+   ajratilgan fonda va tavsifdan oldin turadi. */
+.m-route {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 13px;
+  padding: 11px 12px;
+  border-radius: 13px;
+  background: #f2f4ff;
+  background: color-mix(in srgb, var(--m-accent) 9%, #fff);
+  border: 1px solid rgba(11, 24, 72, 0.05);
+}
+
+.m-route-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+  background: var(--m-accent);
+  color: #fff;
+  box-shadow: 0 5px 13px -4px var(--m-accent);
+}
+
+.m-route-title {
+  font-size: clamp(9.5px, 1.15vh, 11.5px);
+  font-weight: 800;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+
+.m-route-text {
+  margin-top: 3px;
+  font-size: clamp(11px, 1.4vh, 13.5px);
+  line-height: 1.55;
+  color: #33405e;
+}
+
+.m-detail-text {
+  font-size: clamp(11px, 1.4vh, 14px);
+  line-height: 1.68;
+  color: #3b4a6b;
+}
+
+.m-detail-seats {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 13px;
+  padding: 7px 14px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.55));
+  border: 1px solid rgba(11, 24, 72, 0.06);
+  color: var(--m-ink);
+  font-size: clamp(11px, 1.4vh, 14px);
+  font-weight: 700;
+  box-shadow: 0 4px 12px -6px rgba(11, 24, 72, 0.4);
+}
+
+.m-detail-seats svg {
+  color: var(--m-accent);
+}
+
+.m-detail-sub {
+  margin-top: 15px;
+  font-size: clamp(9.5px, 1.15vh, 11.5px);
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--m-muted);
+}
+
+.m-feature-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.m-feature-list li {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: clamp(10.5px, 1.35vh, 13.5px);
+  color: #3b4a6b;
+}
+
+.m-feature-list svg {
+  flex-shrink: 0;
+  padding: 3px;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #f2f4ff;
+  background: color-mix(in srgb, var(--m-accent) 14%, #fff);
+  color: var(--m-accent);
+}
+
+/* ── Chapdagi xonalar ro'yxati ─────────────────────── */
+.m-roomlist {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 190px;
+  overflow: hidden;
+}
+
+.m-roomlist-count {
+  margin-left: auto;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: #f2f4ff;
+  background: color-mix(in srgb, var(--m-accent) 13%, #fff);
+  color: var(--m-accent);
+  font-size: clamp(10px, 1.2vh, 12px);
+  font-weight: 800;
+  letter-spacing: 0;
+}
+
+.m-roomlist-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-height: 0;
+  overflow-y: auto;
+  margin: 0 -6px;
+  padding: 0 6px;
+}
+
+.m-roomlist-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.m-roomlist-scroll::-webkit-scrollbar-thumb {
+  background: rgba(11, 24, 72, 0.16);
+  border-radius: 8px;
+}
+
+.m-roomlist-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: clamp(6px, 0.95vh, 10px) 10px;
+  border-radius: 11px;
+  text-align: left;
+  color: var(--m-text);
+  font-size: clamp(10.5px, 1.35vh, 13.5px);
+  font-weight: 600;
+  line-height: 1.3;
+  transition: background 0.16s, color 0.16s;
+}
+
+.m-roomlist-item[aria-pressed='true'] {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--m-tone) 16%, #fff), transparent);
+  color: var(--m-tone);
+  font-weight: 700;
+  box-shadow: inset 2px 0 0 var(--m-tone);
+}
+
+.m-roomlist-dot {
+  flex-shrink: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--m-tone);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
+.m-roomlist-name {
+  flex: 1;
+  min-width: 0;
+}
+
+.m-roomlist-seats {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  font-size: clamp(9.5px, 1.15vh, 11.5px);
+  font-weight: 700;
+  color: var(--m-muted);
+}
+
+/* ── Xonalar ro'yxati ko'rinishi ───────────────────── */
+.m-rooms {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: clamp(20px, 3.4vh, 40px) clamp(16px, 2vw, 36px) clamp(28px, 4vh, 48px);
+}
+
+.m-rooms-head {
+  position: relative;
+  padding-left: 18px;
+}
+
+.m-rooms-head::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 8px;
+  width: 5px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--m-accent) 0%, var(--m-accent-2) 60%, var(--m-gold) 100%);
+  box-shadow: 0 6px 18px -4px rgba(79, 82, 246, 0.75);
+}
+
+.m-rooms-title {
+  font-size: clamp(22px, 3.8vh, 40px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.05;
+  background: linear-gradient(118deg, #0b1848 8%, #2f3f8f 55%, #4f52f6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.m-rooms-sub {
+  max-width: 660px;
+  margin-top: 8px;
+  font-size: clamp(12px, 1.5vh, 15px);
+  line-height: 1.6;
+  color: #55648a;
+}
+
+.m-rooms-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin: clamp(16px, 2.6vh, 30px) 0 clamp(13px, 2vh, 22px);
+}
+
+.m-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.m-filter {
+  --m-accent: #4f52f6;
+  padding: 9px 17px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.66);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  font-size: clamp(11px, 1.35vh, 13.5px);
+  font-weight: 700;
+  color: var(--m-muted);
+  box-shadow: 0 4px 14px -8px rgba(11, 24, 72, 0.5);
+  transition: color 0.18s, background 0.18s, box-shadow 0.18s, transform 0.18s;
+}
+
+.m-filter:hover {
+  color: var(--m-ink);
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateY(-1px);
+}
+
+.m-filter[aria-pressed='true'] {
+  background: linear-gradient(135deg, var(--m-accent) 0%, color-mix(in srgb, var(--m-accent) 72%, #000) 100%);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: 0 10px 24px -10px var(--m-accent);
+}
+
+.m-search {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 250px;
+  padding: 0 16px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  color: var(--m-muted);
+  box-shadow: var(--m-shadow);
+}
+
+.m-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: clamp(11px, 1.35vh, 14px);
+  color: var(--m-text);
+}
+
+.m-search input::placeholder {
+  color: #9aa8c4;
+}
+
+.m-rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+
+.m-room-card {
+  --m-accent: #4f52f6;
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 13px;
+  padding: 15px;
+  border-radius: 18px;
+  border: var(--m-glass-edge);
+  background: var(--m-glass);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  text-align: left;
+  overflow: hidden;
+  box-shadow: var(--m-shadow);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+/* Chap chekkadagi rangli tasma — xona turini bildiradi */
+.m-room-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 18%;
+  bottom: 18%;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--m-accent);
+  opacity: 0;
+  transition: opacity 0.2s, top 0.2s, bottom 0.2s;
+}
+
+.m-room-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 1px 2px rgba(11, 24, 72, 0.05),
+    0 22px 44px -16px rgba(11, 24, 72, 0.4);
+}
+
+.m-room-card:hover::before {
+  opacity: 1;
+  top: 8%;
+  bottom: 8%;
+}
+
+.m-room-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  background: #f2f4ff;
+  background: color-mix(in srgb, var(--m-accent) 13%, #fff);
+  color: var(--m-accent);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+
+.m-room-card:hover .m-room-icon {
+  background: linear-gradient(140deg, var(--m-accent) 0%, color-mix(in srgb, var(--m-accent) 70%, #000) 100%);
+  color: #fff;
+  box-shadow: 0 10px 22px -8px var(--m-accent);
+}
+
+.m-room-body {
+  min-width: 0;
+}
+
+.m-room-name {
+  font-size: 15.5px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  color: var(--m-ink);
+  line-height: 1.25;
+}
+
+.m-room-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--m-muted);
+}
+
+.m-room-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.m-room-tagline {
+  margin-top: 7px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #5b6b8c;
+}
+
+/* O'ng chekkadagi kichik strelka — kartochka bosilishini bildiradi */
+.m-room-go {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid rgba(11, 24, 72, 0.08);
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--m-accent);
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+
+.m-room-card:hover .m-room-go,
+.m-room-card:focus-visible .m-room-go {
+  background: linear-gradient(135deg, var(--m-accent), color-mix(in srgb, var(--m-accent) 70%, #000));
+  border-color: transparent;
+  color: #fff;
+  transform: translateX(2px);
+  box-shadow: 0 8px 18px -6px var(--m-accent);
+}
+
+.m-rooms-empty {
+  padding: 48px 0;
+  text-align: center;
+  font-size: 15px;
+  color: var(--m-muted);
+}
+
+/* ── "Kutubxona haqida" sahifasi ───────────────────── */
+.m-about {
+  max-width: 1560px;
+  margin: 0 auto;
+  padding: clamp(20px, 3.4vh, 40px) clamp(16px, 2vw, 36px) clamp(28px, 4vh, 48px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.2vh, 22px);
+}
+
+/* Matn bloki va rasm bir xil balandlikda — rasm ustunga moslashadi,
+   shuning uchun chapda va o'ngda ortiqcha bo'sh joy qolmaydi. */
+.m-about-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(18px, 2.6vw, 40px);
+}
+
+.m-about-hero-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(4px, 1.4vh, 14px) 0;
+}
+
+.m-about-sub {
+  margin-top: 10px;
+  font-size: clamp(12px, 1.6vh, 17px);
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  background: linear-gradient(100deg, #c8891f 0%, #f0ab2a 60%, #f8ce72 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.m-about-lead {
+  margin-top: 14px;
+  max-width: 640px;
+  font-size: clamp(12.5px, 1.6vh, 16px);
+  line-height: 1.72;
+  color: #3b4a6b;
+}
+
+.m-about-hero-img {
+  position: relative;
+  border-radius: 24px;
+  overflow: hidden;
+  border: var(--m-glass-edge);
+  box-shadow:
+    0 1px 2px rgba(11, 24, 72, 0.05),
+    0 26px 54px -18px rgba(11, 24, 72, 0.5);
+}
+
+.m-about-hero-img img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: clamp(230px, 30vh, 330px);
+  object-fit: cover;
+}
+
+/* Rasm ustidagi yengil rangli parda — sarlavha bilan bir ohangda */
+.m-about-hero-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(200deg, rgba(79, 82, 246, 0.16) 0%, transparent 45%, rgba(11, 24, 72, 0.22) 100%);
+}
+
+/* Raqamlar tasmasi */
+.m-about-facts {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: clamp(10px, 1.4vw, 22px);
+  padding: clamp(14px, 2vh, 22px) clamp(16px, 1.8vw, 26px);
+}
+
+.m-fact {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-width: 0;
+}
+
+.m-fact + .m-fact {
+  border-left: 1px solid var(--m-line);
+  padding-left: clamp(10px, 1.4vw, 22px);
+}
+
+.m-fact-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: clamp(38px, 4.8vh, 48px);
+  height: clamp(38px, 4.8vh, 48px);
+  border-radius: 14px;
+  background: #eef1fb;
+  background: color-mix(in srgb, var(--m-tone) 14%, #fff);
+  color: var(--m-tone);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+.m-fact-value {
+  white-space: nowrap;
+  font-size: clamp(16px, 2.3vh, 25px);
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: var(--m-tone);
+  line-height: 1.1;
+}
+
+/* Ikki qatorga joy ajratiladi — uzun va qisqa yorliqlar bir xil
+   balandlikni egallaydi, shunda qiymatlar bir chiziqda turadi. */
+.m-fact-label {
+  margin-top: 3px;
+  min-height: 2.6em;
+  font-size: clamp(9px, 1.05vh, 11px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--m-muted);
+  line-height: 1.3;
+}
+
+/* To'rtta yo'nalish kartochkasi */
+.m-about-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: clamp(12px, 1.4vw, 18px);
+}
+
+.m-feature-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(14px, 1.9vh, 20px);
+  border-radius: var(--m-radius);
+  background: var(--m-glass);
+  -webkit-backdrop-filter: blur(18px) saturate(1.35);
+  backdrop-filter: blur(18px) saturate(1.35);
+  border: var(--m-glass-edge);
+  box-shadow: var(--m-shadow);
+  overflow: hidden;
+}
+
+.m-feature-media {
+  position: relative;
+  margin: calc(-1 * clamp(14px, 1.9vh, 20px)) calc(-1 * clamp(14px, 1.9vh, 20px)) 0;
+  height: clamp(96px, 13vh, 140px);
+  overflow: hidden;
+}
+
+.m-feature-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Rasm xona rangida bo'yaladi — to'rtala kartochka bir uslubda ko'rinadi */
+.m-feature-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--m-tone) 55%, transparent) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.m-feature-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  margin-top: -21px;
+  border-radius: 13px;
+  background: linear-gradient(140deg, var(--m-tone) 0%, color-mix(in srgb, var(--m-tone) 70%, #000) 100%);
+  color: #fff;
+  box-shadow:
+    0 10px 22px -8px var(--m-tone),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.m-feature-title {
+  margin-top: 11px;
+  font-size: clamp(14px, 1.85vh, 17.5px);
+  font-weight: 800;
+  letter-spacing: -0.2px;
+  color: var(--m-ink);
+}
+
+.m-feature-body {
+  margin-top: 6px;
+  font-size: clamp(11.5px, 1.4vh, 13.5px);
+  line-height: 1.6;
+  color: #55648a;
+}
+
+/* Pastki uch blok */
+/* Mockupdagidek: keng "imkoniyatlar" bloki va yonida uchta ixcham
+   kartochka — hammasi bir qatorda va bir balandlikda. */
+.m-about-bottom {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(12px, 1.4vw, 18px);
+  align-items: stretch;
+}
+
+.m-about-bottom > .m-card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Kartochka pastiga yopishadigan havola — balandliklar tenglashganda
+   bo'sh joy tepada emas, kontent orasida qoladi. */
+.m-push-bottom {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.m-amenity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: space-between;
+  flex: 1;
+  gap: 10px;
+}
+
+.m-amenity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 13px;
+  border-radius: 13px;
+  border: 1px solid rgba(11, 24, 72, 0.06);
+  background: rgba(255, 255, 255, 0.62);
+  font-size: clamp(11px, 1.35vh, 13.5px);
+  font-weight: 600;
+  color: #3b4a6b;
+}
+
+.m-amenity svg {
+  flex-shrink: 0;
+  color: var(--m-accent);
+}
+
+.m-contact-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+  padding: 10px 4px;
+  border-top: 1px solid var(--m-line);
+  font-size: clamp(11.5px, 1.4vh, 14px);
+  font-weight: 600;
+  color: var(--m-text);
+  border-radius: 8px;
+  transition: color 0.18s, padding-left 0.18s, background 0.18s;
+}
+
+.m-contact-row svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--m-accent);
+}
+
+a.m-contact-row:hover {
+  color: var(--m-accent);
+  padding-left: 10px;
+  background: linear-gradient(90deg, rgba(79, 82, 246, 0.09), transparent);
+}
+
+/* Manzil QR kodi — kiosk hech qayerga o'tmaydi, telefon o'tadi */
+.m-qr {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));
+  border: 1px solid rgba(11, 24, 72, 0.06);
+}
+
+.m-qr-code {
+  display: flex;
+  flex-shrink: 0;
+  padding: 7px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 4px 12px -5px rgba(11, 24, 72, 0.5);
+}
+
+.m-qr-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(11px, 1.35vh, 13.5px);
+  font-weight: 700;
+  color: var(--m-ink);
+}
+
+.m-qr-title svg {
+  flex-shrink: 0;
+  color: var(--m-accent);
+}
+
+.m-qr-hint {
+  margin-top: 5px;
+  font-size: clamp(10px, 1.2vh, 12px);
+  line-height: 1.5;
+  color: var(--m-muted);
+}
+
+/* Alisher Navoiy so'zi */
+.m-quote {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 22px);
+  flex-wrap: wrap;
+  padding: clamp(16px, 2.4vh, 26px) clamp(18px, 2.2vw, 34px);
+  border-radius: var(--m-radius);
+  background: linear-gradient(120deg, #2b3c6d 0%, #182548 55%, #101a3a 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #fff;
+  box-shadow:
+    0 1px 2px rgba(11, 24, 72, 0.2),
+    0 20px 42px -16px rgba(11, 24, 72, 0.7);
+}
+
+.m-quote > svg {
+  flex-shrink: 0;
+  color: var(--m-gold);
+}
+
+.m-quote p {
+  flex: 1;
+  min-width: 220px;
+  font-size: clamp(13px, 1.8vh, 18px);
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+.m-quote cite {
+  font-style: normal;
+  font-size: clamp(11px, 1.35vh, 13.5px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  background: linear-gradient(100deg, #f8ce72 0%, #f0ab2a 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ── Moslashuvchanlik ──────────────────────────────── */
+/* Past ekranlarda salomlashuv kartochkasi olib tashlanadi — xonalar
+   ro'yxatiga joy bo'shaydi. Uning matni pastdagi maslahat tasmasida bor. */
+@media (max-height: 900px) {
+  .m-welcome {
+    display: none;
+  }
+}
+
+/* Tor ekranlarda ustunlar ixchamlashadi — chizma baribir to'liq ko'rinadi */
+@media (max-width: 1440px) {
+  .m-root {
+    --m-plan-off: 226px;
+  }
+
+  .m-layout {
+    grid-template-columns: clamp(186px, 15vw, 232px) minmax(0, 1fr) clamp(214px, 18vw, 280px);
+  }
+}
+
+/* Ustunlar sig'masa — chizma tepada, panellar ostida (sahifa aylanadi) */
+@media (max-width: 1200px) {
+  .m-root {
+    --m-plan-off: 300px;
+  }
+
+  .m-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      'stage'
+      'right'
+      'left';
+    overflow-y: auto;
+  }
+
+  .m-col,
+  .m-stage {
+    overflow: visible;
+  }
+
+  .m-col-left {
+    flex-direction: row;
+  }
+
+  .m-col-left > .m-card {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Yonma-yon turganda ro'yxat cheksiz cho'zilmasin */
+  .m-roomlist {
+    max-height: 320px;
+  }
+
+  .m-welcome {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+/* Oltita ustun sig'masa raqamlar ikki qatorga bo'linadi —
+   aks holda "1 000 000+" o'zi ikki qatorga tushib ketadi. */
+@media (max-width: 1480px) {
+  .m-about-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px clamp(12px, 1.6vw, 26px);
+  }
+
+  .m-fact:nth-child(4) {
+    border-left: none;
+    padding-left: 0;
+  }
+
+  /* Uch ustunda yorliqlar bir qatorga sig'adi — zaxira joy kerak emas */
+  .m-fact-label {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 1180px) {
+  .m-about-hero {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .m-about-bottom {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .m-about-bottom > .m-card:first-child {
+    grid-column: 1 / -1;
+  }
+
+  .m-about-facts {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .m-fact + .m-fact {
+    border-left: none;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 1024px) {
+  .m-nav-btn span {
+    display: none;
+  }
+
+  .m-brand-sub {
+    display: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .m-about-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .m-col-left {
+    flex-direction: column;
+  }
+
+  .m-stage-head {
+    gap: 10px;
+  }
+
+  .m-floors {
+    width: 100%;
+  }
+
+  .m-floor-btn {
+    flex: 1;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .m-plan,
+  .m-detail,
+  .m-here,
+  .m-here-pin::after {
+    animation: none;
+  }
+}
