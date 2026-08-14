@@ -73,6 +73,8 @@ export interface Translation {
     isbn: string;
     availability: string;
     inStock: (count: number) => string;
+    /** Kartochkalardagi qisqa shakl. */
+    copiesShort: (count: number) => string;
     outOfStock: string;
     description: string;
   };
@@ -89,6 +91,120 @@ export interface Translation {
     schedule: string;
     qrHint: string;
   };
+  /** Bosh sahifadagi dashboard bloklari. */
+  dash: {
+    statsTitle: string;
+    categoriesTitle: string;
+    weeklyTitle: string;
+    servicesTitle: string;
+    qrTitle: string;
+    qrHint: string;
+    stat: {
+      visitors: string;
+      seats: string;
+      newBooks: string;
+      events: string;
+      catalog: string;
+    };
+    quick: {
+      wifi: string;
+      audio: string;
+      catalog: string;
+      kids: string;
+      events: string;
+      membership: string;
+    };
+    /** "Bugun kutubxonamizda N ta tadbir bo'lib o'tadi!" */
+    todayEvents: (count: number) => string;
+    visitsAxis: string;
+  };
+  weather: {
+    peopleInside: (count: number) => string;
+    condition: {
+      clear: string;
+      partly: string;
+      cloudy: string;
+      rain: string;
+      snow: string;
+    };
+  };
+  /** Sensorli infokiosk ekrani (/ yo'li). */
+  kiosk: {
+    brand: [string, string];
+    welcome: string;
+    welcomeSub: string;
+    searchPlaceholder: string;
+    searchButton: string;
+    help: string;
+    tapToStart: string;
+    seeAll: string;
+    quickSearches: string;
+    /** Bosh sahifa pastidagi maslahat paneli. */
+    hint: string;
+    /** Chap menyu bo'limlari. */
+    menu: {
+      home: string;
+      search: string;
+      genres: string;
+      authors: string;
+      newArrivals: string;
+      popular: string;
+      available: string;
+      events: string;
+      branches: string;
+    };
+    /** Bosh sahifadagi 6 ta qidiruv kartochkasi (sarlavha + izoh). */
+    tiles: {
+      search: [string, string];
+      authors: [string, string];
+      genres: [string, string];
+      newArrivals: [string, string];
+      popular: [string, string];
+      available: [string, string];
+    };
+    /** Mualliflar sahifasi. */
+    authors: {
+      subtitle: string;
+      bookCount: (n: number) => string;
+    };
+    /** Mavjud kitoblar sahifasi. */
+    available: {
+      subtitle: string;
+    };
+    /** Qidiruv sahifasidagi chap filtr paneli. */
+    filters: {
+      title: string;
+      clear: string;
+      genre: string;
+      year: string;
+      availableOnly: string;
+      sort: string;
+      show: string;
+      hide: string;
+      sortBy: {
+        relevance: string;
+        newest: string;
+        popular: string;
+        title: string;
+      };
+      years: {
+        recent: string;
+        y2010: string;
+        y2000: string;
+        older: string;
+      };
+      found: (n: number) => string;
+    };
+    branches: {
+      floor: string;
+      seats: string;
+      phone: string;
+      hours: string;
+    };
+    helpText: string[];
+  };
+  /** Haftaning qisqartirilgan nomlari (0 = yakshanba). */
+  daysShort: string[];
   days: string[];
   monthsShort: string[];
 }
@@ -96,8 +212,8 @@ export interface Translation {
 export const translations: Record<Lang, Translation> = {
   uz: {
     documentTitle: "O'zbekiston Milliy kutubxonasi — Infokiosk",
-    libraryName: ["O'ZBEKISTON", 'MILLIY', 'KUTUBXONASI'],
-    tagline: "BILIMGA YO'L — MA'RIFATGA YO'L",
+    libraryName: ["O'zbekiston", 'Milliy', 'Kutubxonasi'],
+    tagline: 'Bilim — kelajak poydevori!',
     searchPlaceholder: 'Qidirish...',
     eventsTitle: "AFISHA – TADBIRLAR RO'YXATI",
     eventsButton: 'BARCHA TADBIRLAR',
@@ -150,6 +266,7 @@ export const translations: Record<Lang, Translation> = {
       isbn: 'ISBN',
       availability: 'Holati',
       inStock: (count) => `Javonda ${count} nusxa bor`,
+      copiesShort: (count) => `${count} nusxa`,
       outOfStock: 'Hozircha band',
       description: 'Qisqacha',
     },
@@ -166,14 +283,124 @@ export const translations: Record<Lang, Translation> = {
       schedule: 'Ish vaqti',
       qrHint: 'Saytni telefoningizda ochish uchun QR kodni skanerlang',
     },
+    dash: {
+      statsTitle: "BUGUNGI KO'RSATKICHLAR",
+      categoriesTitle: 'KITOBLAR TOIFALARI',
+      weeklyTitle: 'HAFTALIK TASHRIF DINAMIKASI',
+      servicesTitle: 'XIZMATLAR',
+      qrTitle: 'Elektron katalog va mobil ilova',
+      qrHint: 'QR kodni skanerlang yoki natlib.uz ga kiring',
+      stat: {
+        visitors: 'Bugungi tashrifchilar',
+        seats: "Mavjud o'rinlar",
+        newBooks: 'Oyda yangi kitob',
+        events: 'Faol tadbirlar',
+        catalog: 'Umumiy katalog',
+      },
+      quick: {
+        wifi: 'Wi-Fi',
+        audio: 'Audio kitoblar',
+        catalog: 'Elektron katalog',
+        kids: 'Bolalar zonasi',
+        events: 'Tadbirlar',
+        membership: "A'zolik",
+      },
+      todayEvents: (count) => `Bugun kutubxonamizda ${count} ta tadbir bo'lib o'tadi!`,
+      visitsAxis: 'Tashriflar',
+    },
+    weather: {
+      peopleInside: (count) => `${count} kishi`,
+      condition: {
+        clear: 'Ochiq',
+        partly: 'Bulutli ochiq',
+        cloudy: 'Bulutli',
+        rain: "Yog'ingarchilik",
+        snow: 'Qor',
+      },
+    },
+    kiosk: {
+      brand: ['MILLIY', 'KUTUBXONA'],
+      welcome: 'Kitobingizni toping',
+      welcomeSub: 'Kutubxona katalogidan qidiring',
+      searchPlaceholder: "Kitob nomi, muallif, ISBN yoki mavzu bo'yicha qidiring...",
+      searchButton: 'Qidirish',
+      help: 'Yordam',
+      tapToStart: 'Ekranga teging',
+      seeAll: 'Barchasi',
+      quickSearches: 'Tezkor qidiruv',
+      hint: "Kerakli kitobni topish uchun yuqoridagi qidiruvdan foydalaning yoki bo'limlarni tanlang",
+      menu: {
+        home: 'Bosh sahifa',
+        search: 'Kitob qidirish',
+        genres: 'Janrlar',
+        authors: 'Mualliflar',
+        newArrivals: 'Yangi kelganlar',
+        popular: 'Mashhur kitoblar',
+        available: 'Mavjud kitoblar',
+        events: 'Tadbirlar',
+        branches: 'Kutubxonalar',
+      },
+      tiles: {
+        search: ['Kitob nomi', "Kitob nomi bo'yicha qidirish"],
+        authors: ['Muallif', "Muallif nomi bo'yicha qidirish"],
+        genres: ['Janrlar', 'Sevimli janringizni tanlang'],
+        newArrivals: ['Yangi kelganlar', 'Yangi kitoblar bilan tanishing'],
+        popular: ['Mashhur kitoblar', "Eng ko'p o'qilgan kitoblar"],
+        available: ['Mavjud kitoblar', "Hozir mavjud kitoblarni ko'rish"],
+      },
+      authors: {
+        subtitle: 'Muallif tanlang va uning asarlarini ko‘ring',
+        bookCount: (n) => `${n} ta asar`,
+      },
+      available: {
+        subtitle: "Hozir javonda turgan, darhol olish mumkin bo'lgan kitoblar",
+      },
+      filters: {
+        title: 'Filtrlar',
+        clear: 'Tozalash',
+        genre: 'Janr',
+        year: 'Nashr yili',
+        availableOnly: 'Faqat mavjudlari',
+        sort: 'Saralash',
+        show: "Filtrlarni ko'rsatish",
+        hide: 'Filtrlarni yashirish',
+        sortBy: {
+          relevance: "Mosligi bo'yicha",
+          newest: 'Avval yangilari',
+          popular: 'Eng mashhur',
+          title: "Nomi bo'yicha (A–Z)",
+        },
+        years: {
+          recent: '2020 – hozir',
+          y2010: '2010 – 2019',
+          y2000: '2000 – 2009',
+          older: '2000 gacha',
+        },
+        found: (n) => `${n} ta kitob topildi`,
+      },
+      branches: {
+        floor: 'Joylashuvi',
+        seats: "O'rinlar",
+        phone: 'Telefon',
+        hours: 'Ish vaqti',
+      },
+      helpText: [
+        "Yuqoridagi qatorga kitob nomi, muallif yoki ISBN raqamini yozing va «Qidirish» tugmasini bosing.",
+        "Chap menyu va bosh sahifadagi kartochkalar orqali janrlar, mualliflar, yangi kelgan, mashhur hamda javonda mavjud kitoblarga o'tasiz.",
+        "Qidiruv sahifasida chapdagi filtrlar yordamida natijalarni janr, nashr yili va mavjudligi bo'yicha saralang.",
+        "Kitob ustiga bossangiz, qisqacha tavsifi, nashr ma'lumotlari va javondagi nusxalari soni ko'rinadi.",
+        "Qo'shimcha yordam kerak bo'lsa, xizmat ko'rsatish stoliga murojaat qiling.",
+      ],
+    },
+    daysShort: ['YAK', 'DUS', 'SES', 'CHO', 'PAY', 'JUM', 'SHA'],
     days: ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'],
     monthsShort: ['YAN', 'FEV', 'MAR', 'APR', 'MAY', 'IYN', 'IYL', 'AVG', 'SEN', 'OKT', 'NOY', 'DEK'],
   },
 
   ru: {
     documentTitle: 'Национальная библиотека Узбекистана — Инфокиоск',
-    libraryName: ['НАЦИОНАЛЬНАЯ', 'БИБЛИОТЕКА', 'УЗБЕКИСТАНА'],
-    tagline: 'ПУТЬ К ЗНАНИЯМ — ПУТЬ К ПРОСВЕЩЕНИЮ',
+    libraryName: ['Национальная', 'библиотека', 'Узбекистана'],
+    tagline: 'Знание — фундамент будущего!',
     searchPlaceholder: 'Поиск...',
     eventsTitle: 'АФИША – СПИСОК МЕРОПРИЯТИЙ',
     eventsButton: 'ВСЕ МЕРОПРИЯТИЯ',
@@ -232,6 +459,7 @@ export const translations: Record<Lang, Translation> = {
       isbn: 'ISBN',
       availability: 'Наличие',
       inStock: (count) => `На полке ${count} экз.`,
+      copiesShort: (count) => `${count} экз.`,
       outOfStock: 'Сейчас занято',
       description: 'Кратко',
     },
@@ -248,14 +476,146 @@ export const translations: Record<Lang, Translation> = {
       schedule: 'Режим работы',
       qrHint: 'Отсканируйте QR-код, чтобы открыть сайт на телефоне',
     },
+    dash: {
+      statsTitle: 'СЕГОДНЯШНИЕ ПОКАЗАТЕЛИ',
+      categoriesTitle: 'КАТЕГОРИИ КНИГ',
+      weeklyTitle: 'ДИНАМИКА ПОСЕЩЕНИЙ ЗА НЕДЕЛЮ',
+      servicesTitle: 'УСЛУГИ',
+      qrTitle: 'Электронный каталог и мобильное приложение',
+      qrHint: 'Отсканируйте QR-код или зайдите на natlib.uz',
+      stat: {
+        visitors: 'Посетителей сегодня',
+        seats: 'Свободных мест',
+        newBooks: 'Новых книг за месяц',
+        events: 'Активных мероприятий',
+        catalog: 'Всего в каталоге',
+      },
+      quick: {
+        wifi: 'Wi-Fi',
+        audio: 'Аудиокниги',
+        catalog: 'Электронный каталог',
+        kids: 'Детская зона',
+        events: 'Мероприятия',
+        membership: 'Читательский билет',
+      },
+      todayEvents: (count) => {
+        const mod10 = count % 10;
+        const mod100 = count % 100;
+        const word =
+          mod10 === 1 && mod100 !== 11
+            ? 'мероприятие'
+            : mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)
+              ? 'мероприятия'
+              : 'мероприятий';
+        return `Сегодня в библиотеке пройдёт ${count} ${word}!`;
+      },
+      visitsAxis: 'Посещения',
+    },
+    weather: {
+      peopleInside: (count) => `${count} чел.`,
+      condition: {
+        clear: 'Ясно',
+        partly: 'Переменная облачность',
+        cloudy: 'Облачно',
+        rain: 'Дождь',
+        snow: 'Снег',
+      },
+    },
+    kiosk: {
+      brand: ['НАЦИОНАЛЬНАЯ', 'БИБЛИОТЕКА'],
+      welcome: 'Найдите свою книгу',
+      welcomeSub: 'Ищите в каталоге библиотеки',
+      searchPlaceholder: 'Поиск по названию, автору, ISBN или теме...',
+      searchButton: 'Найти',
+      help: 'Помощь',
+      tapToStart: 'Коснитесь экрана',
+      seeAll: 'Все',
+      quickSearches: 'Быстрый поиск',
+      hint: 'Чтобы найти нужную книгу, воспользуйтесь поиском выше или выберите раздел',
+      menu: {
+        home: 'Главная',
+        search: 'Поиск книг',
+        genres: 'Жанры',
+        authors: 'Авторы',
+        newArrivals: 'Новые поступления',
+        popular: 'Популярные книги',
+        available: 'Есть в наличии',
+        events: 'Мероприятия',
+        branches: 'Библиотеки',
+      },
+      tiles: {
+        search: ['Название книги', 'Поиск по названию книги'],
+        authors: ['Автор', 'Поиск по имени автора'],
+        genres: ['Жанры', 'Выберите любимый жанр'],
+        newArrivals: ['Новые поступления', 'Познакомьтесь с новинками'],
+        popular: ['Популярные книги', 'Самые читаемые книги'],
+        available: ['Есть в наличии', 'Книги, доступные прямо сейчас'],
+      },
+      authors: {
+        subtitle: 'Выберите автора и посмотрите его произведения',
+        bookCount: (n) => {
+          const mod10 = n % 10;
+          const mod100 = n % 100;
+          if (mod10 === 1 && mod100 !== 11) return `${n} произведение`;
+          if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `${n} произведения`;
+          return `${n} произведений`;
+        },
+      },
+      available: {
+        subtitle: 'Книги, которые сейчас на полке и доступны сразу',
+      },
+      filters: {
+        title: 'Фильтры',
+        clear: 'Сбросить',
+        genre: 'Жанр',
+        year: 'Год издания',
+        availableOnly: 'Только в наличии',
+        sort: 'Сортировка',
+        show: 'Показать фильтры',
+        hide: 'Скрыть фильтры',
+        sortBy: {
+          relevance: 'По релевантности',
+          newest: 'Сначала новые',
+          popular: 'Самые популярные',
+          title: 'По названию (А–Я)',
+        },
+        years: {
+          recent: '2020 – сейчас',
+          y2010: '2010 – 2019',
+          y2000: '2000 – 2009',
+          older: 'До 2000',
+        },
+        found: (n) => {
+          const mod10 = n % 10;
+          const mod100 = n % 100;
+          if (mod10 === 1 && mod100 !== 11) return `Найдена ${n} книга`;
+          if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return `Найдено ${n} книги`;
+          return `Найдено ${n} книг`;
+        },
+      },
+      branches: {
+        floor: 'Расположение',
+        seats: 'Мест',
+        phone: 'Телефон',
+        hours: 'Режим работы',
+      },
+      helpText: [
+        'Введите название книги, автора или ISBN в строку поиска вверху и нажмите «Найти».',
+        'Меню слева и карточки на главной странице ведут к жанрам, авторам, новинкам, популярным и доступным сейчас книгам.',
+        'На странице поиска фильтры слева отбирают книги по жанру, году издания и наличию.',
+        'Нажмите на книгу, чтобы увидеть описание, выходные данные и количество экземпляров на полке.',
+        'Если нужна дополнительная помощь, обратитесь к стойке обслуживания.',
+      ],
+    },
+    daysShort: ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'],
     days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
     monthsShort: ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'],
   },
 
   en: {
     documentTitle: 'National Library of Uzbekistan — Infokiosk',
-    libraryName: ['NATIONAL', 'LIBRARY OF', 'UZBEKISTAN'],
-    tagline: 'THE PATH TO KNOWLEDGE — THE PATH TO ENLIGHTENMENT',
+    libraryName: ['National', 'Library of', 'Uzbekistan'],
+    tagline: 'Knowledge — the foundation of the future!',
     searchPlaceholder: 'Search...',
     eventsTitle: 'EVENTS – WHAT’S ON',
     eventsButton: 'ALL EVENTS',
@@ -308,6 +668,7 @@ export const translations: Record<Lang, Translation> = {
       isbn: 'ISBN',
       availability: 'Availability',
       inStock: (count) => `${count} ${count === 1 ? 'copy' : 'copies'} on the shelf`,
+      copiesShort: (count) => `${count} ${count === 1 ? 'copy' : 'copies'}`,
       outOfStock: 'Currently on loan',
       description: 'Summary',
     },
@@ -324,6 +685,117 @@ export const translations: Record<Lang, Translation> = {
       schedule: 'Opening hours',
       qrHint: 'Scan the QR code to open the website on your phone',
     },
+    dash: {
+      statsTitle: "TODAY'S FIGURES",
+      categoriesTitle: 'BOOK CATEGORIES',
+      weeklyTitle: 'WEEKLY VISITOR TREND',
+      servicesTitle: 'SERVICES',
+      qrTitle: 'Electronic catalog and mobile app',
+      qrHint: 'Scan the QR code or visit natlib.uz',
+      stat: {
+        visitors: 'Visitors today',
+        seats: 'Seats available',
+        newBooks: 'New books this month',
+        events: 'Active events',
+        catalog: 'Items in catalog',
+      },
+      quick: {
+        wifi: 'Wi-Fi',
+        audio: 'Audiobooks',
+        catalog: 'Electronic catalog',
+        kids: "Children's zone",
+        events: 'Events',
+        membership: 'Membership',
+      },
+      todayEvents: (count) =>
+        `${count} ${count === 1 ? 'event takes' : 'events take'} place in the library today!`,
+      visitsAxis: 'Visits',
+    },
+    weather: {
+      peopleInside: (count) => `${count} people`,
+      condition: {
+        clear: 'Clear',
+        partly: 'Partly cloudy',
+        cloudy: 'Cloudy',
+        rain: 'Rain',
+        snow: 'Snow',
+      },
+    },
+    kiosk: {
+      brand: ['NATIONAL', 'LIBRARY'],
+      welcome: 'Find your book',
+      welcomeSub: 'Search the library catalogue',
+      searchPlaceholder: 'Search by title, author, ISBN or subject...',
+      searchButton: 'Search',
+      help: 'Help',
+      tapToStart: 'Touch the screen',
+      seeAll: 'See all',
+      quickSearches: 'Quick search',
+      hint: 'Use the search above or pick a section to find the book you need',
+      menu: {
+        home: 'Home',
+        search: 'Find a book',
+        genres: 'Genres',
+        authors: 'Authors',
+        newArrivals: 'New arrivals',
+        popular: 'Popular books',
+        available: 'On the shelf',
+        events: 'Events',
+        branches: 'Libraries',
+      },
+      tiles: {
+        search: ['Book title', 'Search by book title'],
+        authors: ['Author', 'Search by author name'],
+        genres: ['Genres', 'Pick your favourite genre'],
+        newArrivals: ['New arrivals', 'Discover the latest books'],
+        popular: ['Popular books', 'The most read titles'],
+        available: ['On the shelf', 'Books you can borrow right now'],
+      },
+      authors: {
+        subtitle: 'Pick an author and browse their works',
+        bookCount: (n) => `${n} ${n === 1 ? 'work' : 'works'}`,
+      },
+      available: {
+        subtitle: 'Books currently on the shelf and ready to borrow',
+      },
+      filters: {
+        title: 'Filters',
+        clear: 'Clear',
+        genre: 'Genre',
+        year: 'Year published',
+        availableOnly: 'On the shelf only',
+        sort: 'Sort',
+        show: 'Show filters',
+        hide: 'Hide filters',
+        sortBy: {
+          relevance: 'Best match',
+          newest: 'Newest first',
+          popular: 'Most popular',
+          title: 'Title (A–Z)',
+        },
+        years: {
+          recent: '2020 – now',
+          y2010: '2010 – 2019',
+          y2000: '2000 – 2009',
+          older: 'Before 2000',
+        },
+        found: (n) => `${n} ${n === 1 ? 'book' : 'books'} found`,
+      },
+      branches: {
+        floor: 'Location',
+        seats: 'Seats',
+        phone: 'Phone',
+        hours: 'Opening hours',
+      },
+      helpText: [
+        'Type a title, author or ISBN into the search bar at the top and press "Search".',
+        'The menu on the left and the cards on the home page open genres, authors, new arrivals, popular books and titles on the shelf.',
+        'On the search page, the filters on the left narrow results by genre, publication year and availability.',
+        'Tap a book to see its summary, publication details and how many copies are on the shelf.',
+        'If you need more help, please ask at the service desk.',
+      ],
+    },
+    daysShort: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
     days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
     monthsShort: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
   },
@@ -361,4 +833,9 @@ export function formatMonthShort(date: Date, lang: Lang): string {
 
 export function formatTime(date: Date): string {
   return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+/** Katta sonlarni ajratib ko'rsatadi: 1235784 → "1 235 784" (uchala tilda bir xil). */
+export function formatNumber(value: number): string {
+  return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }

@@ -1,14 +1,14 @@
 import { useEffect, type ReactNode } from 'react';
 import { X } from 'lucide-react';
-import { useI18n } from '../i18n/context';
+import { useI18n } from '../../i18n/context';
 
-interface ModalProps {
+interface KioskModalProps {
   title: string;
   onClose: () => void;
   children: ReactNode;
 }
 
-export default function Modal({ title, onClose, children }: ModalProps) {
+export default function KioskModal({ title, onClose, children }: KioskModalProps) {
   const { t } = useI18n();
 
   useEffect(() => {
@@ -25,27 +25,31 @@ export default function Modal({ title, onClose, children }: ModalProps) {
       role="dialog"
       aria-modal="true"
       aria-label={title}
+      style={{ background: 'rgba(11, 24, 72, 0.45)' }}
       onClick={(e) => {
-        // Faqat fonga bosilganda yopiladi
         if (e.target === e.currentTarget) onClose();
       }}
     >
-      <div className="modal-card">
+      <div
+        className="modal-card"
+        style={{ background: '#FDFEFF', border: '1px solid #E3E8F2', maxWidth: '760px' }}
+      >
         <header
           className="flex items-center justify-between gap-4 px-5 flex-shrink-0"
-          style={{
-            background: 'linear-gradient(135deg, #06437A 0%, #0E5270 100%)',
-            borderBottom: '1px solid rgba(34,195,230,0.35)',
-            minHeight: '56px',
-          }}
+          style={{ borderBottom: '1px solid #E3E8F2', minHeight: '58px' }}
         >
-          <h2 className="text-white font-bold text-base tracking-wide truncate">{title}</h2>
+          <h2
+            className="font-bold truncate"
+            style={{ color: '#0B1848', fontSize: 'clamp(14px, 1.8vh, 18px)' }}
+          >
+            {title}
+          </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label={t.aria.close}
-            className="btn-compact flex-shrink-0 flex items-center justify-center rounded-lg text-white hover:bg-white/15 active:bg-white/25 transition-colors"
-            style={{ width: '38px', height: '38px' }}
+            className="btn-compact flex-shrink-0 flex items-center justify-center rounded-lg transition-colors"
+            style={{ width: '40px', height: '40px', background: '#EEF1F8', color: '#1B2559' }}
           >
             <X size={20} />
           </button>

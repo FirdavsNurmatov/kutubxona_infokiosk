@@ -21,13 +21,13 @@ function InfoRow({
     <div className="flex items-start gap-3">
       <div
         className="flex-shrink-0 flex items-center justify-center rounded-lg"
-        style={{ width: '38px', height: '38px', background: 'rgba(13,27,75,0.06)' }}
+        style={{ width: '38px', height: '38px', background: 'rgba(34,195,230,0.12)' }}
       >
-        <Icon size={18} className="text-navy-700" strokeWidth={1.8} />
+        <Icon size={20} className="text-paper-200" strokeWidth={1.8} />
       </div>
       <div className="min-w-0">
-        <div className="text-navy-400 text-[11px] font-semibold uppercase tracking-wide">{label}</div>
-        <div className="text-navy-900 text-sm font-medium break-words">{value}</div>
+        <div className="text-paper-400 text-xs font-semibold uppercase tracking-wide">{label}</div>
+        <div className="text-white text-[15px] font-medium break-words">{value}</div>
       </div>
     </div>
   );
@@ -40,8 +40,8 @@ export default function ContactView({ onBack }: ContactViewProps) {
     <PageShell title={t.page.contact} onBack={onBack}>
       <div className="grid gap-3" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' }}>
         <div
-          className="rounded-2xl bg-white p-5 flex flex-col gap-4"
-          style={{ border: '1px solid rgba(201,168,76,0.35)' }}
+          className="rounded-2xl bg-ink-600 p-5 flex flex-col gap-4"
+          style={{ border: '1px solid rgba(34,195,230,0.25)' }}
         >
           <InfoRow icon={MapPin} label={t.contactInfo.address} value={tr(contact.address)} />
           <InfoRow icon={Phone} label={t.contactInfo.phone} value={contact.phone} />
@@ -50,22 +50,22 @@ export default function ContactView({ onBack }: ContactViewProps) {
         </div>
 
         <div
-          className="rounded-2xl bg-white p-5"
-          style={{ border: '1px solid rgba(201,168,76,0.35)' }}
+          className="rounded-2xl bg-ink-600 p-5"
+          style={{ border: '1px solid rgba(34,195,230,0.25)' }}
         >
           <div className="flex items-center gap-2 mb-3">
-            <Clock size={18} className="text-navy-700" strokeWidth={1.8} />
-            <h3 className="text-navy-900 font-bold text-sm">{t.contactInfo.schedule}</h3>
+            <Clock size={18} className="text-paper-200" strokeWidth={1.8} />
+            <h3 className="text-white font-bold text-base">{t.contactInfo.schedule}</h3>
           </div>
           <div className="flex flex-col">
             {contact.schedule.map((row, idx) => (
               <div
                 key={tr(row.days)}
                 className="flex items-center justify-between gap-3 py-2.5 text-sm"
-                style={idx > 0 ? { borderTop: '1px solid rgba(201,168,76,0.2)' } : undefined}
+                style={idx > 0 ? { borderTop: '1px solid rgba(34,195,230,0.25)' } : undefined}
               >
-                <span className="text-navy-700 font-medium">{tr(row.days)}</span>
-                <span className="text-navy-900 font-semibold tabular-nums">{tr(row.hours)}</span>
+                <span className="text-paper-200 font-medium">{tr(row.days)}</span>
+                <span className="text-white font-semibold tabular-nums">{tr(row.hours)}</span>
               </div>
             ))}
           </div>
@@ -74,14 +74,14 @@ export default function ContactView({ onBack }: ContactViewProps) {
         <div
           className="rounded-2xl p-5 flex flex-col items-center justify-center gap-4 text-center"
           style={{
-            background: 'linear-gradient(135deg, #0D1B4B 0%, #1a2f6e 100%)',
-            border: '1.5px solid #C9A84C',
+            background: 'linear-gradient(135deg, #06437A 0%, #0E5270 100%)',
+            border: '1.5px solid #22C3E6',
           }}
         >
-          <div className="rounded-xl bg-white p-3">
+          <div className="rounded-xl bg-ink-600 p-3">
             <QRCodeSVG value={SITE_URL} size={140} bgColor="#ffffff" fgColor="#0D1B4B" level="M" />
           </div>
-          <p className="text-white text-xs leading-relaxed" style={{ maxWidth: '220px' }}>
+          <p className="text-white text-sm leading-relaxed" style={{ maxWidth: '220px' }}>
             {t.contactInfo.qrHint}
           </p>
           <div className="flex items-center gap-3 flex-wrap justify-center">
@@ -91,7 +91,7 @@ export default function ContactView({ onBack }: ContactViewProps) {
                 href={link.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gold-400 hover:text-gold-300 text-xs font-semibold underline underline-offset-2"
+                className="text-cyan-300 hover:text-cyan-200 text-sm font-semibold underline underline-offset-2"
               >
                 {link.label}
               </a>

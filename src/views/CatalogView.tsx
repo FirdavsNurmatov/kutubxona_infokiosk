@@ -41,12 +41,12 @@ export default function CatalogView({ initialFilter, onBack, onSelectBook }: Cat
               key={key}
               type="button"
               onClick={() => setCollection(key)}
-              className={`btn-compact px-3 py-1.5 rounded-lg text-[11px] font-bold tracking-wide transition-colors ${
+              className={`btn-compact px-3 py-1.5 rounded-lg text-xs font-bold tracking-wide transition-colors ${
                 collection === key
-                  ? 'bg-gold-500 text-white'
+                  ? 'bg-cyan-400 text-ink-900'
                   : 'text-white hover:bg-white/15 active:bg-white/25'
               }`}
-              style={collection === key ? undefined : { border: '1px solid rgba(201,168,76,0.4)' }}
+              style={collection === key ? undefined : { border: '1px solid rgba(34,195,230,0.25)' }}
             >
               {t.filter[key]}
             </button>
@@ -60,10 +60,10 @@ export default function CatalogView({ initialFilter, onBack, onSelectBook }: Cat
           <button
             type="button"
             onClick={() => setCategory(null)}
-            className={`btn-compact px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors ${
-              category === null ? 'bg-navy-900 text-white' : 'bg-white/70 text-navy-700 hover:bg-white'
+            className={`btn-compact px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+              category === null ? 'bg-cyan-400 text-ink-900' : 'bg-ink-600 text-paper-200 hover:bg-ink-500'
             }`}
-            style={{ border: '1px solid rgba(201,168,76,0.4)' }}
+            style={{ border: '1px solid rgba(34,195,230,0.25)' }}
           >
             {t.filter.all}
           </button>
@@ -74,10 +74,10 @@ export default function CatalogView({ initialFilter, onBack, onSelectBook }: Cat
                 key={label}
                 type="button"
                 onClick={() => setCategory(label)}
-                className={`btn-compact px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-colors ${
-                  category === label ? 'bg-navy-900 text-white' : 'bg-white/70 text-navy-700 hover:bg-white'
+                className={`btn-compact px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                  category === label ? 'bg-cyan-400 text-ink-900' : 'bg-ink-600 text-paper-200 hover:bg-ink-500'
                 }`}
-                style={{ border: '1px solid rgba(201,168,76,0.4)' }}
+                style={{ border: '1px solid rgba(34,195,230,0.25)' }}
               >
                 {label}
               </button>
@@ -103,9 +103,9 @@ function EmptyState() {
   const { t } = useI18n();
   return (
     <div className="flex flex-col items-center justify-center gap-2 py-16 text-center">
-      <SearchX size={48} className="text-navy-300" strokeWidth={1.5} />
-      <p className="text-navy-800 font-bold">{t.emptyResults}</p>
-      <p className="text-navy-500 text-sm">{t.emptyResultsHint}</p>
+      <SearchX size={48} className="text-paper-500" strokeWidth={1.5} />
+      <p className="text-paper-200 font-bold">{t.emptyResults}</p>
+      <p className="text-paper-400 text-[15px]">{t.emptyResultsHint}</p>
     </div>
   );
 }

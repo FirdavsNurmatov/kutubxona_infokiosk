@@ -25,6 +25,9 @@ export interface Book {
   isbn: string;
   /** Ayni paytda javondagi nusxalar soni. */
   copies: number;
+  /** O'quvchilar bahosi (5 ballik) va baho bergan kishilar soni. */
+  rating: number;
+  ratingCount: number;
   cover: string;
   collections: ('new' | 'recommended')[];
 }
@@ -42,6 +45,18 @@ const IMG = {
   stack: '/images/stack.jpg',
   reading: '/images/reading.jpg',
 };
+
+/* Tadbir sanalari bugunga nisbatan hisoblanadi — demo qaysi kunda ochilmasin,
+   afisha dolzarb ko'rinadi. Backend ulanganda bu yordamchi olib tashlanadi. */
+function dayOffset(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  // Mahalliy sana (toISOString UTC ga o'tkazib, kechqurun kunni surib yuboradi)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/** Bugungi sana — tadbir sanalari bilan bir xil (mahalliy) formatda. */
+export const todayISO = (): string => dayOffset(0);
 
 const CAT = {
   prose: { uz: 'Badiiy adabiyot', ru: 'Художественная литература', en: 'Fiction' },
@@ -65,7 +80,7 @@ const PUB = {
 export const events: LibraryEvent[] = [
   {
     id: 1,
-    date: '2026-08-27',
+    date: dayOffset(0),
     time: '11:00',
     endTime: '13:00',
     title: {
@@ -83,7 +98,7 @@ export const events: LibraryEvent[] = [
   },
   {
     id: 2,
-    date: '2026-08-28',
+    date: dayOffset(0),
     time: '14:00',
     endTime: '16:00',
     title: {
@@ -101,7 +116,7 @@ export const events: LibraryEvent[] = [
   },
   {
     id: 3,
-    date: '2026-08-30',
+    date: dayOffset(0),
     time: '11:00',
     endTime: '12:30',
     title: { uz: "Ma'naviyat soati", ru: 'Час духовности', en: 'Spirituality Hour' },
@@ -115,7 +130,7 @@ export const events: LibraryEvent[] = [
   },
   {
     id: 4,
-    date: '2026-08-31',
+    date: dayOffset(1),
     time: '10:30',
     endTime: '12:00',
     title: {
@@ -137,7 +152,7 @@ export const events: LibraryEvent[] = [
   },
   {
     id: 5,
-    date: '2026-09-02',
+    date: dayOffset(3),
     time: '14:00',
     endTime: '15:30',
     title: {
@@ -159,7 +174,7 @@ export const events: LibraryEvent[] = [
   },
   {
     id: 6,
-    date: '2026-09-05',
+    date: dayOffset(6),
     time: '16:00',
     endTime: '18:00',
     title: {
@@ -177,7 +192,7 @@ export const events: LibraryEvent[] = [
   },
   {
     id: 7,
-    date: '2026-09-09',
+    date: dayOffset(10),
     time: '10:00',
     endTime: '17:00',
     title: {
@@ -193,9 +208,99 @@ export const events: LibraryEvent[] = [
     },
     image: IMG.shelf,
   },
+  {
+    id: 8,
+    date: dayOffset(1),
+    time: '15:00',
+    endTime: '17:00',
+    title: {
+      uz: 'Ingliz tili suhbat klubi',
+      ru: 'Разговорный клуб английского языка',
+      en: 'English Conversation Club',
+    },
+    location: { uz: 'Til markazi, 2-qavat', ru: 'Языковой центр, 2 этаж', en: 'Language centre, floor 2' },
+    description: {
+      uz: "Har hafta o'tkaziladigan bepul suhbat mashg'uloti. Boshlang'ich daraja ham mumkin.",
+      ru: 'Еженедельное бесплатное занятие по разговорной практике. Начальный уровень тоже подойдёт.',
+      en: 'A free weekly speaking practice session. Beginners welcome.',
+    },
+    image: IMG.meeting,
+  },
+  {
+    id: 9,
+    date: dayOffset(2),
+    time: '11:00',
+    endTime: '13:00',
+    title: {
+      uz: 'Xattotlik ustaxonasi',
+      ru: 'Мастерская каллиграфии',
+      en: 'Calligraphy Workshop',
+    },
+    location: { uz: "Nodir kitoblar zali", ru: 'Зал редких книг', en: 'Rare Books Hall' },
+    description: {
+      uz: "Arab yozuvi va nasta'liq uslubi bo'yicha amaliy mashg'ulot.",
+      ru: 'Практическое занятие по арабской письменности и стилю насталик.',
+      en: 'A hands-on session on Arabic script and the nastaliq style.',
+    },
+    image: IMG.stack,
+  },
+  {
+    id: 10,
+    date: dayOffset(4),
+    time: '13:00',
+    endTime: '15:00',
+    title: {
+      uz: 'Raqamli savodxonlik darsi',
+      ru: 'Урок цифровой грамотности',
+      en: 'Digital Literacy Class',
+    },
+    location: { uz: 'Kompyuter zali', ru: 'Компьютерный зал', en: 'Computer room' },
+    description: {
+      uz: "Keksa yoshdagilar uchun internet va elektron xizmatlardan foydalanish.",
+      ru: 'Интернет и электронные услуги для людей старшего возраста.',
+      en: 'Using the internet and e-services, aimed at older visitors.',
+    },
+    image: IMG.desk,
+  },
+  {
+    id: 11,
+    date: dayOffset(5),
+    time: '10:00',
+    endTime: '12:00',
+    title: {
+      uz: "She'riyat kechasi",
+      ru: 'Вечер поэзии',
+      en: 'Poetry Evening',
+    },
+    location: { uz: 'Anjumanlar zali', ru: 'Зал собраний', en: 'Assembly Hall' },
+    description: {
+      uz: "Navoiy g'azallari va zamonaviy she'riyatdan namunalar o'qiladi.",
+      ru: 'Прозвучат газели Навои и образцы современной поэзии.',
+      en: 'Readings of Navoi\u2019s ghazals and contemporary poetry.',
+    },
+    image: IMG.open,
+  },
+  {
+    id: 12,
+    date: dayOffset(8),
+    time: '14:00',
+    endTime: '16:30',
+    title: {
+      uz: 'Kutubxona bo\u2018ylab ekskursiya',
+      ru: 'Экскурсия по библиотеке',
+      en: 'Guided Library Tour',
+    },
+    location: { uz: 'Markaziy foye', ru: 'Центральное фойе', en: 'Central Foyer' },
+    description: {
+      uz: "Fond, o'qish zallari va saqlash bo'limlari bilan tanishtiruv sayohati.",
+      ru: 'Знакомство с фондом, читальными залами и хранилищами.',
+      en: 'An introduction to the collection, reading rooms and stacks.',
+    },
+    image: IMG.hall,
+  },
 ];
 
-export const books: Book[] = [
+const coreBooks: Book[] = [
   {
     id: 1,
     rank: 1,
@@ -212,6 +317,8 @@ export const books: Book[] = [
     pages: 512,
     isbn: '978-9943-26-114-2',
     copies: 6,
+    rating: 4.7,
+    ratingCount: 1420,
     cover: IMG.shelf,
     collections: ['new'],
   },
@@ -231,6 +338,8 @@ export const books: Book[] = [
     pages: 288,
     isbn: '978-9943-27-441-8',
     copies: 4,
+    rating: 4.5,
+    ratingCount: 640,
     cover: IMG.open,
     collections: ['new'],
   },
@@ -254,6 +363,8 @@ export const books: Book[] = [
     pages: 448,
     isbn: '978-9943-03-882-9',
     copies: 9,
+    rating: 4.8,
+    ratingCount: 1980,
     cover: IMG.stack,
     collections: ['new'],
   },
@@ -269,10 +380,12 @@ export const books: Book[] = [
       en: 'The classic treatise on the art of rhetoric, in translation.',
     },
     publisher: PUB.akademnashr,
-    year: 2020,
+    year: 2009,
     pages: 336,
     isbn: '978-9943-49-227-0',
-    copies: 3,
+    copies: 0,
+    rating: 4.4,
+    ratingCount: 380,
     cover: IMG.reading,
     collections: ['new'],
   },
@@ -296,6 +409,8 @@ export const books: Book[] = [
     pages: 464,
     isbn: '978-9943-49-501-1',
     copies: 12,
+    rating: 4.8,
+    ratingCount: 2460,
     cover: IMG.meeting,
     collections: ['new'],
   },
@@ -315,6 +430,8 @@ export const books: Book[] = [
     pages: 320,
     isbn: '978-9943-49-612-4',
     copies: 15,
+    rating: 4.7,
+    ratingCount: 3120,
     cover: IMG.desk,
     collections: ['new'],
   },
@@ -334,6 +451,8 @@ export const books: Book[] = [
     pages: 352,
     isbn: '978-9943-27-810-2',
     copies: 7,
+    rating: 4.6,
+    ratingCount: 1740,
     cover: IMG.hall,
     collections: ['new'],
   },
@@ -353,6 +472,8 @@ export const books: Book[] = [
     pages: 720,
     isbn: '978-9943-03-441-8',
     copies: 5,
+    rating: 4.5,
+    ratingCount: 820,
     cover: IMG.books,
     collections: ['new'],
   },
@@ -372,6 +493,8 @@ export const books: Book[] = [
     pages: 400,
     isbn: '978-9943-26-055-8',
     copies: 4,
+    rating: 4.4,
+    ratingCount: 560,
     cover: IMG.kids,
     collections: ['new'],
   },
@@ -391,6 +514,8 @@ export const books: Book[] = [
     pages: 264,
     isbn: '978-9943-03-990-1',
     copies: 8,
+    rating: 4.7,
+    ratingCount: 1180,
     cover: IMG.open,
     collections: ['new'],
   },
@@ -411,6 +536,8 @@ export const books: Book[] = [
     pages: 208,
     isbn: '978-9943-27-333-6',
     copies: 11,
+    rating: 4.8,
+    ratingCount: 1250,
     cover: IMG.stack,
     collections: ['recommended'],
   },
@@ -426,10 +553,12 @@ export const books: Book[] = [
       en: 'A collection of short stories by the Russian master of the form.',
     },
     publisher: PUB.sharq,
-    year: 2020,
+    year: 2007,
     pages: 240,
     isbn: '978-9943-26-201-9',
     copies: 6,
+    rating: 4.7,
+    ratingCount: 980,
     cover: IMG.reading,
     collections: ['recommended'],
   },
@@ -449,6 +578,8 @@ export const books: Book[] = [
     pages: 384,
     isbn: '978-9943-03-771-6',
     copies: 14,
+    rating: 4.6,
+    ratingCount: 870,
     cover: IMG.shelf,
     collections: ['recommended'],
   },
@@ -468,6 +599,8 @@ export const books: Book[] = [
     pages: 608,
     isbn: '978-9943-26-330-6',
     copies: 5,
+    rating: 4.8,
+    ratingCount: 1540,
     cover: IMG.meeting,
     collections: ['recommended'],
   },
@@ -487,6 +620,8 @@ export const books: Book[] = [
     pages: 336,
     isbn: '978-9943-03-778-5',
     copies: 7,
+    rating: 4.5,
+    ratingCount: 760,
     cover: IMG.desk,
     collections: ['recommended'],
   },
@@ -510,6 +645,8 @@ export const books: Book[] = [
     pages: 352,
     isbn: '978-9943-27-905-5',
     copies: 18,
+    rating: 4.9,
+    ratingCount: 2100,
     cover: IMG.hall,
     collections: ['recommended'],
   },
@@ -525,10 +662,12 @@ export const books: Book[] = [
       en: 'The adventure novel widely regarded as the first modern European novel.',
     },
     publisher: PUB.sharq,
-    year: 2019,
+    year: 1998,
     pages: 864,
     isbn: '978-9943-26-018-3',
-    copies: 3,
+    copies: 0,
+    rating: 4.6,
+    ratingCount: 1100,
     cover: IMG.books,
     collections: ['recommended'],
   },
@@ -556,6 +695,8 @@ export const books: Book[] = [
     pages: 656,
     isbn: '978-9943-38-114-7',
     copies: 10,
+    rating: 4.9,
+    ratingCount: 1850,
     cover: IMG.kids,
     collections: ['recommended'],
   },
@@ -575,6 +716,8 @@ export const books: Book[] = [
     pages: 176,
     isbn: '978-9943-49-118-1',
     copies: 6,
+    rating: 4.7,
+    ratingCount: 900,
     cover: IMG.open,
     collections: ['recommended'],
   },
@@ -594,20 +737,560 @@ export const books: Book[] = [
       en: "The author's unfinished philosophical testament.",
     },
     publisher: PUB.akademnashr,
-    year: 2020,
+    year: 1999,
     pages: 512,
     isbn: '978-9943-49-077-1',
-    copies: 2,
+    copies: 0,
+    rating: 4.6,
+    ratingCount: 830,
     cover: IMG.stack,
     collections: ['recommended'],
   },
 ];
+
+
+/* ── Fondning qolgan qismi ────────────────────────────────
+   Yuqoridagi 20 ta kitob TOP-10 ro'yxatlarini to'ldiradi;
+   quyidagilar katalog, janrlar va qidiruv uchun (collections bo'sh). */
+const moreBooks: Book[] = [
+  /* ─ Tarix ─ */
+  {
+    id: 21, rank: 11,
+    title: { uz: 'Temur tuzuklari', ru: 'Уложение Темура', en: 'The Institutes of Temur' },
+    author: { uz: 'Amir Temur', ru: 'Амир Темур', en: 'Amir Temur' },
+    category: CAT.history,
+    description: {
+      uz: "Sohibqironning davlat boshqaruvi va harbiy san'at haqidagi vasiyatlari.",
+      ru: 'Заветы Сахибкирана об управлении государством и военном искусстве.',
+      en: "Temur's precepts on statecraft and the art of war.",
+    },
+    publisher: PUB.gafurGulom, year: 2021, pages: 368, isbn: '978-9943-03-812-6',
+    copies: 12, rating: 4.8, ratingCount: 2240, cover: IMG.stack, collections: [],
+  },
+  {
+    id: 22, rank: 12,
+    title: { uz: 'Yulduzli tunlar', ru: 'Звёздные ночи', en: 'Starry Nights' },
+    author: { uz: 'Pirimqul Qodirov', ru: 'Пиримкул Кадыров', en: 'Pirimqul Qodirov' },
+    category: CAT.history,
+    description: {
+      uz: 'Bobur hayoti va Boburiylar saltanati haqidagi tarixiy roman.',
+      ru: 'Исторический роман о жизни Бабура и империи Бабуридов.',
+      en: 'A historical novel about Babur and the Mughal empire.',
+    },
+    publisher: PUB.sharq, year: 2022, pages: 544, isbn: '978-9943-26-401-3',
+    copies: 8, rating: 4.7, ratingCount: 1310, cover: IMG.shelf, collections: [],
+  },
+  {
+    id: 23, rank: 13,
+    title: { uz: 'Ipak yo‘llari', ru: 'Шёлковый путь', en: 'The Silk Roads' },
+    author: { uz: 'Piter Frankopan', ru: 'Питер Франкопан', en: 'Peter Frankopan' },
+    category: CAT.history,
+    description: {
+      uz: "Dunyo tarixiga Sharq nuqtai nazaridan qaraydigan yangicha tadqiqot.",
+      ru: 'Новый взгляд на мировую историю с точки зрения Востока.',
+      en: 'A new history of the world seen from the East.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 704, isbn: '978-9943-49-388-8',
+    copies: 5, rating: 4.6, ratingCount: 890, cover: IMG.books, collections: [],
+  },
+  {
+    id: 24, rank: 14,
+    title: { uz: 'Firdavs ul-iqbol', ru: 'Фирдавс ул-икбол', en: 'Firdaws al-Iqbal' },
+    author: { uz: 'Shermuhammad Munis', ru: 'Шермухаммад Мунис', en: 'Shermuhammad Munis' },
+    category: CAT.history,
+    description: {
+      uz: 'Xiva xonligi tarixiga oid muhim manba.',
+      ru: 'Важный источник по истории Хивинского ханства.',
+      en: 'A key source on the history of the Khanate of Khiva.',
+    },
+    publisher: PUB.gafurGulom, year: 2003, pages: 456, isbn: '978-9943-03-522-4',
+    copies: 0, rating: 4.4, ratingCount: 210, cover: IMG.hall, collections: [],
+  },
+
+  /* ─ Ilmiy-ommabop ─ */
+  {
+    id: 25, rank: 15,
+    title: { uz: 'Homo Deus', ru: 'Homo Deus', en: 'Homo Deus' },
+    author: { uz: 'Yuval Noy Harari', ru: 'Юваль Ной Харари', en: 'Yuval Noah Harari' },
+    category: CAT.science,
+    description: {
+      uz: "Insoniyat kelajagi va texnologiya haqidagi bashoratli tadqiqot.",
+      ru: 'Прогноз о будущем человечества и технологий.',
+      en: 'A brief history of tomorrow — humankind and technology.',
+    },
+    publisher: PUB.akademnashr, year: 2024, pages: 448, isbn: '978-9943-49-540-0',
+    copies: 9, rating: 4.6, ratingCount: 1480, cover: IMG.desk, collections: [],
+  },
+  {
+    id: 26, rank: 16,
+    title: { uz: 'Vaqtning qisqacha tarixi', ru: 'Краткая история времени', en: 'A Brief History of Time' },
+    author: { uz: 'Stiven Xoking', ru: 'Стивен Хокинг', en: 'Stephen Hawking' },
+    category: CAT.science,
+    description: {
+      uz: "Koinot, qora tuynuklar va vaqt haqida sodda tilda.",
+      ru: 'О Вселенной, чёрных дырах и времени простым языком.',
+      en: 'The universe, black holes and time explained simply.',
+    },
+    publisher: PUB.akademnashr, year: 2022, pages: 256, isbn: '978-9943-49-241-6',
+    copies: 7, rating: 4.7, ratingCount: 1620, cover: IMG.reading, collections: [],
+  },
+  {
+    id: 27, rank: 17,
+    title: { uz: 'Xudbin gen', ru: 'Эгоистичный ген', en: 'The Selfish Gene' },
+    author: { uz: 'Richard Dokinz', ru: 'Ричард Докинз', en: 'Richard Dawkins' },
+    category: CAT.science,
+    description: {
+      uz: 'Evolyutsiyaga genlar nuqtai nazaridan qarash.',
+      ru: 'Взгляд на эволюцию с точки зрения генов.',
+      en: 'Evolution seen from the point of view of the gene.',
+    },
+    publisher: PUB.akademnashr, year: 2021, pages: 384, isbn: '978-9943-49-165-5',
+    copies: 4, rating: 4.5, ratingCount: 640, cover: IMG.open, collections: [],
+  },
+  {
+    id: 28, rank: 18,
+    title: { uz: 'Nima uchun uxlaymiz', ru: 'Зачем мы спим', en: 'Why We Sleep' },
+    author: { uz: 'Metyu Uoker', ru: 'Мэттью Уокер', en: 'Matthew Walker' },
+    category: CAT.science,
+    description: {
+      uz: 'Uyqu va tush ko‘rishning inson salomatligidagi o‘rni.',
+      ru: 'Роль сна и сновидений для здоровья человека.',
+      en: 'The role of sleep and dreams in human health.',
+    },
+    publisher: PUB.akademnashr, year: 2024, pages: 368, isbn: '978-9943-49-604-9',
+    copies: 11, rating: 4.6, ratingCount: 1050, cover: IMG.meeting, collections: [],
+  },
+
+  /* ─ She'riyat ─ */
+  {
+    id: 29, rank: 19,
+    title: { uz: 'Xamsa', ru: 'Хамса', en: 'Khamsa' },
+    author: { uz: 'Alisher Navoiy', ru: 'Алишер Навои', en: 'Alisher Navoi' },
+    category: CAT.poetry,
+    description: {
+      uz: "Besh dostondan iborat, o'zbek adabiyotining cho'qqisi.",
+      ru: 'Пятерица поэм — вершина узбекской литературы.',
+      en: 'A quintet of epic poems — the summit of Uzbek literature.',
+    },
+    publisher: PUB.gafurGulom, year: 1991, pages: 880, isbn: '978-9943-03-601-6',
+    copies: 15, rating: 4.9, ratingCount: 3180, cover: IMG.stack, collections: [],
+  },
+  {
+    id: 30, rank: 20,
+    title: { uz: 'Ruhlar isyoni', ru: 'Восстание душ', en: 'The Revolt of Souls' },
+    author: { uz: 'Erkin Vohidov', ru: 'Эркин Вахидов', en: 'Erkin Vohidov' },
+    category: CAT.poetry,
+    description: {
+      uz: "Xalq shoirining eng mashhur dostoni va she'rlari.",
+      ru: 'Самая известная поэма народного поэта и его стихи.',
+      en: "The People's Poet's best-known epic poem and verses.",
+    },
+    publisher: PUB.gafurGulom, year: 2021, pages: 296, isbn: '978-9943-03-744-0',
+    copies: 9, rating: 4.8, ratingCount: 1420, cover: IMG.open, collections: [],
+  },
+  {
+    id: 31, rank: 21,
+    title: { uz: 'Ishq kelganda', ru: 'Когда приходит любовь', en: 'When Love Comes' },
+    author: { uz: 'Muhammad Yusuf', ru: 'Мухаммад Юсуф', en: 'Muhammad Yusuf' },
+    category: CAT.poetry,
+    description: {
+      uz: "Sodda va samimiy tildagi zamonaviy o'zbek she'riyati.",
+      ru: 'Современная узбекская поэзия простым и искренним языком.',
+      en: 'Modern Uzbek poetry in a plain, heartfelt voice.',
+    },
+    publisher: PUB.yangiAsr, year: 2023, pages: 208, isbn: '978-9943-27-702-0',
+    copies: 6, rating: 4.7, ratingCount: 980, cover: IMG.kids, collections: [],
+  },
+  {
+    id: 32, rank: 22,
+    title: { uz: 'Ruboiylar', ru: 'Рубаи', en: 'Rubaiyat' },
+    author: { uz: 'Umar Xayyom', ru: 'Омар Хайям', en: 'Omar Khayyam' },
+    category: CAT.poetry,
+    description: {
+      uz: 'Hayot, vaqt va donolik haqidagi to‘rtliklar.',
+      ru: 'Четверостишия о жизни, времени и мудрости.',
+      en: 'Quatrains on life, time and wisdom.',
+    },
+    publisher: PUB.sharq, year: 2008, pages: 176, isbn: '978-9943-26-090-9',
+    copies: 8, rating: 4.7, ratingCount: 1240, cover: IMG.reading, collections: [],
+  },
+  {
+    id: 33, rank: 23,
+    title: { uz: 'Sonetlar', ru: 'Сонеты', en: 'Sonnets' },
+    author: { uz: 'Uilyam Shekspir', ru: 'Уильям Шекспир', en: 'William Shakespeare' },
+    category: CAT.poetry,
+    description: {
+      uz: 'Jahon she’riyatining klassik namunasi.',
+      ru: 'Классика мировой поэзии.',
+      en: 'A classic of world poetry.',
+    },
+    publisher: PUB.sharq, year: 2005, pages: 192, isbn: '978-9943-26-044-2',
+    copies: 0, rating: 4.5, ratingCount: 520, cover: IMG.books, collections: [],
+  },
+
+  /* ─ Psixologiya ─ */
+  {
+    id: 34, rank: 24,
+    title: { uz: 'Tez va sekin fikrlash', ru: 'Думай медленно… решай быстро', en: 'Thinking, Fast and Slow' },
+    author: { uz: 'Deniel Kaneman', ru: 'Даниэль Канеман', en: 'Daniel Kahneman' },
+    category: CAT.psychology,
+    description: {
+      uz: 'Qaror qabul qilishdagi tafakkurning ikki tizimi.',
+      ru: 'Две системы мышления при принятии решений.',
+      en: 'The two systems that drive the way we think.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 512, isbn: '978-9943-49-455-7',
+    copies: 10, rating: 4.7, ratingCount: 1890, cover: IMG.desk, collections: [],
+  },
+  {
+    id: 35, rank: 25,
+    title: { uz: "Ta'sir psixologiyasi", ru: 'Психология влияния', en: 'Influence' },
+    author: { uz: 'Robert Chialdini', ru: 'Роберт Чалдини', en: 'Robert Cialdini' },
+    category: CAT.psychology,
+    description: {
+      uz: 'Odamlar nima uchun «ha» deyishining ilmiy izohi.',
+      ru: 'Научное объяснение того, почему люди говорят «да».',
+      en: 'The science of why people say yes.',
+    },
+    publisher: PUB.akademnashr, year: 2022, pages: 400, isbn: '978-9943-49-302-4',
+    copies: 7, rating: 4.6, ratingCount: 1130, cover: IMG.meeting, collections: [],
+  },
+  {
+    id: 36, rank: 26,
+    title: { uz: 'Hayot ma’nosini izlab', ru: 'Человек в поисках смысла', en: "Man's Search for Meaning" },
+    author: { uz: 'Viktor Frankl', ru: 'Виктор Франкл', en: 'Viktor Frankl' },
+    category: CAT.psychology,
+    description: {
+      uz: 'Konslager tajribasidan tug‘ilgan logoterapiya asoslari.',
+      ru: 'Основы логотерапии, рождённые опытом концлагеря.',
+      en: 'The foundations of logotherapy, born of the camps.',
+    },
+    publisher: PUB.akademnashr, year: 2021, pages: 224, isbn: '978-9943-49-198-3',
+    copies: 13, rating: 4.9, ratingCount: 2470, cover: IMG.shelf, collections: [],
+  },
+  {
+    id: 37, rank: 27,
+    title: { uz: 'Emotsional intellekt', ru: 'Эмоциональный интеллект', en: 'Emotional Intelligence' },
+    author: { uz: 'Deniel Goulman', ru: 'Дэниел Гоулман', en: 'Daniel Goleman' },
+    category: CAT.psychology,
+    description: {
+      uz: 'Hissiyotlarni boshqarish nega aqldan muhimroq.',
+      ru: 'Почему управление эмоциями важнее IQ.',
+      en: 'Why managing emotions can matter more than IQ.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 384, isbn: '978-9943-49-478-6',
+    copies: 6, rating: 4.5, ratingCount: 860, cover: IMG.hall, collections: [],
+  },
+
+  /* ─ Diniy adabiyot ─ */
+  {
+    id: 38, rank: 28,
+    title: { uz: 'Sahihi Buxoriy', ru: 'Сахих аль-Бухари', en: 'Sahih al-Bukhari' },
+    author: { uz: 'Imom al-Buxoriy', ru: 'Имам аль-Бухари', en: 'Imam al-Bukhari' },
+    category: CAT.religion,
+    description: {
+      uz: 'Hadis ilmining eng ishonchli to‘plamlaridan biri.',
+      ru: 'Один из самых достоверных сборников хадисов.',
+      en: 'One of the most authoritative collections of hadith.',
+    },
+    publisher: PUB.hilol, year: 2022, pages: 912, isbn: '978-9943-38-070-6',
+    copies: 8, rating: 4.9, ratingCount: 1760, cover: IMG.stack, collections: [],
+  },
+  {
+    id: 39, rank: 29,
+    title: { uz: 'Kimyoi saodat', ru: 'Эликсир счастья', en: 'The Alchemy of Happiness' },
+    author: { uz: 'Imom G‘azzoliy', ru: 'Имам аль-Газали', en: 'Imam al-Ghazali' },
+    category: CAT.religion,
+    description: {
+      uz: 'Ma’naviy kamolot va axloq haqidagi klassik asar.',
+      ru: 'Классический труд о духовном совершенствовании и нравственности.',
+      en: 'A classic work on spiritual growth and ethics.',
+    },
+    publisher: PUB.hilol, year: 2021, pages: 448, isbn: '978-9943-38-011-9',
+    copies: 5, rating: 4.7, ratingCount: 640, cover: IMG.open, collections: [],
+  },
+  {
+    id: 40, rank: 30,
+    title: { uz: 'Qisasi Rabg‘uziy', ru: 'Кисаси Рабгузи', en: 'Qisas al-Rabghuzi' },
+    author: { uz: 'Nosiruddin Rabg‘uziy', ru: 'Насируддин Рабгузи', en: 'Nasiruddin Rabghuzi' },
+    category: CAT.religion,
+    description: {
+      uz: 'Payg‘ambarlar qissalarining turkiy tildagi mashhur bayoni.',
+      ru: 'Известное тюркоязычное изложение историй пророков.',
+      en: 'The celebrated Turkic retelling of the stories of the prophets.',
+    },
+    publisher: PUB.gafurGulom, year: 2004, pages: 528, isbn: '978-9943-03-655-9',
+    copies: 4, rating: 4.6, ratingCount: 410, cover: IMG.books, collections: [],
+  },
+
+  /* ─ Bolalar adabiyoti ─ */
+  {
+    id: 41, rank: 31,
+    title: { uz: 'Kichkina shahzoda', ru: 'Маленький принц', en: 'The Little Prince' },
+    author: { uz: 'Antuan de Sent-Ekzyuperi', ru: 'Антуан де Сент-Экзюпери', en: 'Antoine de Saint-Exupéry' },
+    category: CAT.children,
+    description: {
+      uz: 'Kattalar uchun ham yozilgan mashhur ertak-qissa.',
+      ru: 'Знаменитая сказка, написанная и для взрослых.',
+      en: 'The famous tale written for grown-ups too.',
+    },
+    publisher: PUB.yangiAsr, year: 2023, pages: 128, isbn: '978-9943-27-655-9',
+    copies: 20, rating: 4.9, ratingCount: 3420, cover: IMG.kids, collections: [],
+  },
+  {
+    id: 42, rank: 32,
+    title: { uz: 'Sariq devni minib', ru: 'Оседлав жёлтого дива', en: 'Riding the Yellow Div' },
+    author: { uz: 'Xudoyberdi To‘xtaboyev', ru: 'Худайберды Тухтабаев', en: 'Xudoyberdi Toxtaboyev' },
+    category: CAT.children,
+    description: {
+      uz: 'Sehrli qalpoqcha topib olgan Hoshimjonning sarguzashtlari.',
+      ru: 'Приключения Хошимджона, нашедшего волшебную шапку.',
+      en: 'The adventures of a boy who finds a magic cap.',
+    },
+    publisher: PUB.gafurGulom, year: 2022, pages: 320, isbn: '978-9943-03-880-5',
+    copies: 16, rating: 4.8, ratingCount: 2180, cover: IMG.reading, collections: [],
+  },
+  {
+    id: 43, rank: 33,
+    title: { uz: 'Alisaning mo‘jizalar mamlakatidagi sarguzashtlari', ru: 'Алиса в Стране чудес', en: "Alice's Adventures in Wonderland" },
+    author: { uz: 'Lyuis Kerroll', ru: 'Льюис Кэрролл', en: 'Lewis Carroll' },
+    category: CAT.children,
+    description: {
+      uz: 'Quyon inidan boshlangan aql bovar qilmas sayohat.',
+      ru: 'Невероятное путешествие, начавшееся с кроличьей норы.',
+      en: 'An impossible journey that begins down a rabbit hole.',
+    },
+    publisher: PUB.yangiAsr, year: 2021, pages: 192, isbn: '978-9943-27-401-2',
+    copies: 11, rating: 4.6, ratingCount: 1290, cover: IMG.meeting, collections: [],
+  },
+  {
+    id: 44, rank: 34,
+    title: { uz: 'Tom Soyerning sarguzashtlari', ru: 'Приключения Тома Сойера', en: 'The Adventures of Tom Sawyer' },
+    author: { uz: 'Mark Tven', ru: 'Марк Твен', en: 'Mark Twain' },
+    category: CAT.children,
+    description: {
+      uz: 'Missisipi bo‘yidagi shaharchada yashovchi shumtaka bola qissasi.',
+      ru: 'История озорного мальчишки из городка на Миссисипи.',
+      en: 'The story of a mischievous boy on the Mississippi.',
+    },
+    publisher: PUB.sharq, year: 2006, pages: 288, isbn: '978-9943-26-166-1',
+    copies: 9, rating: 4.5, ratingCount: 940, cover: IMG.shelf, collections: [],
+  },
+  {
+    id: 45, rank: 35,
+    title: { uz: 'Chipollinoning sarguzashtlari', ru: 'Приключения Чиполлино', en: 'The Adventures of Cipollino' },
+    author: { uz: 'Janni Rodari', ru: 'Джанни Родари', en: 'Gianni Rodari' },
+    category: CAT.children,
+    description: {
+      uz: 'Piyoz bola va uning do‘stlari haqidagi ertak.',
+      ru: 'Сказка о мальчике-луковке и его друзьях.',
+      en: 'A tale of a little onion boy and his friends.',
+    },
+    publisher: PUB.gafurGulom, year: 1996, pages: 224, isbn: '978-9943-03-490-6',
+    copies: 12, rating: 4.4, ratingCount: 760, cover: IMG.hall, collections: [],
+  },
+
+  /* ─ Falsafa ─ */
+  {
+    id: 46, rank: 36,
+    title: { uz: 'O‘zim bilan suhbatlar', ru: 'Размышления', en: 'Meditations' },
+    author: { uz: 'Mark Avreliy', ru: 'Марк Аврелий', en: 'Marcus Aurelius' },
+    category: CAT.philosophy,
+    description: {
+      uz: 'Rim imperatorining o‘ziga yozgan stoik qaydlari.',
+      ru: 'Стоические записи римского императора для самого себя.',
+      en: 'The stoic notes a Roman emperor wrote to himself.',
+    },
+    publisher: PUB.akademnashr, year: 2022, pages: 256, isbn: '978-9943-49-288-1',
+    copies: 8, rating: 4.8, ratingCount: 1560, cover: IMG.desk, collections: [],
+  },
+  {
+    id: 47, rank: 37,
+    title: { uz: 'Davlat', ru: 'Государство', en: 'The Republic' },
+    author: { uz: 'Aflotun', ru: 'Платон', en: 'Plato' },
+    category: CAT.philosophy,
+    description: {
+      uz: 'Adolat va ideal davlat tuzumi haqidagi dialog.',
+      ru: 'Диалог о справедливости и идеальном государстве.',
+      en: 'A dialogue on justice and the ideal state.',
+    },
+    publisher: PUB.akademnashr, year: 2002, pages: 512, isbn: '978-9943-49-155-6',
+    copies: 0, rating: 4.5, ratingCount: 620, cover: IMG.stack, collections: [],
+  },
+
+  /* ─ Badiiy adabiyot ─ */
+  {
+    id: 48, rank: 38,
+    title: { uz: 'Kecha va kunduz', ru: 'Ночь и день', en: 'Night and Day' },
+    author: { uz: 'Cho‘lpon', ru: 'Чулпан', en: 'Cho‘lpon' },
+    category: CAT.prose,
+    description: {
+      uz: 'Zebi taqdiri orqali XX asr boshidagi jamiyat manzarasi.',
+      ru: 'Картина общества начала XX века через судьбу Зеби.',
+      en: 'A portrait of early twentieth-century society through one woman’s fate.',
+    },
+    publisher: PUB.gafurGulom, year: 2022, pages: 336, isbn: '978-9943-03-838-6',
+    copies: 10, rating: 4.8, ratingCount: 1680, cover: IMG.open, collections: [],
+  },
+  {
+    id: 49, rank: 39,
+    title: { uz: 'Shaytanat', ru: 'Шайтанат', en: 'Shaytanat' },
+    author: { uz: 'Tohir Malik', ru: 'Тахир Малик', en: 'Tohir Malik' },
+    category: CAT.prose,
+    description: {
+      uz: 'Jinoyat olami va vijdon kurashi haqidagi ko‘p jildli roman.',
+      ru: 'Многотомный роман о преступном мире и борьбе совести.',
+      en: 'A multi-volume novel about the criminal world and conscience.',
+    },
+    publisher: PUB.sharq, year: 2023, pages: 640, isbn: '978-9943-26-522-5',
+    copies: 14, rating: 4.7, ratingCount: 2890, cover: IMG.books, collections: [],
+  },
+  {
+    id: 50, rank: 40,
+    title: { uz: 'Chol va dengiz', ru: 'Старик и море', en: 'The Old Man and the Sea' },
+    author: { uz: 'Ernest Xeminguey', ru: 'Эрнест Хемингуэй', en: 'Ernest Hemingway' },
+    category: CAT.prose,
+    description: {
+      uz: 'Keksa baliqchining ulkan baliq bilan olishuvi.',
+      ru: 'Схватка старого рыбака с огромной рыбой.',
+      en: "An old fisherman's struggle with a great fish.",
+    },
+    publisher: PUB.yangiAsr, year: 2021, pages: 144, isbn: '978-9943-27-388-6',
+    copies: 7, rating: 4.6, ratingCount: 1170, cover: IMG.reading, collections: [],
+  },
+  {
+    id: 51, rank: 41,
+    title: { uz: 'Buyuk Getsbi', ru: 'Великий Гэтсби', en: 'The Great Gatsby' },
+    author: { uz: 'Frensis Skott Fitsjerald', ru: 'Фрэнсис Скотт Фицджеральд', en: 'F. Scott Fitzgerald' },
+    category: CAT.prose,
+    description: {
+      uz: '«Jaz asri» Amerikasidagi orzular va yolg‘izlik haqida.',
+      ru: 'О мечтах и одиночестве Америки «века джаза».',
+      en: 'Dreams and loneliness in Jazz Age America.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 224, isbn: '978-9943-49-511-0',
+    copies: 6, rating: 4.4, ratingCount: 830, cover: IMG.kids, collections: [],
+  },
+];
+
+export const books: Book[] = [...coreBooks, ...moreBooks];
 
 export const newBooks = books.filter((b) => b.collections.includes('new'));
 export const recommendedBooks = books.filter((b) => b.collections.includes('recommended'));
 
 /** Katalog filtri uchun kategoriyalar ro'yxati (takrorlanmagan). */
 export const categories: Localized[] = Object.values(CAT);
+
+/* Ustunlarda ko'rinadigan qisqa toifa nishoni. CAT obyektlari barcha kitoblarda
+   bir xil havola bo'lgani uchun Map kalit sifatida havolaning o'zini ishlatadi. */
+const BADGES = new Map<Localized, Localized>([
+  [CAT.prose, { uz: 'ROMAN', ru: 'РОМАН', en: 'FICTION' }],
+  [CAT.history, { uz: 'TARIX', ru: 'ИСТОРИЯ', en: 'HISTORY' }],
+  [CAT.science, { uz: 'ILM-FAN', ru: 'НАУКА', en: 'SCIENCE' }],
+  [CAT.poetry, { uz: "SHE'RIYAT", ru: 'ПОЭЗИЯ', en: 'POETRY' }],
+  [CAT.psychology, { uz: 'RIVOJLANISH', ru: 'САМОРАЗВИТИЕ', en: 'SELF-HELP' }],
+  [CAT.religion, { uz: 'DINIY', ru: 'РЕЛИГИЯ', en: 'RELIGION' }],
+  [CAT.children, { uz: 'BOLALAR', ru: 'ДЕТСКАЯ', en: 'CHILDREN' }],
+  [CAT.philosophy, { uz: 'FALSAFA', ru: 'ФИЛОСОФИЯ', en: 'PHILOSOPHY' }],
+]);
+
+export function badgeFor(book: Book): Localized {
+  return BADGES.get(book.category) ?? book.category;
+}
+
+/* ══ Bosh sahifadagi dashboard ma'lumotlari ═══════════════
+   Hammasi mock. Backend ulanganda shu tuzilmalar API javobiga almashtiriladi. */
+
+export interface StatTile {
+  id: 'visitors' | 'seats' | 'newBooks' | 'events' | 'catalog';
+  icon: 'users' | 'armchair' | 'book' | 'calendar' | 'library';
+  value: number;
+  accent: 'cyan' | 'emerald' | 'amber' | 'iris' | 'azure';
+}
+
+/** Bugun bo'ladigan tadbirlar soni — statistika ham, e'lon qatori ham shundan oladi. */
+export function todayEventCount(): number {
+  const today = todayISO();
+  return events.filter((e) => e.date === today).length;
+}
+
+export const todayStats: StatTile[] = [
+  { id: 'visitors', icon: 'users', value: 512, accent: 'cyan' },
+  { id: 'seats', icon: 'armchair', value: 248, accent: 'emerald' },
+  { id: 'newBooks', icon: 'book', value: 86, accent: 'amber' },
+  { id: 'events', icon: 'calendar', value: todayEventCount(), accent: 'iris' },
+  { id: 'catalog', icon: 'library', value: 1235784, accent: 'azure' },
+];
+
+export interface CategoryShare {
+  /** i18n kaliti emas — to'g'ridan-to'g'ri toifa nomi. */
+  label: Localized;
+  percent: number;
+  color: string;
+}
+
+/* Ranglar tasodifiy tanlanmagan: to'q fonda rang ko'rligi (protan/deutan)
+   va oddiy ko'rish uchun qo'shni bo'laklar farqlanishi tekshirilgan
+   (eng yomon juftlik ΔE 19.1 — me'yor ≥ 8). Tartibni o'zgartirmang. */
+export const categoryShares: CategoryShare[] = [
+  { label: CAT.prose, percent: 38, color: '#059EB1' },
+  { label: CAT.science, percent: 20, color: '#93640C' },
+  { label: CAT.history, percent: 14, color: '#2F6BFF' },
+  { label: CAT.philosophy, percent: 10, color: '#068B45' },
+  { label: CAT.children, percent: 9, color: '#9838E2' },
+  {
+    label: { uz: 'Boshqalar', ru: 'Прочее', en: 'Other' },
+    percent: 9,
+    color: '#D6004A',
+  },
+];
+
+export interface DayVisits {
+  /** 0 = yakshanba … 6 = shanba (Date.getDay() bilan bir xil). */
+  weekday: number;
+  visits: number;
+}
+
+export const weeklyVisits: DayVisits[] = [
+  { weekday: 1, visits: 420 },
+  { weekday: 2, visits: 510 },
+  { weekday: 3, visits: 470 },
+  { weekday: 4, visits: 560 },
+  { weekday: 5, visits: 650 },
+  { weekday: 6, visits: 720 },
+  { weekday: 0, visits: 610 },
+];
+
+export interface QuickService {
+  id: 'wifi' | 'audio' | 'catalog' | 'kids' | 'events' | 'membership';
+  icon: 'wifi' | 'headphones' | 'monitor' | 'kids' | 'calendar' | 'card';
+  accent: string;
+}
+
+export const quickServices: QuickService[] = [
+  { id: 'wifi', icon: 'wifi', accent: '#22C3E6' },
+  { id: 'audio', icon: 'headphones', accent: '#F0AB2A' },
+  { id: 'catalog', icon: 'monitor', accent: '#378ACF' },
+  { id: 'kids', icon: 'kids', accent: '#3FBF9F' },
+  { id: 'events', icon: 'calendar', accent: '#E8688A' },
+  { id: 'membership', icon: 'card', accent: '#8B7FD4' },
+];
+
+/** Ob-havo — hozircha mock. API ulash uchun shu obyektni almashtirish kifoya. */
+export interface Weather {
+  tempC: number;
+  condition: 'clear' | 'partly' | 'cloudy' | 'rain' | 'snow';
+  city: Localized;
+}
+
+export const weather: Weather = {
+  tempC: 34,
+  condition: 'partly',
+  city: { uz: 'Toshkent', ru: 'Ташкент', en: 'Tashkent' },
+};
+
+/** Hozir binoda turgan kishilar soni (mock). */
+export const peopleInside = 512;
 
 export interface Service {
   id: number;
@@ -769,3 +1452,204 @@ export const socialLinks = [
 ] as const;
 
 export const SITE_URL = 'https://natlib.uz';
+
+/* ══ Sensorli infokiosk uchun qo'shimcha ma'lumotlar ══════ */
+
+/** Mashhur kitoblar — reyting bo'yicha saralangan. */
+export const popularBooks = [...books].sort((a, b) => b.rating - a.rating).slice(0, 24);
+
+/** Kioskdagi "yangi kelganlar": to'plamdagilar oldinda, qolgan joyni
+    eng so'nggi nashr yilidagi kitoblar to'ldiradi. */
+export const latestBooks = [
+  ...newBooks,
+  ...books.filter((b) => !b.collections.includes('new')).sort((a, b) => b.year - a.year),
+].slice(0, 24);
+
+export interface Genre {
+  id: string;
+  label: Localized;
+  /** Shu janrga tegishli kitoblar toifasi. */
+  category: Localized;
+  icon: 'book' | 'history' | 'science' | 'poetry' | 'brain' | 'mosque' | 'kids' | 'think';
+  color: string;
+}
+
+export const genres: Genre[] = [
+  { id: 'prose', label: CAT.prose, category: CAT.prose, icon: 'book', color: '#4F52F6' },
+  { id: 'history', label: CAT.history, category: CAT.history, icon: 'history', color: '#0E9F6E' },
+  { id: 'science', label: CAT.science, category: CAT.science, icon: 'science', color: '#F59E0B' },
+  { id: 'poetry', label: CAT.poetry, category: CAT.poetry, icon: 'poetry', color: '#EC4899' },
+  { id: 'psychology', label: CAT.psychology, category: CAT.psychology, icon: 'brain', color: '#8B5CF6' },
+  { id: 'religion', label: CAT.religion, category: CAT.religion, icon: 'mosque', color: '#0EA5E9' },
+  { id: 'children', label: CAT.children, category: CAT.children, icon: 'kids', color: '#EF4444' },
+  { id: 'philosophy', label: CAT.philosophy, category: CAT.philosophy, icon: 'think', color: '#14B8A6' },
+];
+
+export interface NewsItem {
+  id: number;
+  date: string;
+  title: Localized;
+  summary: Localized;
+  image: string;
+}
+
+export const news: NewsItem[] = [
+  {
+    id: 1,
+    date: dayOffset(2),
+    title: {
+      uz: 'Xalqaro oila kuni',
+      ru: 'Международный день семьи',
+      en: 'International Day of Families',
+    },
+    summary: {
+      uz: "Kutubxonamizda maxsus kitob ko'rgazmasi va tadbirlar bo'lib o'tadi.",
+      ru: 'В библиотеке пройдёт специальная книжная выставка и мероприятия.',
+      en: 'A special book exhibition and events will be held at the library.',
+    },
+    image: IMG.hall,
+  },
+  {
+    id: 2,
+    date: dayOffset(5),
+    title: {
+      uz: 'Raqamli fond kengaymoqda',
+      ru: 'Цифровой фонд расширяется',
+      en: 'The digital collection is growing',
+    },
+    summary: {
+      uz: "Elektron katalogga 12 000 dan ortiq yangi nashr qo'shildi.",
+      ru: 'В электронный каталог добавлено более 12 000 новых изданий.',
+      en: 'More than 12,000 new titles have been added to the electronic catalog.',
+    },
+    image: IMG.reading,
+  },
+  {
+    id: 3,
+    date: dayOffset(9),
+    title: {
+      uz: 'Bolalar zonasi yangilandi',
+      ru: 'Детская зона обновлена',
+      en: "The children's zone has been renewed",
+    },
+    summary: {
+      uz: "Bolalar uchun yangi o'qish burchagi va ijodiy maydon ochildi.",
+      ru: 'Открыты новый читальный уголок и творческая площадка для детей.',
+      en: 'A new reading corner and creative area for children have opened.',
+    },
+    image: IMG.kids,
+  },
+  {
+    id: 4,
+    date: dayOffset(12),
+    title: {
+      uz: 'Nodir qo\u2018lyozmalar raqamlashtirildi',
+      ru: 'Редкие рукописи оцифрованы',
+      en: 'Rare manuscripts digitised',
+    },
+    summary: {
+      uz: "XV–XIX asrlarga oid 340 ta qo'lyozma elektron shaklda saqlandi.",
+      ru: '340 рукописей XV–XIX веков сохранены в электронном виде.',
+      en: '340 manuscripts from the 15th–19th centuries are now preserved digitally.',
+    },
+    image: IMG.stack,
+  },
+  {
+    id: 5,
+    date: dayOffset(15),
+    title: {
+      uz: 'Talabalar uchun tungi o\u2018qish zali',
+      ru: 'Ночной читальный зал для студентов',
+      en: 'Night reading room for students',
+    },
+    summary: {
+      uz: "Imtihon davrida zal 24:00 gacha ochiq bo'ladi.",
+      ru: 'В период экзаменов зал работает до 24:00.',
+      en: 'During the exam period the hall stays open until midnight.',
+    },
+    image: IMG.desk,
+  },
+  {
+    id: 6,
+    date: dayOffset(18),
+    title: {
+      uz: 'Audio kitoblar to\u2018plami kengaydi',
+      ru: 'Коллекция аудиокниг расширена',
+      en: 'The audiobook collection has grown',
+    },
+    summary: {
+      uz: "O'zbek adabiyotidan 200 dan ortiq audio kitob qo'shildi.",
+      ru: 'Добавлено более 200 аудиокниг узбекской литературы.',
+      en: 'Over 200 Uzbek-literature audiobooks have been added.',
+    },
+    image: IMG.reading,
+  },
+];
+
+/** Bosh sahifadagi "Tezkor qidiruvlar" ro'yxati. */
+export const quickSearches: Localized[] = [
+  { uz: 'Alisher Navoiy asarlari', ru: 'Произведения Алишера Навои', en: 'Works of Alisher Navoi' },
+  { uz: 'Tarixiy romanlar', ru: 'Исторические романы', en: 'Historical novels' },
+  { uz: 'Dasturlash kitoblari', ru: 'Книги по программированию', en: 'Programming books' },
+  { uz: 'Bolalar adabiyoti', ru: 'Детская литература', en: "Children's literature" },
+  { uz: 'Psixologiya', ru: 'Психология', en: 'Psychology' },
+];
+
+export interface Branch {
+  id: number;
+  name: Localized;
+  address: Localized;
+  phone: string;
+  hours: Localized;
+  /** Binodagi qavat yoki hudud — kioskda yo'l ko'rsatish uchun. */
+  floor: Localized;
+  seats: number;
+}
+
+export const branches: Branch[] = [
+  {
+    id: 1,
+    name: { uz: 'Asosiy bino', ru: 'Главное здание', en: 'Main building' },
+    address: { uz: "Navoiy ko'chasi, 1-uy", ru: 'улица Навои, 1', en: '1 Navoi Street' },
+    phone: '+998 (71) 232-83-89',
+    hours: { uz: '09:00 – 20:00', ru: '09:00 – 20:00', en: '09:00 – 20:00' },
+    floor: { uz: '1–4 qavat', ru: '1–4 этаж', en: 'Floors 1–4' },
+    seats: 640,
+  },
+  {
+    id: 2,
+    name: { uz: 'Nodir kitoblar bo‘limi', ru: 'Отдел редких книг', en: 'Rare books department' },
+    address: { uz: "Navoiy ko'chasi, 1-uy", ru: 'улица Навои, 1', en: '1 Navoi Street' },
+    phone: '+998 (71) 232-84-12',
+    hours: { uz: '10:00 – 17:00', ru: '10:00 – 17:00', en: '10:00 – 17:00' },
+    floor: { uz: '3-qavat, sharqiy qanot', ru: '3 этаж, восточное крыло', en: 'Floor 3, east wing' },
+    seats: 48,
+  },
+  {
+    id: 3,
+    name: { uz: 'Bolalar adabiyoti zali', ru: 'Зал детской литературы', en: "Children's literature hall" },
+    address: { uz: "Navoiy ko'chasi, 1-uy", ru: 'улица Навои, 1', en: '1 Navoi Street' },
+    phone: '+998 (71) 232-84-30',
+    hours: { uz: '09:00 – 18:00', ru: '09:00 – 18:00', en: '09:00 – 18:00' },
+    floor: { uz: '1-qavat', ru: '1 этаж', en: 'Floor 1' },
+    seats: 120,
+  },
+  {
+    id: 4,
+    name: { uz: 'Chilonzor filiali', ru: 'Филиал Чиланзар', en: 'Chilanzar branch' },
+    address: { uz: "Chilonzor tumani, Bunyodkor shoh ko'chasi, 12", ru: 'Чиланзарский район, проспект Бунёдкор, 12', en: '12 Bunyodkor Avenue, Chilanzar' },
+    phone: '+998 (71) 276-11-04',
+    hours: { uz: '09:00 – 18:00', ru: '09:00 – 18:00', en: '09:00 – 18:00' },
+    floor: { uz: 'Alohida bino', ru: 'Отдельное здание', en: 'Separate building' },
+    seats: 180,
+  },
+  {
+    id: 5,
+    name: { uz: 'Yunusobod filiali', ru: 'Филиал Юнусабад', en: 'Yunusabad branch' },
+    address: { uz: "Yunusobod tumani, Amir Temur ko'chasi, 108", ru: 'Юнусабадский район, улица Амира Темура, 108', en: '108 Amir Temur Street, Yunusabad' },
+    phone: '+998 (71) 235-77-21',
+    hours: { uz: '09:00 – 18:00', ru: '09:00 – 18:00', en: '09:00 – 18:00' },
+    floor: { uz: 'Alohida bino', ru: 'Отдельное здание', en: 'Separate building' },
+    seats: 150,
+  },
+];

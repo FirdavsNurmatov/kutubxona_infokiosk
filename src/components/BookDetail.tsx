@@ -1,6 +1,7 @@
-import { CheckCircle2, XCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, Star } from 'lucide-react';
 import Modal from './Modal';
 import { useI18n } from '../i18n/context';
+import { badgeFor } from '../data/mockData';
 import type { Book } from '../data/mockData';
 
 interface BookDetailProps {
@@ -11,8 +12,10 @@ interface BookDetailProps {
 function Field({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-0.5 min-w-0">
-      <span className="text-navy-400 text-[11px] font-semibold uppercase tracking-wide">{label}</span>
-      <span className="text-navy-900 text-sm font-medium break-words">{value}</span>
+      <span className="text-cyan-300/70 text-xs font-semibold uppercase tracking-wide">
+        {label}
+      </span>
+      <span className="text-white text-[15px] font-medium break-words">{value}</span>
     </div>
   );
 }
@@ -26,28 +29,35 @@ export default function BookDetail({ book, onClose }: BookDetailProps) {
       <div className="p-5 flex flex-col gap-5">
         <div className="flex gap-5 flex-wrap">
           <div
-            className="flex-shrink-0 rounded-xl overflow-hidden shadow-lg bg-cream-200"
-            style={{ width: '140px', height: '196px', border: '1px solid rgba(201,168,76,0.4)' }}
+            className="flex-shrink-0 rounded-xl overflow-hidden shadow-panel bg-ink-500"
+            style={{ width: '140px', height: '196px', border: '1px solid rgba(34,195,230,0.3)' }}
           >
             <img src={book.cover} alt="" className="w-full h-full object-cover" />
           </div>
 
           <div className="flex-1 flex flex-col gap-3" style={{ minWidth: '220px' }}>
             <div>
-              <h3 className="text-navy-900 font-extrabold text-lg leading-tight">{tr(book.title)}</h3>
-              <p className="text-navy-500 text-sm mt-1">{tr(book.author)}</p>
+              <h3 className="text-white font-extrabold text-xl leading-tight">{tr(book.title)}</h3>
+              <p className="text-paper-400 text-[15px] mt-1">{tr(book.author)}</p>
             </div>
 
-            <span
-              className="self-start text-xs font-bold px-3 py-1 rounded-full"
-              style={{ background: 'rgba(201,168,76,0.2)', color: '#9a7520' }}
-            >
-              {tr(book.category)}
-            </span>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span
+                className="text-[11.5px] font-bold px-2.5 py-1 rounded tracking-wide"
+                style={{ background: 'rgba(34,195,230,0.15)', color: '#5FD3EC' }}
+              >
+                {tr(badgeFor(book))}
+              </span>
+              <span className="flex items-center gap-1.5 text-sm">
+                <Star size={15} className="text-amber-400 fill-amber-400" />
+                <span className="font-bold text-white tabular-nums">{book.rating.toFixed(1)}</span>
+                <span className="text-paper-400 tabular-nums text-xs">({book.ratingCount})</span>
+              </span>
+            </div>
 
             <div
               className={`flex items-center gap-2 text-sm font-semibold ${
-                available ? 'text-emerald-700' : 'text-red-600'
+                available ? 'text-emerald-400' : 'text-rose-400'
               }`}
             >
               {available ? <CheckCircle2 size={18} /> : <XCircle size={18} />}
@@ -57,19 +67,20 @@ export default function BookDetail({ book, onClose }: BookDetailProps) {
         </div>
 
         <div>
-          <h4 className="text-navy-400 text-[11px] font-semibold uppercase tracking-wide mb-1">
+          <h4 className="text-cyan-300/70 text-xs font-semibold uppercase tracking-wide mb-1">
             {t.bookInfo.description}
           </h4>
-          <p className="text-navy-800 text-sm leading-relaxed">{tr(book.description)}</p>
+          <p className="text-paper-200 text-[15px] leading-relaxed">{tr(book.description)}</p>
         </div>
 
         <div
           className="grid gap-4 pt-4"
           style={{
             gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-            borderTop: '1px solid rgba(201,168,76,0.3)',
+            borderTop: '1px solid rgba(34,195,230,0.2)',
           }}
         >
+          <Field label={t.bookInfo.category} value={tr(book.category)} />
           <Field label={t.bookInfo.publisher} value={tr(book.publisher)} />
           <Field label={t.bookInfo.year} value={String(book.year)} />
           <Field label={t.bookInfo.pages} value={String(book.pages)} />
