@@ -203,6 +203,28 @@ export interface Translation {
     };
     helpText: string[];
   };
+  /** Devordagi katta ekranning ikkinchi versiyasi — signage pleyer (/ekran2). */
+  screen2: {
+    /** 01-bo'lim yorlig'i (maketdagi "WELCOME"). */
+    welcome: string;
+    eventsTitle: string;
+    /** Faqat WELCOME bo'limida ko'rinadigan ko'rsatkichlar. */
+    stat: {
+      catalog: string;
+      visitors: string;
+      events: string;
+    };
+    /** Tanlangan kitob panelidagi qo'shimcha ko'rsatkichlar. */
+    meta: {
+      year: string;
+      pages: string;
+    };
+    /** Ma'lumot bo'lmaganda ham ekran chiroyli qolishi kerak. */
+    empty: {
+      books: string;
+      events: string;
+    };
+  };
   /** Haftaning qisqartirilgan nomlari (0 = yakshanba). */
   daysShort: string[];
   days: string[];
@@ -391,6 +413,20 @@ export const translations: Record<Lang, Translation> = {
         "Kitob ustiga bossangiz, qisqacha tavsifi, nashr ma'lumotlari va javondagi nusxalari soni ko'rinadi.",
         "Qo'shimcha yordam kerak bo'lsa, xizmat ko'rsatish stoliga murojaat qiling.",
       ],
+    },
+    screen2: {
+      welcome: 'XUSH KELIBSIZ',
+      eventsTitle: 'YAQINLASHAYOTGAN TADBIRLAR',
+      stat: {
+        catalog: 'Katalogdagi nashrlar',
+        visitors: 'Bugungi tashrifchilar',
+        events: 'Faol tadbirlar',
+      },
+      meta: { year: 'Nashr yili', pages: 'Sahifalar' },
+      empty: {
+        books: 'Hozircha yangi kitoblar mavjud emas.',
+        events: 'Hozircha yaqin tadbirlar mavjud emas.',
+      },
     },
     daysShort: ['YAK', 'DUS', 'SES', 'CHO', 'PAY', 'JUM', 'SHA'],
     days: ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'],
@@ -607,6 +643,20 @@ export const translations: Record<Lang, Translation> = {
         'Если нужна дополнительная помощь, обратитесь к стойке обслуживания.',
       ],
     },
+    screen2: {
+      welcome: 'ДОБРО ПОЖАЛОВАТЬ',
+      eventsTitle: 'БЛИЖАЙШИЕ МЕРОПРИЯТИЯ',
+      stat: {
+        catalog: 'Изданий в каталоге',
+        visitors: 'Посетителей сегодня',
+        events: 'Активных мероприятий',
+      },
+      meta: { year: 'Год издания', pages: 'Страниц' },
+      empty: {
+        books: 'Пока нет новых поступлений.',
+        events: 'Пока нет ближайших мероприятий.',
+      },
+    },
     daysShort: ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'],
     days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
     monthsShort: ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'],
@@ -794,6 +844,20 @@ export const translations: Record<Lang, Translation> = {
         'Tap a book to see its summary, publication details and how many copies are on the shelf.',
         'If you need more help, please ask at the service desk.',
       ],
+    },
+    screen2: {
+      welcome: 'WELCOME',
+      eventsTitle: 'UPCOMING EVENTS',
+      stat: {
+        catalog: 'Titles in the catalogue',
+        visitors: 'Visitors today',
+        events: 'Active events',
+      },
+      meta: { year: 'Published', pages: 'Pages' },
+      empty: {
+        books: 'No new arrivals at the moment.',
+        events: 'No upcoming events at the moment.',
+      },
     },
     daysShort: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
     days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],

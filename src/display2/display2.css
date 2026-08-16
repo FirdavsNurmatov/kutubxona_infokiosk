@@ -1,0 +1,1926 @@
+/* ══════════════════════════════════════════════════════════════
+   /ekran2 — zaldagi katta LED ekran uchun signage pleyer.
+
+   O'lchov birligi: --u. Kenglikka emas, kadr balandligiga bog'langan
+   (16:9 da 1u = kenglikning 1% i). Ultra-keng ekranda (32:9) --u o'sib
+   ketmaydi, shuning uchun maket markazda "xavfsiz zona"da qoladi, chetlar
+   esa fon bezagiga beriladi — egri LED panel uchun aynan shu kerak.
+   ══════════════════════════════════════════════════════════════ */
+
+.d2-root {
+  --u: min(1vw, 1.7778vh);
+
+  /* Asosiy — to'q navy */
+  --sg-navy-900: #04111f;
+  --sg-navy-800: #061525;
+  --sg-navy-700: #071b2d;
+
+  /* Urg'u — oltin (ehtiyot bilan ishlatiladi) */
+  --sg-gold: #d9a441;
+  --sg-gold-soft: #f0cd8b;
+
+  /* Ikkilamchi — kutubxona ko'ki */
+  --sg-blue: #168fc4;
+  --sg-blue-bright: #20b8e8;
+
+  --sg-text: #eaf1fa;
+  --sg-muted: #8ba2c0;
+
+  --sg-serif: Georgia, 'Times New Roman', 'Liberation Serif', 'Noto Serif', serif;
+  /* Bo'limlar orasidagi krossfeyd */
+  --sg-fade: 900ms;
+  /* Karusel siljishi — sekin va bir tekis */
+  --sg-glide: 1400ms;
+  --sg-ease: cubic-bezier(0.32, 0.72, 0.28, 1);
+
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--sg-navy-900);
+  color: var(--sg-text);
+  cursor: none;
+}
+
+/* ══ FON QATLAMI ═══════════════════════════════════════════ */
+
+/*
+   Fon sahifalardan mustaqil: u almashmaydi, faqat bo'limga qarab
+   kayfiyatini o'zgartiradi. Hech qachon bosishga xalaqit bermaydi.
+*/
+.sg-backdrop {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  isolation: isolate;
+}
+
+/* Particle Waves (WebGL) — butun ekranni to'ldiradi */
+.sg-waves {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sg-waves canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* Qora canvas fonga qo'shiladi: qora — o'zgarishsiz, yorug' nuqtalar — yog'du */
+  mix-blend-mode: screen;
+}
+
+/* ══ OSMON — RANG MAYDONI ══════════════════════════════════ */
+
+/*
+   Fonning eng past qatlami. `SignageBackdrop` uni KITOBLARDAN tashqari
+   hamma bo'limga qo'yadi (u yerda butun fon generatsiya qilingan video).
+
+   Nima uchun kerak: zarrachalar canvas'i `mix-blend-mode: screen` bilan
+   ishlaydi, ya'ni u faqat **yorug'lik qo'shadi**. Ostida rang bo'lmasa,
+   qora ekranda bir hovuch nuqta qolади — maketdagi ko'k-oltin chuqurlik
+   yo'qoladi. Shu sababli rang aynan shu yerda, to'lqindan pastda beriladi.
+
+   Maketdagi kayfiyat: tepasi to'q navy, pastga tushgan sari kutubxona
+   ko'ki ochiladi, gorizontda esa nozik oltin yog'du turadi.
+*/
+.sg-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* gorizontdagi oltin yog'du — kam, lekin sahnaning iliqligi shundan */
+    radial-gradient(ellipse 68% 32% at 50% 80%, rgba(217, 164, 65, 0.18) 0%, transparent 72%),
+    /* chap va o'ngdan kirib kelgan ko'k oqim */
+    radial-gradient(ellipse 48% 60% at 6% 60%, rgba(22, 143, 196, 0.28) 0%, transparent 70%),
+    radial-gradient(ellipse 48% 60% at 94% 60%, rgba(22, 143, 196, 0.24) 0%, transparent 70%),
+    /* asos: tepasi qorong'i, pasti ochiqroq navy */
+    linear-gradient(to bottom, #030b16 0%, var(--sg-navy-800) 44%, #0a2137 100%);
+}
+
+/*
+   TADBIRLAR — bu sahifada osmon yagona fon (hero video yo'q), shuning uchun
+   rang to'liq kuchida beriladi. Kartochkalar ekranning o'rta belbog'ida
+   turadi: ko'k oqim ularni yon tomondan quchadi, oltin yog'du esa
+   pastdan ko'taradi va kartochkalarning to'q foni undan ajralib turadi.
+*/
+.sg-sky--events {
+  background:
+    /* yon tomonlardan kirgan ko'k oqim — kartochkalar belbog'i darajasida */
+    radial-gradient(ellipse 56% 62% at 0% 46%, rgba(22, 143, 196, 0.34) 0%, transparent 70%),
+    radial-gradient(ellipse 56% 62% at 100% 46%, rgba(22, 143, 196, 0.3) 0%, transparent 70%),
+    /* asos: eng pasti yana qorayadi — ko'rsatkichlar va bo'sh zona og'ir ko'rinmasin */
+    linear-gradient(to bottom, #030f1c 0%, #072034 40%, #082741 62%, #04121f 100%);
+}
+
+/*
+   Oltin yog'du alohida qatlamda va `screen` bilan qo'shiladi.
+
+   Sabab: shaffof sariqni ko'k ustiga oddiy qo'ysak, ranglar o'rtalashib
+   loyqa zaytun dog' hosil qiladi — aynan shu "iflos" tuyg'u beradi.
+   `screen` esa faqat yorug'lik qo'shadi, shuning uchun ko'k ko'kligicha
+   qoladi, ustidagi yog'du esa haqiqiy oltin bo'lib chiqadi.
+
+   Shakli — keng va yassi tasma: u kartochkalar ostidan o'tib, ularni
+   gorizontga "o'tqazadi", katta dog' bo'lib yoyilib ketmaydi.
+*/
+.sg-sky--events::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  background:
+    radial-gradient(ellipse 44% 7% at 50% 63%, rgba(214, 158, 74, 0.46) 0%, transparent 72%),
+    radial-gradient(ellipse 26% 20% at 50% 56%, rgba(196, 138, 58, 0.3) 0%, transparent 74%);
+}
+
+/* Kinematik sahna — faqat INTRO va AMBIENT sahifalarida DOM'da bo'ladi */
+/* ══ HERO SAHNALAR ═════════════════════════════════════════ */
+
+/*
+   INTRO va AMBIENT sahifalarining fonlari. Ikkalasi ham butun ekranni
+   egallaydi va hech qachon bitta sahifada uchrashmaydi:
+     • INTRO   — yoritilgan kutubxona binosi
+     • AMBIENT — ochiq kitob va bilim oqimi
+*/
+.d2-hero {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/*
+   KITOBLAR videosi deyarli asl o'lchamida, faqat biroz yuqoriga suriladi.
+
+   Ilgari halqa-pedestalni muqova ostiga olib kelish uchun video 1.33 ga
+   kattalashtirilardi — manba 1920×1080 bo'lgani uchun bu tasvirni sezilarli
+   xiralashtirardi. Endi pedestal vazifasini `.sg-book-track::after` bajaradi,
+   shuning uchun bunday katta cho'zish kerak emas.
+
+   Nega baribir ozgina `scale` bor: kadrni yuqoriga surganda pastda bo'sh
+   chiziq ochilib qolmasligi uchun zaxira kerak. 1.1 da har tomonda 5% ortiqcha
+   kadr bor, ya'ni vertikal zaxira ≈ 54 px; siljish esa 45 px — chekka toza
+   qoladi. Cho'zilish avvalgisidan uch barobar kam.
+   (Siljish `scale × foiz` ga teng: 1.1 × 3.8% ≈ 45 px.)
+*/
+.d2-hero--books .d2-hero-video {
+  transform: scale(1.1) translateY(-3.8%);
+  transform-origin: 50% 50%;
+}
+
+/* Higgsfield loop videosi — statik plita bilan bir xil kadrlanadi */
+.d2-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Plita bilan bir xil qirqim: ultra-keng panelda ham bino va kitob joyida qoladi */
+  object-position: 50% 60%;
+  pointer-events: none;
+}
+
+.d2-hero-plate {
+  position: absolute;
+  inset: 0;
+  background-repeat: no-repeat;
+  /* `cover` — tasvir hech qachon cho'zilmaydi, faqat kadrga to'ldiriladi */
+  background-size: cover;
+  will-change: transform;
+}
+
+/* Ultra-keng panelda kadr vertikal qirqiladi; pozitsiya shunday tanlanganki,
+   bino ham, uning oldidagi yaltiroq maydon ham ko'rinib qoladi. */
+.d2-hero-plate--arch {
+  background-image: url('/images/ekran2/plate-building.png');
+  background-position: 50% 62%;
+}
+
+.d2-hero-plate--book {
+  background-image: url('/images/ekran2/plate-book.png');
+  background-position: 50% 60%;
+}
+
+/* Matn o'qishli bo'lishi uchun parda. Binoning o'zi ochiq qoladi —
+   qorong'ilik yuqorida (soat uchun) va pastda (nom va ko'rsatkichlar uchun). */
+.d2-hero-scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/*
+   INTRO va KITOBLARDA parda yo'q: generatsiya qilingan videolar allaqachon
+   to'q va o'z kompozitsiyasiga ega, ustidan qo'yilgan qora qatlam esa ularni
+   xiralashtirardi. Matn o'qishliligi endi fon qoraytirish bilan emas,
+   yozuvning o'z soyasi bilan ta'minlanadi (pastdagi `text-shadow` larga
+   qarang) — bu fonni yorqin qoldiradi.
+*/
+
+/* KITOBLAR: video allaqachon qorong'i, parda faqat chetlarni yumshatadi */
+.d2-hero-scrim--books {
+  background: radial-gradient(
+    ellipse 62% 58% at 50% 52%,
+    transparent 0%,
+    rgba(2, 11, 22, 0.25) 62%,
+    rgba(2, 11, 22, 0.6) 100%
+  );
+}
+
+/*
+   TADBIRLAR: kartochkalar tasmasi kadrning o'rta belbog'ida turadi, video esa
+   aynan o'sha balandlikda eng band — to'lqinlar va zarrachalar shu yerdan
+   o'tadi. Parda o'sha yo'lakni bosadi, lekin chekkalarni ochiq qoldiradi:
+   binafsha oqim va o'ngdagi bino ko'rinib tursin.
+*/
+.d2-hero-scrim--events {
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(3, 8, 22, 0.5) 0%,
+      rgba(3, 8, 22, 0.12) 22%,
+      rgba(3, 8, 22, 0.62) 44%,
+      rgba(3, 8, 22, 0.66) 62%,
+      rgba(3, 8, 22, 0.22) 82%,
+      rgba(3, 8, 22, 0.55) 100%
+    ),
+    radial-gradient(ellipse 72% 46% at 50% 52%, rgba(2, 6, 18, 0.42) 0%, transparent 72%);
+}
+
+/* AMBIENT deyarli ochiq qoladi — bu raqamli san'at asari, matn yo'q */
+.d2-hero-scrim--ambient {
+  background: linear-gradient(
+    to bottom,
+    rgba(2, 11, 22, 0.42) 0%,
+    transparent 26%,
+    transparent 72%,
+    rgba(2, 11, 22, 0.44) 100%
+  );
+}
+
+/* ── INTRO: chiroqlar, tuman, nur va aks ─────────────────── */
+
+/*
+   Deraza chiroqlarining uch guruhi. Har biri fasadning o'z qismida turadi va
+   GSAP ularni mustaqil ritmda yoritadi — miltillash emas, tabiiy yoritish.
+*/
+.d2-windows {
+  position: absolute;
+  mix-blend-mode: screen;
+  filter: blur(calc(var(--u) * 0.55));
+  opacity: 0.5;
+  will-change: opacity;
+  pointer-events: none;
+}
+
+.d2-windows--left {
+  left: 29%;
+  top: 45%;
+  width: 15%;
+  height: 19%;
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    rgba(255, 198, 122, 0.34) 0%,
+    rgba(255, 172, 84, 0.1) 54%,
+    transparent 80%
+  );
+}
+
+.d2-windows--center {
+  left: 43%;
+  top: 40%;
+  width: 14%;
+  height: 24%;
+  background: radial-gradient(
+    ellipse at 50% 60%,
+    rgba(255, 206, 138, 0.4) 0%,
+    rgba(255, 176, 88, 0.12) 52%,
+    transparent 80%
+  );
+}
+
+.d2-windows--right {
+  left: 56%;
+  top: 45%;
+  width: 15%;
+  height: 19%;
+  background: radial-gradient(
+    ellipse at 50% 55%,
+    rgba(255, 198, 122, 0.34) 0%,
+    rgba(255, 172, 84, 0.1) 54%,
+    transparent 80%
+  );
+}
+
+/*
+   Ikki qavat tuman — binoni yopmaydi, faqat chuqurlik beradi.
+   Kuchli blur va past shaffoflik: tutunga emas, havoga o'xshaydi.
+*/
+.d2-haze {
+  position: absolute;
+  left: -8%;
+  right: -8%;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.d2-haze--far {
+  top: 38%;
+  height: 20%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(90, 142, 220, 0.13) 48%,
+    transparent 100%
+  );
+  filter: blur(calc(var(--u) * 1.6));
+}
+
+.d2-haze--near {
+  top: 58%;
+  height: 22%;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(214, 172, 104, 0.1) 46%,
+    transparent 100%
+  );
+  filter: blur(calc(var(--u) * 2));
+}
+
+/* Bino markazidan taraladigan nur — kamdan-kam ochiladi va sekin so'nadi */
+.d2-rays {
+  position: absolute;
+  left: 50%;
+  bottom: 42%;
+  width: 54%;
+  height: 40%;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  opacity: 0;
+  mix-blend-mode: screen;
+  filter: blur(calc(var(--u) * 0.9));
+  pointer-events: none;
+  background: repeating-conic-gradient(
+    from 200deg at 50% 100%,
+    rgba(255, 206, 138, 0.1) 0deg 1.6deg,
+    transparent 1.6deg 7deg
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 50% 100% at 50% 100%,
+    #000 4%,
+    rgba(0, 0, 0, 0.34) 44%,
+    transparent 78%
+  );
+  mask-image: radial-gradient(
+    ellipse 50% 100% at 50% 100%,
+    #000 4%,
+    rgba(0, 0, 0, 0.34) 44%,
+    transparent 78%
+  );
+  will-change: opacity;
+}
+
+/* Bino ostidagi yaltiroq maydondagi aks */
+.d2-reflection {
+  position: absolute;
+  left: 50%;
+  top: 66%;
+  width: 46%;
+  height: 22%;
+  transform: translateX(-50%);
+  transform-origin: 50% 0;
+  background: radial-gradient(
+    ellipse 50% 60% at 50% 20%,
+    rgba(255, 190, 110, 0.16) 0%,
+    rgba(120, 168, 235, 0.07) 46%,
+    transparent 76%
+  );
+  filter: blur(calc(var(--u) * 1.1));
+  mix-blend-mode: screen;
+  opacity: 0.4;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Havodagi chang — oldingi plan */
+.d2-dust {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ── AMBIENT: kitobdan taralayotgan nur ──────────────────── */
+
+/*
+   Varaqlarning yuqori qirrasi bo'ylab sekin suriladigan iliq yorug'lik.
+   Kitob qimirlamaydi — faqat undagi yorug'lik siljiydi.
+*/
+.d2-page-light {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  width: 34%;
+  height: 10%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    rgba(255, 216, 152, 0.3) 0%,
+    rgba(255, 190, 110, 0.1) 46%,
+    transparent 76%
+  );
+  filter: blur(calc(var(--u) * 0.9));
+  mix-blend-mode: screen;
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/*
+   Nur dastasining tayanch nuqtasi kitob markaziga to'g'ri keladi
+   (ekran balandligining ~66% i), shuning uchun `bottom: 34%`.
+*/
+.d2-book-burst {
+  position: absolute;
+  left: 50%;
+  bottom: 34%;
+  width: 46%;
+  height: 34%;
+  transform: translateX(-50%);
+  transform-origin: 50% 100%;
+  background: radial-gradient(
+    ellipse 40% 100% at 50% 100%,
+    rgba(255, 208, 136, 0.3) 0%,
+    rgba(255, 178, 88, 0.1) 44%,
+    transparent 76%
+  );
+  filter: blur(calc(var(--u) * 0.5));
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+/* Yelpig'ich shaklidagi ingichka nurlar */
+.d2-book-burst::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-conic-gradient(
+    from 200deg at 50% 100%,
+    rgba(255, 206, 138, 0.12) 0deg 1.1deg,
+    transparent 1.1deg 5.5deg
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 46% 100% at 50% 100%,
+    #000 6%,
+    rgba(0, 0, 0, 0.4) 46%,
+    transparent 80%
+  );
+  mask-image: radial-gradient(
+    ellipse 46% 100% at 50% 100%,
+    #000 6%,
+    rgba(0, 0, 0, 0.4) 46%,
+    transparent 80%
+  );
+}
+
+.d2-book-glow {
+  position: absolute;
+  left: 50%;
+  top: 66%;
+  width: 40%;
+  height: 22%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse 46% 50% at 50% 50%,
+    rgba(255, 198, 114, 0.34) 0%,
+    rgba(255, 172, 72, 0.1) 50%,
+    transparent 78%
+  );
+  filter: blur(calc(var(--u) * 0.7));
+  mix-blend-mode: screen;
+  will-change: transform, opacity;
+}
+
+/* Harflar, yorug'lik izlari va uchqunlar — bitta canvas */
+.d2-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.sg-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 78% 74% at 50% 48%,
+    transparent 48%,
+    rgba(1, 6, 14, 0.72) 100%
+  );
+}
+
+/* ══ PLEYER SAHNASI ════════════════════════════════════════ */
+
+/*
+   Ekranda ayni paytda faqat BITTA sahifa turadi: eski sahifa so'nadi,
+   DOM'dan chiqariladi, keyin yangisi ochiladi. Shuning uchun bir
+   sahifaning elementi boshqasida qolib ketishi mumkin emas.
+*/
+.sg-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  /* Bu yerda ham `fill-mode` yo'q — sahifa har qanday holatda ko'rinadi */
+  animation: sg-page-in 900ms var(--sg-ease);
+}
+
+.sg-stage.is-leaving {
+  animation: sg-page-out 700ms var(--sg-ease) both;
+}
+
+.sg-stage--video {
+  background: #000;
+}
+
+@keyframes sg-page-in {
+  from {
+    opacity: 0;
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sg-page-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.994);
+  }
+}
+
+/* ══ BO'LIM YORLIG'I (01 / 02 / 03) ════════════════════════ */
+
+/*
+   Maketdagi yorliq: oltin serif raqam + kichik harfli yozuv.
+   Uchala sahifada bir xil joyda — kadrning yuqori chap burchagida.
+*/
+.sg-label {
+  position: absolute;
+  top: calc(var(--u) * 2.6);
+  left: max(calc(var(--u) * 3), calc(50vw - var(--u) * 58));
+  z-index: 3;
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--u) * 1.1);
+}
+
+.sg-label-index {
+  font-family: var(--sg-serif);
+  font-size: calc(var(--u) * 1.55);
+  line-height: 1;
+  color: var(--sg-gold);
+  letter-spacing: 0.02em;
+}
+
+.sg-label-text {
+  font-size: calc(var(--u) * 0.86);
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(234, 241, 250, 0.9);
+  text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1.2) rgba(0, 8, 24, 0.85);
+}
+
+/* ══ 01 — INTRO ════════════════════════════════════════════ */
+
+/*
+   Maketdagi kompozitsiya: nom chapda, soat va ko'rsatkichlar o'ngda,
+   o'rtada esa bino uchun bo'sh joy qoladi.
+*/
+.sg-intro {
+  position: relative;
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  gap: calc(var(--u) * 4);
+  padding: calc(var(--u) * 7.5) max(calc(var(--u) * 3), calc(50vw - var(--u) * 58)) 0;
+}
+
+/* ── Chap ustun: emblema va nom ──────────────────────────── */
+
+.sg-intro-brand {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 1.8);
+}
+
+.sg-intro-logo {
+  width: calc(var(--u) * 5.6);
+  height: calc(var(--u) * 5.6);
+  flex-shrink: 0;
+  /* Ikki qavat soya: emblema yorug' fonda ham ajralib turadi */
+  filter:
+    drop-shadow(0 0 calc(var(--u) * 0.6) rgba(2, 11, 22, 0.95))
+    drop-shadow(0 0 calc(var(--u) * 2) rgba(217, 164, 65, 0.45));
+}
+
+.sg-intro-title {
+  margin: 0;
+  font-family: var(--sg-serif);
+  font-size: calc(var(--u) * 2.15);
+  font-weight: 400;
+  line-height: 1.18;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #f6faff;
+  text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1.6) rgba(0, 8, 24, 0.92);
+}
+
+.sg-intro-tagline {
+  margin: calc(var(--u) * 0.7) 0 0;
+  font-size: calc(var(--u) * 0.82);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--sg-gold);
+}
+
+/* ── O'ng ustun: soat, sana, ko'rsatkichlar ──────────────── */
+
+.sg-intro-side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  /* Yorliq bilan bir sathda boshlanadi */
+  margin-top: calc(var(--u) * -4.4);
+}
+
+.sg-intro-time {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 0.8);
+}
+
+/* Maketdagi soat belgisi — ingichka doira va ikki strelka */
+.sg-clock-mark {
+  position: relative;
+  width: calc(var(--u) * 1.4);
+  height: calc(var(--u) * 1.4);
+  border: calc(var(--u) * 0.09) solid rgba(234, 241, 250, 0.8);
+  border-radius: 50%;
+}
+
+.sg-clock-mark::before,
+.sg-clock-mark::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: rgba(234, 241, 250, 0.85);
+}
+
+.sg-clock-mark::before {
+  width: calc(var(--u) * 0.38);
+  height: calc(var(--u) * 0.08);
+  transform: translateY(-50%);
+}
+
+.sg-clock-mark::after {
+  width: calc(var(--u) * 0.08);
+  height: calc(var(--u) * 0.44);
+  transform: translate(-50%, -100%);
+}
+
+.sg-clock {
+  font-size: calc(var(--u) * 2.5);
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(246, 250, 255, 0.95);
+}
+
+.sg-intro-date {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: calc(var(--u) * 0.16);
+  margin-top: calc(var(--u) * 0.7);
+  font-size: calc(var(--u) * 0.72);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(234, 241, 250, 0.72);
+}
+
+.sg-intro-day {
+  color: var(--sg-muted);
+}
+
+/* Ko'rsatkichlar — maketdagidek ikonka, qiymat, izoh va ajratgichlar */
+.sg-intro-stats {
+  display: flex;
+  align-items: stretch;
+  margin-top: calc(var(--u) * 2.4);
+}
+
+.sg-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--u) * 0.34);
+  padding: 0 calc(var(--u) * 2.2);
+  text-align: center;
+}
+
+.sg-stat + .sg-stat {
+  border-left: 1px solid rgba(217, 164, 65, 0.24);
+}
+
+.sg-stat-icon {
+  width: calc(var(--u) * 1.8);
+  height: calc(var(--u) * 1.8);
+  color: var(--sg-gold);
+}
+
+.sg-stat-value {
+  font-size: calc(var(--u) * 1.4);
+  font-weight: 500;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--sg-gold-soft);
+}
+
+.sg-stat-label {
+  font-size: calc(var(--u) * 0.64);
+  line-height: 1.35;
+  color: var(--sg-muted);
+  max-width: calc(var(--u) * 7);
+}
+
+/* ══ Bo'lim sarlavhasi (KITOBLAR / TADBIRLAR) ══════════════ */
+
+.sg-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: calc(var(--u) * 2.6) 0 calc(var(--u) * 3.4);
+}
+
+/*
+   KITOBLAR: maketda tanlangan kitob oltin halqa-pedestal ustida turadi.
+   Generatsiya qilingan videoda halqalar kadrning pastida (y≈43u dan)
+   joylashgan, shuning uchun video biroz kattalashtirilib yuqoriga suriladi:
+   halqalar muqovalar ostiga chiqadi, pastda esa nom uchun toza joy qoladi.
+*/
+.sg-stage--books .sg-section {
+  padding-bottom: calc(var(--u) * 4);
+}
+
+/*
+   Maketdagi joylashuv: karusel markazdan chapga suriladi, tanlangan kitob
+   haqidagi ma'lumot esa uning o'ng yonida panel bo'lib turadi. O'ngdagi
+   muqovalar panelga joy berish uchun uzoqroqqa suriladi — uyalar nosimmetrik.
+
+   Siljish qiymati panelniki bilan **birga** o'zgarishi shart (`--split-shift`):
+   panel trek ichida emas, karuselga nisbatan joylashgan, shuning uchun faqat
+   bittasini surish muqova bilan matn orasidagi masofani buzadi.
+   Chekka qiymat o'ngdagi eng chetki muqova bilan cheklangan — u kadrdan
+   chiqib ketmasligi kerak.
+*/
+/*
+   Ikkita bog'liq sozlagich. Ular birga o'zgaradi, chunki bittasi ikkinchisiga
+   joy ochadi:
+
+     --split-shift — butun kompozitsiya markazdan qancha chapga suriladi.
+                     Kichrayganda hamma narsa o'ngga, videodagi oltin halqa
+                     ichiga siljiydi (halqa 490…1426 px oralig'ida turadi).
+     --panel-w     — ma'lumot panelining eni.
+
+   Nega birga: kompozitsiyani o'ngga surganda o'ngdagi muqovalar kadr
+   chekkasiga tiqiladi. Ularni ichkariga tortish kerak, bu esa panel bilan
+   to'qnashuvga olib keladi — shuning uchun panel ham torayadi. Panel keng
+   qolsa, kompozitsiya joyidan qimirlay olmaydi.
+*/
+.sg-carousel--split {
+  --split-shift: 10;
+  --panel-w: 23.5;
+}
+
+.sg-carousel--split .sg-book-track {
+  transform: translateX(calc(var(--u) * var(--split-shift) * -1));
+}
+
+.sg-carousel--split .sg-book[data-side='l'][data-slot='1'] {
+  --slot-x: 17;
+}
+
+.sg-carousel--split .sg-book[data-side='l'][data-slot='2'] {
+  --slot-x: 28;
+}
+
+.sg-carousel--split .sg-book[data-side='l'][data-slot='3'] {
+  --slot-x: 34;
+}
+
+/*
+   O'ngdagi juftlik: qiymatlar kadr chekkasi bilan cheklangan. Eng chetki
+   muqovaning o'ng qirrasi 1920 da ~1850 px da tugaydi — kadrdan chiqib
+   ketmaydi, lekin chekkaga ham yopishmaydi.
+*/
+.sg-carousel--split .sg-book[data-side='r'][data-slot='1'] {
+  --slot-x: 43;
+}
+
+.sg-carousel--split .sg-book[data-side='r'][data-slot='2'] {
+  --slot-x: 54;
+}
+
+.sg-carousel--split .sg-book[data-side='r'][data-slot='3'] {
+  --slot-x: 76;
+}
+
+/*
+   Panel — muqovaning o'ng yonida, vertikal markazda.
+
+   Chap chekkasi trek siljishidan hosil qilinadi: qahramon muqovaning markazi
+   `-split-shift`, yarim eni 9.5u, undan keyin 2.5u nafas — jami `12u - siljish`.
+   Shu sababli siljishni o'zgartirganda panel o'zi ergashadi.
+*/
+.sg-carousel--split .sg-focus-info {
+  position: absolute;
+  left: calc(50% - var(--u) * calc(var(--split-shift) - 12));
+  top: 50%;
+  transform: translateY(-50%);
+  align-items: flex-start;
+  gap: calc(var(--u) * 0.55);
+  width: calc(var(--u) * var(--panel-w));
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  animation: sg-panel-in 900ms var(--sg-ease);
+}
+
+.sg-carousel--split .sg-focus-title,
+.sg-carousel--split .sg-focus-author,
+.sg-carousel--split .sg-focus-genre {
+  text-align: left;
+}
+
+.sg-carousel--split .sg-focus-title {
+  font-size: calc(var(--u) * 2);
+  -webkit-line-clamp: 3;
+}
+
+/* Janr sarlavhadan yuqorida turadi — maketdagi tartib */
+.sg-carousel--split .sg-focus-genre {
+  order: -1;
+  margin: 0;
+  font-size: calc(var(--u) * 0.66);
+}
+
+/* Qisqa tavsif — uzoqdan o'qish uchun uch qatordan oshmaydi */
+.sg-focus-summary {
+  margin: calc(var(--u) * 0.4) 0 0;
+  font-size: calc(var(--u) * 0.82);
+  line-height: 1.55;
+  color: rgba(206, 220, 240, 0.82);
+  text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1) rgba(0, 6, 18, 0.9);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Nashr yili va sahifalar soni */
+.sg-carousel--split .sg-focus-meta {
+  display: flex;
+  gap: calc(var(--u) * 2.4);
+  margin-top: calc(var(--u) * 1);
+  padding-top: calc(var(--u) * 1);
+  border-top: 1px solid rgba(217, 164, 65, 0.22);
+}
+
+.sg-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--u) * 0.12);
+}
+
+.sg-meta-value {
+  font-size: calc(var(--u) * 1.05);
+  font-weight: 600;
+  color: var(--sg-gold-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.sg-meta-label {
+  font-size: calc(var(--u) * 0.6);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--sg-muted);
+}
+
+@keyframes sg-panel-in {
+  from {
+    opacity: 0;
+    transform: translate(calc(var(--u) * -1), -50%);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
+}
+
+
+/*
+   Xavfsiz zona: ultra-keng LED panelda ham matn markazdan uzoqlashmaydi.
+   Sarlavha chapga tekislangan — markazda fon binosi turadi, ular
+   to'qnashmasligi kerak.
+*/
+.sg-section-title {
+  width: min(100% - var(--u) * 8, calc(var(--u) * 116));
+  margin: 0 auto;
+  font-size: calc(var(--u) * 1.35);
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(234, 241, 250, 0.88);
+  text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1.2) rgba(0, 8, 24, 0.85);
+}
+
+/* Sarlavha ostidagi nozik oltin chiziq */
+.sg-section-title::after {
+  content: '';
+  display: block;
+  width: calc(var(--u) * 6);
+  height: 1px;
+  margin: calc(var(--u) * 1) 0 0;
+  background: linear-gradient(to right, var(--sg-gold), transparent);
+}
+
+.sg-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  font-size: calc(var(--u) * 1.15);
+  letter-spacing: 0.06em;
+  color: var(--sg-muted);
+}
+
+/* ══ KARUSEL — UMUMIY ══════════════════════════════════════ */
+
+/*
+   Kitoblar va tadbirlar sahifalari bitta vizual falsafaga bo'ysunadi:
+   markazdagi element qahramon, qolganlari ko'zni unga olib boradi.
+
+   Uyalarning ko'rinishi `[data-slot]` orqali beriladi:
+
+     uya      0        1        2        3*
+     masshtab 1.00     0.84     0.72     0.62
+     shaffof. 1.00     0.55     0.35     0.22*
+     blur     0px      1px      2px      3px
+
+   * uchinchi juftlik faqat ultra-keng panelda ochiladi.
+
+   Masshtab va blur faqat rasmga tegadi — yozuv aniq qoladi, shuning uchun
+   chetdagi elementlarning nomi ham uzoqdan o'qiladi.
+*/
+
+.sg-carousel {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 0;
+}
+
+.sg-book-track,
+.sg-event-track {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+   Tanlangan kitob ostidagi yog'du — "prожektor dog'i".
+
+   Nega alohida qatlam kerak: halqa-pedestal generatsiya qilingan videoning
+   ichiga pishirilgan, ya'ni na yorqinligini, na o'rnini keyin boshqarib
+   bo'lmaydi. Bu element esa **trekning ichida** turadi — trek qanchaga
+   surilsa, yog'du ham xuddi shunchaga suriladi, shuning uchun u markazdagi
+   muqova ostida abadiy qulflangan bo'lib qoladi (hisob-kitob talab qilmaydi).
+
+   `bottom` manfiy: dog' muqova taglik chizig'idan biroz pastga chiqadi,
+   shunda u kitob ostidagi pol yorug'ligiday o'qiladi, halqa bo'lib emas.
+   `z-index: 0` — muqovalar (1…5) undan yuqorida qoladi.
+*/
+.sg-book-track::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--u) * -1.4);
+  z-index: 0;
+  width: calc(var(--u) * 42);
+  height: calc(var(--u) * 9.5);
+  transform: translateX(-50%);
+  pointer-events: none;
+  background: radial-gradient(
+    closest-side ellipse,
+    rgba(255, 224, 163, 0.62) 0%,
+    rgba(232, 178, 88, 0.34) 40%,
+    rgba(217, 164, 65, 0.12) 66%,
+    transparent 100%
+  );
+  filter: blur(calc(var(--u) * 0.6));
+}
+
+.sg-book,
+.sg-event {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Uyaning standart qiymatlari — quyida [data-slot] bo'yicha almashtiriladi */
+  --slot-x: 0;
+  --slot-scale: 1;
+  --slot-opacity: 1;
+  --slot-blur: 0px;
+  --slot-dir: 1;
+  transform: translateX(calc(-50% + var(--slot-x) * var(--slot-dir) * var(--u)));
+  opacity: var(--slot-opacity);
+  transition:
+    transform var(--sg-glide) var(--sg-ease),
+    opacity var(--sg-glide) ease;
+  will-change: transform, opacity;
+}
+
+.sg-book-media,
+.sg-event-media {
+  position: relative;
+  transform: scale(var(--slot-scale));
+  transform-origin: 50% 100%;
+  filter: blur(var(--slot-blur));
+  transition:
+    transform var(--sg-glide) var(--sg-ease),
+    filter var(--sg-glide) ease;
+  will-change: transform, filter;
+}
+
+.sg-book-media img,
+.sg-book-media .sg-media-fallback,
+.sg-event-media img,
+.sg-event-media .sg-media-fallback {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #0a1526;
+  display: block;
+  border-radius: calc(var(--u) * 0.22);
+  /* Ramka yo'q, soya esa juda yumshoq — kartochka emas, eksponat */
+  box-shadow: 0 calc(var(--u) * 1.4) calc(var(--u) * 3) rgba(0, 4, 14, 0.72);
+}
+
+/* Markazdagi element ortidagi nozik oltin yog'du */
+.sg-book-glow,
+.sg-event-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 172%;
+  height: 132%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    rgba(217, 164, 65, 0.24) 0%,
+    rgba(32, 184, 232, 0.06) 48%,
+    transparent 74%
+  );
+  opacity: 0;
+  transition: opacity var(--sg-glide) ease;
+}
+
+.sg-book.is-focus .sg-book-glow,
+.sg-event.is-focus .sg-event-glow {
+  opacity: 1;
+}
+
+.sg-book.is-focus .sg-book-media img,
+.sg-event.is-focus .sg-event-media img {
+  box-shadow:
+    0 calc(var(--u) * 1.8) calc(var(--u) * 4) rgba(0, 4, 14, 0.8),
+    0 0 calc(var(--u) * 3) rgba(217, 164, 65, 0.16);
+}
+
+/* ── Uyalar jadvali ──────────────────────────────────────── */
+
+.sg-book[data-slot='1'],
+.sg-event[data-slot='1'] {
+  --slot-scale: 0.84;
+  --slot-opacity: 0.55;
+  --slot-blur: 1px;
+  z-index: 4;
+}
+
+.sg-book[data-slot='2'],
+.sg-event[data-slot='2'] {
+  --slot-scale: 0.72;
+  --slot-opacity: 0.35;
+  --slot-blur: 2px;
+  z-index: 3;
+}
+
+/*
+   KITOBLAR: yon muqovalar ancha kichik — tanlangani yaqqol ajralib tursin.
+
+   O'lcham bu yerda faqat ierarxiya emas, **oraliq** masalasi ham: muqovalar
+   bir xatorda turgani uchun har bir foiz kenglik qo'shni bilan orasidagi
+   nafasdan olinadi. 0.62/0.48 da yon muqovalar bir-biriga tegib, hatto
+   qahramon muqova ostiga kirib ketardi — shuning uchun ular kichraytirildi.
+*/
+.sg-book[data-slot='1'] {
+  --slot-scale: 0.52;
+  --slot-opacity: 0.58;
+}
+
+.sg-book[data-slot='2'] {
+  --slot-scale: 0.38;
+  --slot-opacity: 0.34;
+}
+
+.sg-book[data-slot='3'] {
+  --slot-scale: 0.4;
+}
+
+.sg-book[data-slot='3'],
+.sg-event[data-slot='3'] {
+  --slot-scale: 0.62;
+  --slot-opacity: 0;
+  --slot-blur: 3px;
+  z-index: 2;
+}
+
+.sg-book[data-slot='4'],
+.sg-event[data-slot='4'] {
+  --slot-scale: 0.56;
+  --slot-opacity: 0;
+  --slot-blur: 3px;
+  z-index: 1;
+}
+
+.sg-book[data-slot='0'],
+.sg-event[data-slot='0'] {
+  z-index: 5;
+}
+
+/* Markazdagi elementning kichik yozuvi so'nadi — u pastdagi katta blokda */
+.sg-book-text,
+.sg-event-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* Yozuv ham uya bilan birga torayadi, qo'shnisiga kirib ketmasin */
+  width: calc(100% * var(--slot-scale));
+  transition: opacity var(--sg-glide) ease;
+}
+
+.sg-book.is-focus .sg-book-text,
+.sg-event.is-focus .sg-event-text {
+  opacity: 0;
+}
+
+/* ══ 02 — KITOBLAR ═════════════════════════════════════════ */
+
+/*
+   Muqovalar haqiqiy nashrlardan olingan va ularning nisbati har xil
+   (0.62…0.74). Shuning uchun `contain`: muqova san'ati qirqilmaydi, faqat
+   ramka ichida to'liq ko'rinadi. Bo'sh joy to'q navy bilan to'ldiriladi.
+*/
+.sg-book-media img {
+  object-fit: contain;
+}
+
+/* Muqova: 1920 da ~422×634 px — ekranning haqiqiy qahramoni */
+.sg-book-track {
+  height: calc(var(--u) * 38.5);
+}
+
+.sg-book {
+  width: calc(var(--u) * 19);
+}
+
+.sg-book-media {
+  width: calc(var(--u) * 19);
+  height: calc(var(--u) * 28.5);
+}
+
+.sg-book[data-slot='1'] {
+  --slot-x: 24;
+}
+
+.sg-book[data-slot='2'] {
+  --slot-x: 42;
+}
+
+.sg-book[data-slot='3'] {
+  --slot-x: 56;
+}
+
+.sg-book[data-slot='4'] {
+  --slot-x: 66;
+}
+
+.sg-book-text {
+  gap: calc(var(--u) * 0.3);
+  margin-top: calc(var(--u) * 1.3);
+}
+
+/*
+   Yon muqovalarning yozuvi endi to'g'ridan-to'g'ri video ustida turadi
+   (pastdagi qoraytiruvchi qatlam olib tashlandi). Shuning uchun o'qishlilik
+   yozuvning o'z soyasidan keladi: soya faqat harflar atrofida ishlaydi,
+   fonni esa qoraytirmaydi.
+*/
+.sg-book-title {
+  font-size: calc(var(--u) * 0.92);
+  line-height: 1.26;
+  letter-spacing: 0.02em;
+  color: rgba(234, 241, 250, 0.82);
+  text-shadow:
+    0 calc(var(--u) * 0.08) calc(var(--u) * 0.5) rgba(1, 5, 14, 0.95),
+    0 0 calc(var(--u) * 1.1) rgba(1, 5, 14, 0.8);
+  text-align: center;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Janr oltin rangda va aynan oltin halqalar ustiga tushadi — soyasiz
+   yo'qolib ketadi, shuning uchun u sarlavhadan ham qattiqroq soya oladi */
+.sg-book-genre {
+  font-size: calc(var(--u) * 0.6);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(226, 176, 84, 0.78);
+  text-shadow:
+    0 calc(var(--u) * 0.06) calc(var(--u) * 0.4) rgba(1, 5, 14, 0.98),
+    0 0 calc(var(--u) * 0.9) rgba(1, 5, 14, 0.9);
+}
+
+/* ── Fokus halqasi (Vanta RINGS) ─────────────────────────── */
+
+/*
+   Halqalar butun ekran foni emas: ular faqat markazdagi muqova ortida,
+   doira ichida chiziladi va chetlariga qarab so'nadi.
+*/
+.sg-halo-slot {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--u) * -1);
+  width: calc(var(--u) * 46);
+  height: calc(var(--u) * 46);
+  transform: translateX(-50%);
+  z-index: 0;
+  pointer-events: none;
+  list-style: none;
+}
+
+.sg-halo {
+  position: absolute;
+  inset: 0;
+  /* Past shaffoflik — halqa urg'u beradi, e'tiborni tortib olmaydi */
+  opacity: 0.3;
+  filter: saturate(0.24) brightness(1.05);
+  mix-blend-mode: screen;
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 18%,
+    rgba(0, 0, 0, 0.45) 48%,
+    transparent 74%
+  );
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    #000 18%,
+    rgba(0, 0, 0, 0.45) 48%,
+    transparent 74%
+  );
+}
+
+.sg-halo canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Ko'k halqalar ustidagi nozik oltin urg'u */
+.sg-halo::after {
+  content: '';
+  position: absolute;
+  inset: 16%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(217, 164, 65, 0.12) 0%,
+    rgba(217, 164, 65, 0.04) 44%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Tadbirlar sahifasida Vanta yo'q — o'rniga sokin oltin aura */
+.sg-halo-slot--event {
+  width: calc(var(--u) * 46);
+  height: calc(var(--u) * 30);
+  bottom: calc(var(--u) * 1.5);
+}
+
+.sg-focus-aura {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 50%,
+    rgba(217, 164, 65, 0.14) 0%,
+    rgba(22, 143, 196, 0.06) 46%,
+    transparent 72%
+  );
+  filter: blur(calc(var(--u) * 0.8));
+  animation: sg-aura 9s ease-in-out infinite;
+}
+
+/* Markazdagi element atrofidagi "nafas" — sezilmas darajada */
+@keyframes sg-aura {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+}
+
+/* ── Markazdagi element haqidagi katta blok ──────────────── */
+
+.sg-focus-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(var(--u) * 0.5);
+  margin-top: calc(var(--u) * 2.4);
+  padding: 0 calc(var(--u) * 12);
+  /* Qator uzunligiga shift: ultra-keng panelda `padding` yetarli emas —
+     u foizga emas, `--u` ga bog'langan, shuning uchun kadr kengaygan sari
+     matn qatori cho'zilib ketardi. Uzoqdan o'qish uchun qator qisqa bo'lishi
+     kerak, shuning uchun kenglik yuqoridan cheklanadi. */
+  max-width: calc(var(--u) * 46);
+  text-align: center;
+  /* `fill-mode` ataylab yo'q: agar animatsiya biror sababga ko'ra
+     ishlamay qolsa, blok o'zining tabiiy (ko'rinadigan) holatida qoladi.
+     Axborot ekranida matnning yo'qolib qolishi qabul qilib bo'lmas xato. */
+  animation: sg-rise 1000ms var(--sg-ease);
+}
+
+.sg-focus-title {
+  margin: 0;
+  font-family: var(--sg-serif);
+  font-size: calc(var(--u) * 2.2);
+  line-height: 1.14;
+  letter-spacing: 0.03em;
+  color: #f6faff;
+  text-shadow: 0 calc(var(--u) * 0.15) calc(var(--u) * 1.4) rgba(0, 6, 18, 0.95);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sg-focus-author {
+  margin: 0;
+  font-size: calc(var(--u) * 1);
+  letter-spacing: 0.05em;
+  color: rgba(234, 241, 250, 0.82);
+  text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1) rgba(0, 6, 18, 0.9);
+}
+
+.sg-focus-genre {
+  margin: calc(var(--u) * 0.2) 0 0;
+  font-size: calc(var(--u) * 0.68);
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--sg-gold);
+}
+
+/* Tadbir uchun: nom ostidagi oltin chiziq va bitta qatordagi tafsilot */
+.sg-focus-rule {
+  width: calc(var(--u) * 5);
+  height: 1px;
+  margin: calc(var(--u) * 0.5) 0;
+  background: linear-gradient(to right, transparent, var(--sg-gold), transparent);
+}
+
+.sg-focus-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 1.2);
+  margin: 0;
+  font-size: calc(var(--u) * 0.92);
+  letter-spacing: 0.08em;
+  color: rgba(234, 241, 250, 0.85);
+}
+
+.sg-focus-meta span {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 0.4);
+}
+
+.sg-focus-meta svg {
+  width: calc(var(--u) * 0.9);
+  height: calc(var(--u) * 0.9);
+  color: var(--sg-gold);
+}
+
+.sg-focus-sep {
+  width: calc(var(--u) * 0.28);
+  height: calc(var(--u) * 0.28);
+  border-radius: 50%;
+  background: rgba(217, 164, 65, 0.55);
+}
+
+@keyframes sg-rise {
+  from {
+    opacity: 0;
+    transform: translateY(calc(var(--u) * 1.2));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ══ 03 — TADBIRLAR ════════════════════════════════════════ */
+
+/*
+   Maketdagi gorizontal kartochka:
+
+       sana │ rasm │ nom + joy
+
+   Markazdagisi oltin ramka va yumshoq yog'du oladi; qolganlari sokin to'q
+   panel bo'lib qoladi. Barcha ma'lumot kartochkaning ichida — pastda alohida
+   katta blok yo'q.
+*/
+.sg-event-track {
+  height: calc(var(--u) * 14);
+}
+
+.sg-event {
+  width: calc(var(--u) * 32);
+  /* Kartochkalar bir sathda markazlashadi (kitoblardagidek pastki tayanch emas) */
+  bottom: auto;
+  top: 50%;
+  margin-top: calc(var(--u) * -5.8);
+}
+
+.sg-event-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: calc(var(--u) * 6.8) calc(var(--u) * 11) minmax(0, 1fr);
+  align-items: stretch;
+  width: 100%;
+  height: calc(var(--u) * 9.4);
+  overflow: hidden;
+  border-radius: calc(var(--u) * 0.5);
+  /*
+     Fon endi jonli video: binoning yorug' chizmasi va zarracha oqimlari
+     kartochka ostidan o'tadi. Shuning uchun panel qorayroq va qattiqroq —
+     aks holda chetdagi kartochka fonga singib, chegarasi yo'qoladi.
+  */
+  background: linear-gradient(180deg, rgba(9, 20, 44, 0.88), rgba(4, 11, 28, 0.8));
+  border: 1px solid rgba(134, 156, 224, 0.2);
+  transform: scale(var(--slot-scale));
+  transform-origin: 50% 50%;
+  filter: blur(var(--slot-blur));
+  transition:
+    transform var(--sg-glide) var(--sg-ease),
+    filter var(--sg-glide) ease,
+    border-color var(--sg-glide) ease,
+    box-shadow var(--sg-glide) ease,
+    height var(--sg-glide) var(--sg-ease);
+}
+
+/* ── Markazdagi tadbir: oltin–siyohrang gradient ramka ───────
+   Ramka uch qatlamdan yig'iladi, har birining o'z vazifasi bor:
+
+     ::after  — ichkaridan qirg'oqni quchgan **xira** gradient tasma
+                (yumshoq yog'du, ramkani "yonayotgan" qiladi)
+     ::before — o'sha gradientning **tiniq** ipi (aniq chegara)
+     box-shadow — tashqariga chiqqan oltin va siyohrang bulut
+
+   Nega `border` emas: CSS ramkasi bitta tekis rang oladi, gradient qabul
+   qilmaydi. Shuning uchun to'rtburchak gradient bilan bo'yaladi va o'rtasi
+   `mask` bilan o'yib olinadi — qolgani aynan ramka bo'lib qoladi.
+   `padding` ramka qalinligini belgilaydi.
+*/
+.sg-event.is-focus .sg-event-card {
+  height: calc(var(--u) * 11.6);
+  border: 0;
+  background: linear-gradient(180deg, rgba(13, 21, 52, 0.86), rgba(5, 10, 28, 0.76));
+  box-shadow:
+    0 0 calc(var(--u) * 2.2) rgba(224, 172, 74, 0.36),
+    0 0 calc(var(--u) * 5.5) rgba(124, 76, 214, 0.34),
+    0 calc(var(--u) * 0.7) calc(var(--u) * 3.2) rgba(2, 5, 18, 0.62),
+    inset 0 0 calc(var(--u) * 3.4) rgba(217, 164, 65, 0.06);
+}
+
+/* Ikkala qatlam ham bir xil gradientdan foydalanadi — burchagi va
+   to'xtashlari mos, shuning uchun xira tasma tiniq ipning aynan ostiga tushadi */
+.sg-event.is-focus .sg-event-card::before,
+.sg-event.is-focus .sg-event-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgba(255, 227, 163, 0.96) 0%,
+    rgba(217, 164, 65, 0.9) 16%,
+    rgba(150, 96, 226, 0.86) 42%,
+    rgba(104, 62, 204, 0.82) 56%,
+    rgba(217, 164, 65, 0.9) 82%,
+    rgba(255, 233, 176, 0.96) 100%
+  );
+  /* O'rtasini o'yib tashlash: tashqi to'rtburchakdan content-box ayiriladi */
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+}
+
+/* Xira tasma — qalinroq va bulutli.
+   `z-index: 0` muhim: yog'du kartochka foni ustida, lekin sana/rasm/matndan
+   **pastda** turishi kerak. Aks holda blur ichkariga yoyilib, muqova rasmini
+   va yozuvni binafsha pardaga o'raydi. */
+.sg-event.is-focus .sg-event-card::after {
+  z-index: 0;
+  padding: calc(var(--u) * 0.6);
+  filter: blur(calc(var(--u) * 0.42));
+  opacity: 0.6;
+}
+
+/* Tiniq ip — yupqa va o'tkir, eng ustida */
+.sg-event.is-focus .sg-event-card::before {
+  z-index: 2;
+  padding: calc(var(--u) * 0.13);
+}
+
+/* Kartochka ustunlari yog'dudan yuqorida qoladi */
+.sg-event-when,
+.sg-event-media,
+.sg-event-body {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Sana ustuni ─────────────────────────────────────────── */
+
+.sg-event-when {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 0.1);
+  padding: 0 calc(var(--u) * 0.4);
+}
+
+.sg-event-day {
+  font-family: var(--sg-serif);
+  font-size: calc(var(--u) * 2);
+  line-height: 1;
+  color: var(--sg-gold-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.sg-event.is-focus .sg-event-day {
+  font-size: calc(var(--u) * 2.5);
+  color: var(--sg-gold);
+}
+
+.sg-event-month {
+  font-size: calc(var(--u) * 0.56);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--sg-muted);
+}
+
+.sg-event-time {
+  margin-top: calc(var(--u) * 0.35);
+  font-size: calc(var(--u) * 0.92);
+  color: var(--sg-gold-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Rasm ────────────────────────────────────────────────── */
+
+.sg-event-media {
+  position: relative;
+  display: block;
+  height: 100%;
+}
+
+.sg-event-media img,
+.sg-event-media .sg-media-fallback {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  opacity: 0.86;
+}
+
+.sg-event.is-focus .sg-event-media img {
+  opacity: 1;
+}
+
+/* ── Nom va joy ──────────────────────────────────────────── */
+
+.sg-event-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: calc(var(--u) * 0.7);
+  min-width: 0;
+  padding: 0 calc(var(--u) * 1.2);
+}
+
+.sg-event-title {
+  font-family: var(--sg-serif);
+  font-size: calc(var(--u) * 1.02);
+  line-height: 1.24;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: rgba(242, 247, 255, 0.9);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sg-event.is-focus .sg-event-title {
+  font-size: calc(var(--u) * 1.18);
+  color: #f6faff;
+}
+
+.sg-event-place {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--u) * 0.38);
+  font-size: calc(var(--u) * 0.7);
+  color: var(--sg-muted);
+  min-width: 0;
+}
+
+.sg-event-place svg {
+  width: calc(var(--u) * 0.78);
+  height: calc(var(--u) * 0.78);
+  flex-shrink: 0;
+  color: var(--sg-gold);
+}
+
+/* ── Uyalar ──────────────────────────────────────────────── */
+
+.sg-event[data-slot='1'] {
+  --slot-x: 33;
+  --slot-scale: 0.92;
+  --slot-opacity: 0.62;
+  --slot-blur: 0.5px;
+}
+
+.sg-event[data-slot='2'] {
+  --slot-x: 63;
+  --slot-scale: 0.82;
+  --slot-opacity: 0;
+  --slot-blur: 1.4px;
+}
+
+.sg-event[data-slot='3'] {
+  --slot-x: 82;
+  --slot-opacity: 0;
+}
+
+.sg-event[data-slot='4'] {
+  --slot-x: 98;
+  --slot-opacity: 0;
+}
+
+/* ══ Ultra-keng LED panel ══════════════════════════════════ */
+
+/*
+   3840×1080 kabi panellarda kadrda ko'proq joy bor: uyalar kengroq yoyiladi
+   va tadbirlarning keyingi juftligi ochiladi. Markazdagi element o'lchami esa
+   o'zgarmaydi — u har doim ekranning vizual markazi bo'lib qoladi.
+
+   KITOBLAR bundan mustasno: u yerda ko'rinadigan muqovalar soni har qanday
+   ekranda 5 tadan oshmaydi, shuning uchun 3-uya bu yerda ham ochilmaydi.
+*/
+@media (min-aspect-ratio: 2 / 1) {
+  /* Keng panelda tadbirlarning ikkinchi juftligi ham ochiladi */
+  .sg-event[data-slot='2'] {
+    --slot-opacity: 0.3;
+  }
+
+  .sg-book[data-slot='1'] {
+    --slot-x: 26;
+  }
+
+  .sg-book[data-slot='2'] {
+    --slot-x: 48;
+  }
+
+  .sg-book[data-slot='3'] {
+    --slot-x: 68;
+  }
+
+  .sg-book[data-slot='4'] {
+    --slot-x: 82;
+  }
+
+  .sg-event[data-slot='1'] {
+    --slot-x: 33;
+  }
+
+  .sg-event[data-slot='2'] {
+    --slot-x: 64;
+  }
+
+  .sg-event[data-slot='3'] {
+    --slot-x: 92;
+  }
+
+  .sg-event[data-slot='4'] {
+    --slot-x: 88;
+  }
+}
+
+/* Eng keng panellarda (32:9) tadbirlarning uchinchi juftligi ham ko'rinadi */
+@media (min-aspect-ratio: 3 / 1) {
+  .sg-event[data-slot='3'] {
+    --slot-opacity: 0.22;
+  }
+}
+
+/* ══ AMBIENT ═══════════════════════════════════════════════ */
+
+.sg-ambient {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* Yozuv kadr pastki chetida — kitob va uning nuriga xalaqit bermaydi */
+  padding-bottom: calc(var(--u) * 2.6);
+}
+
+.sg-ambient-brand {
+  margin: 0;
+  font-size: calc(var(--u) * 0.85);
+  font-weight: 500;
+  letter-spacing: 0.55em;
+  text-indent: 0.55em;
+  text-transform: uppercase;
+  color: rgba(217, 164, 65, 0.38);
+}
+
+/* ══ VIDEO ═════════════════════════════════════════════════ */
+
+.sg-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ══ Zaxira holatlar ═══════════════════════════════════════ */
+
+.sg-media-fallback {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 30%, rgba(32, 184, 232, 0.12), transparent 70%),
+    linear-gradient(160deg, var(--sg-navy-700), var(--sg-navy-900));
+}
+
+.sg-fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sg-fallback-title {
+  margin: 0;
+  font-family: var(--sg-serif);
+  font-size: calc(var(--u) * 2.6);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(246, 250, 255, 0.86);
+}
+
+/* ══ Ko'rsatkich ═══════════════════════════════════════════ */
+
+.sg-progress {
+  position: absolute;
+  z-index: 2;
+  left: max(calc(var(--u) * 4), calc(50vw - var(--u) * 58));
+  bottom: calc(var(--u) * 3);
+  display: flex;
+  gap: calc(var(--u) * 0.7);
+}
+
+.sg-progress-item {
+  position: relative;
+  width: calc(var(--u) * 2.8);
+  height: calc(var(--u) * 0.16);
+  border-radius: 1px;
+  background: rgba(139, 162, 192, 0.22);
+  overflow: hidden;
+}
+
+.sg-progress-item.is-active {
+  background: rgba(217, 164, 65, 0.24);
+}
+
+.sg-progress-fill {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 50%;
+  background: var(--sg-gold);
+  animation-name: sg-fill;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+@keyframes sg-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* ══ Harakatni kamaytirish ═════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .sg-book,
+  .sg-book-media,
+  .sg-book-text,
+  .sg-book-glow,
+  .sg-event,
+  .sg-event-media,
+  .sg-event-text,
+  .sg-event-glow {
+    transition-duration: 1ms;
+  }
+
+  .sg-focus-aura {
+    animation: none;
+  }
+
+  .sg-focus-info,
+  .sg-stage,
+  .sg-stage.is-leaving {
+    animation-duration: 1ms;
+  }
+}
