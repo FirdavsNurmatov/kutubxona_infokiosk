@@ -20,3 +20,25 @@
   for = "/index.html"
   [headers.values]
     Cache-Control = "no-cache"
+
+# public/ ichidagi fayllar nomiga hash qo'shilmaydi, shuning uchun ularni
+# "immutable" deb bo'lmaydi. Netlify'ning sukutdagi qiymati esa
+# `max-age=0, must-revalidate` — ya'ni har bir ochilishda brauzer har bir
+# rasm va video uchun serverga qayta murojaat qiladi (sahifa "qaytadan
+# yuklanayotgandek" ko'rinishining asosiy sababi shu).
+# Yechim: qisqa muddatli kesh + fonda yangilash.
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
+
+# Videolar og'ir (o'nlab MB) va deyarli o'zgarmaydi — uzoqroq saqlanadi.
+[[headers]]
+  for = "/videos/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"
+
+[[headers]]
+  for = "/favicon.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"

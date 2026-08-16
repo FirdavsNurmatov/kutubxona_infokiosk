@@ -1,8 +1,15 @@
-import { useEffect, useState } from 'react';
-import DisplayApp from './display/DisplayApp';
-import Display2App from './display2/Display2App';
+import { Suspense, lazy, useEffect, useState } from 'react';
 import KioskApp from './kiosk/KioskApp';
-import MapApp from './map/MapApp';
+
+/*
+ * Ikkilamchi ekranlar alohida "chunk" bo'lib yuklanadi.
+ * Sabab: /ekran2 three.js va vanta ni tortadi, /ekran esa recharts ni.
+ * Bittayu bitta bundlega qo'shilsa, kiosk ham ochilishida o'sha
+ * og'irlikni yuklab, tahlil qilib o'tiradi — har bir qayta yuklanishda.
+ */
+const DisplayApp = lazy(() => import('./display/DisplayApp'));
+const Display2App = lazy(() => import('./display2/Display2App'));
+const MapApp = lazy(() => import('./map/MapApp'));
 
 /** Devordagi katta ekran shu yo'l ostida ochiladi. */
 const DISPLAY_PATH = '/ekran';
@@ -19,6 +26,31 @@ function surfaceFromPath(pathname: string): Surface {
   if (pathname.startsWith(DISPLAY_PATH)) return 'display';
   if (pathname.startsWith(MAP_PATH)) return 'map';
   return 'kiosk';
+}
+
+/**
+ * Chunk yuklangunicha ko'rinadigan bo'sh fon.
+ * Har bir ekranning fon rangi o'z CSS chunki bilan birga keladi, shuning
+ * uchun bu yerda qo'lda takrorlanadi — aks holda bir zumlik oq chaqnash bo'ladi.
+ */
+const FALLBACK_BG: Record<Surface, string> = {
+  kiosk: '#F4F6FB',
+  display: '#010F26',
+  display2: '#04111F',
+  map: '#E8EDF7',
+};
+
+function renderSurface(surface: Surface) {
+  switch (surface) {
+    case 'display2':
+      return <Display2App />;
+    case 'display':
+      return <DisplayApp />;
+    case 'map':
+      return <MapApp />;
+    default:
+      return <KioskApp />;
+  }
 }
 
 /**
@@ -48,8 +80,13 @@ export default function App() {
     document.body.dataset.app = surface;
   }, [surface]);
 
-  if (surface === 'display2') return <Display2App />;
-  if (surface === 'display') return <DisplayApp />;
-  if (surface === 'map') return <MapApp />;
-  return <KioskApp />;
+  return (
+    <Suspense
+      fallback={
+        <div style={{ position: 'fixed', inset: 0, background: FALLBACK_BG[surface] }} />
+      }
+    >
+      {renderSurface(surface)}
+    </Suspense>
+  );
 }
