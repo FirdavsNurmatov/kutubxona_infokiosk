@@ -3,6 +3,7 @@ import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { BookOpen, CalendarDays, Users } from 'lucide-react';
 import LibraryLogo from '../../components/LibraryLogo';
+import ClockFace from './ClockFace';
 import SectionLabel from './SectionLabel';
 import { useI18n } from '../../i18n/context';
 import { formatNumber, formatTime } from '../../i18n/translations';
@@ -93,7 +94,7 @@ export default function IntroSlide({ active }: { active: boolean }) {
       {/* O'ng ustun — soat va kunlik ko'rsatkichlar */}
       <div className="sg-intro-side">
         <div className="sg-intro-time">
-          <span className="sg-clock-mark" aria-hidden="true" />
+          <ClockFace />
           <time className="sg-clock">{formatTime(now)}</time>
         </div>
         <div className="sg-intro-date">

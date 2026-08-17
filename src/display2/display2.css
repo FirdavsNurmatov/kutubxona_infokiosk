@@ -677,34 +677,99 @@
   gap: calc(var(--u) * 0.8);
 }
 
-/* Maketdagi soat belgisi — ingichka doira va ikki strelka */
-.sg-clock-mark {
-  position: relative;
-  width: calc(var(--u) * 1.4);
-  height: calc(var(--u) * 1.4);
-  border: calc(var(--u) * 0.09) solid rgba(234, 241, 250, 0.8);
-  border-radius: 50%;
+/*
+   Maketdagi soat belgisi — endi bezak emas, haqiqiy vaqtni ko'rsatadi
+   (`ClockFace.tsx`). O'lchami raqamlar balandligiga tenglashtirilgan: kichik
+   ikonka bo'lib qolsa, uzoqdan strelkalar umuman ko'rinmaydi.
+*/
+/*
+   Chiziq qalinliklari viewBox birligida (100×100) beriladi, ekrandagi qalinlik
+   esa masshtabga ko'paytiriladi. 3.2u ≈ 61px, ya'ni masshtab ≈ 0.6 — demak
+   `stroke-width: 2` atigi 1.2 piksel bo'ladi. Pikseldan ingichka chiziq
+   antialiasingda kulrang tumanga aylanadi va uzoqdan umuman ko'rinmaydi,
+   shuning uchun bu yerdagi qiymatlar ataylab "qalin" tuyuladi: ekranda
+   ularning hech biri 2 pikseldan ingichka emas.
+*/
+.sg-clock-face {
+  width: calc(var(--u) * 3.2);
+  height: calc(var(--u) * 3.2);
+  flex-shrink: 0;
 }
 
-.sg-clock-mark::before,
-.sg-clock-mark::after {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  background: rgba(234, 241, 250, 0.85);
+.sg-clock-ring {
+  fill: none;
+  stroke: rgba(234, 241, 250, 0.5);
+  stroke-width: 3.4;
 }
 
-.sg-clock-mark::before {
-  width: calc(var(--u) * 0.38);
-  height: calc(var(--u) * 0.08);
-  transform: translateY(-50%);
+.sg-clock-tick {
+  stroke: rgba(234, 241, 250, 0.42);
+  stroke-width: 3.4;
+  stroke-linecap: round;
 }
 
-.sg-clock-mark::after {
-  width: calc(var(--u) * 0.08);
-  height: calc(var(--u) * 0.44);
-  transform: translate(-50%, -100%);
+.sg-clock-tick--major {
+  stroke: rgba(234, 241, 250, 0.82);
+  stroke-width: 4.8;
+}
+
+/*
+   Strelkalar. Burchak `animation-delay` orqali beriladi: manfiy kechikish
+   animatsiyani "o'rtasidan" boshlaydi, ya'ni aynan hozirgi vaqt holatidan.
+   Davri — soat 12 soat, daqiqa 1 soat, sekund 1 daqiqa.
+*/
+.sg-clock-hand {
+  stroke-linecap: round;
+  transform-box: view-box;
+  transform-origin: 50% 50%;
+  animation-name: sg-clock-spin;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+/*
+   `from` albatta yozilishi kerak. U tushirib qoldirilsa, brauzer boshlang'ich
+   qiymatni elementning o'zidan — ya'ni inline `transform` dan oladi va
+   strelka to'liq aylanish o'rniga "hozirgi burchakdan 360° gacha" suriladi:
+   soat noto'g'ri vaqtni ko'rsatib qoladi.
+*/
+@keyframes sg-clock-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.sg-clock-hand--hour {
+  stroke: #f6faff;
+  stroke-width: 8.2;
+  animation-duration: 43200s;
+  animation-delay: calc(var(--sg-clock-hour) * -1s);
+}
+
+.sg-clock-hand--minute {
+  stroke: #f6faff;
+  stroke-width: 4.6;
+  animation-duration: 3600s;
+  animation-delay: calc(var(--sg-clock-minute) * -1s);
+}
+
+/*
+   Sekund strelkasi — sahifadagi yagona uzluksiz harakat. U ataylab oltin:
+   ekranning "tirikligi" shu bitta nozik detaldan bilinadi, qolgan
+   tipografiya esa mutlaqo tinch turadi.
+*/
+.sg-clock-hand--second {
+  stroke: var(--sg-gold);
+  stroke-width: 3;
+  animation-duration: 60s;
+  animation-delay: calc(var(--sg-clock-second) * -1s);
+}
+
+.sg-clock-pin {
+  fill: var(--sg-gold);
 }
 
 .sg-clock {
@@ -1922,5 +1987,11 @@
   .sg-stage,
   .sg-stage.is-leaving {
     animation-duration: 1ms;
+  }
+
+  /* Strelkalar to'xtaydi, lekin inline `transform` qoladi — soat to'g'ri
+     vaqtni ko'rsatishda davom etadi, shunchaki aylanmaydi. */
+  .sg-clock-hand {
+    animation: none;
   }
 }
