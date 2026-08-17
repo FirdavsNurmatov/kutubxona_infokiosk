@@ -19,16 +19,10 @@
   --sg-gold: #d9a441;
   --sg-gold-soft: #f0cd8b;
 
-  /* Ikkilamchi — kutubxona ko'ki */
-  --sg-blue: #168fc4;
-  --sg-blue-bright: #20b8e8;
-
   --sg-text: #eaf1fa;
   --sg-muted: #8ba2c0;
 
   --sg-serif: Georgia, 'Times New Roman', 'Liberation Serif', 'Noto Serif', serif;
-  /* Bo'limlar orasidagi krossfeyd */
-  --sg-fade: 900ms;
   /* Karusel siljishi — sekin va bir tekis */
   --sg-glide: 1400ms;
   --sg-ease: cubic-bezier(0.32, 0.72, 0.28, 1);
@@ -219,16 +213,6 @@
    yozuvning o'z soyasi bilan ta'minlanadi (pastdagi `text-shadow` larga
    qarang) — bu fonni yorqin qoldiradi.
 */
-
-/* KITOBLAR: video allaqachon qorong'i, parda faqat chetlarni yumshatadi */
-.d2-hero-scrim--books {
-  background: radial-gradient(
-    ellipse 62% 58% at 50% 52%,
-    transparent 0%,
-    rgba(2, 11, 22, 0.25) 62%,
-    rgba(2, 11, 22, 0.6) 100%
-  );
-}
 
 /*
    TADBIRLAR: kartochkalar tasmasi kadrning o'rta belbog'ida turadi, video esa
@@ -1172,30 +1156,6 @@
   box-shadow: 0 calc(var(--u) * 1.4) calc(var(--u) * 3) rgba(0, 4, 14, 0.72);
 }
 
-/* Markazdagi element ortidagi nozik oltin yog'du */
-.sg-book-glow,
-.sg-event-glow {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 172%;
-  height: 132%;
-  transform: translate(-50%, -50%);
-  background: radial-gradient(
-    ellipse 50% 50% at 50% 50%,
-    rgba(217, 164, 65, 0.24) 0%,
-    rgba(32, 184, 232, 0.06) 48%,
-    transparent 74%
-  );
-  opacity: 0;
-  transition: opacity var(--sg-glide) ease;
-}
-
-.sg-book.is-focus .sg-book-glow,
-.sg-event.is-focus .sg-event-glow {
-  opacity: 1;
-}
-
 .sg-book.is-focus .sg-book-media img,
 .sg-event.is-focus .sg-event-media img {
   box-shadow:
@@ -1265,8 +1225,7 @@
 }
 
 /* Markazdagi elementning kichik yozuvi so'nadi — u pastdagi katta blokda */
-.sg-book-text,
-.sg-event-text {
+.sg-book-text {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1275,8 +1234,7 @@
   transition: opacity var(--sg-glide) ease;
 }
 
-.sg-book.is-focus .sg-book-text,
-.sg-event.is-focus .sg-event-text {
+.sg-book.is-focus .sg-book-text {
   opacity: 0;
 }
 
@@ -1359,99 +1317,6 @@
     0 0 calc(var(--u) * 0.9) rgba(1, 5, 14, 0.9);
 }
 
-/* ── Fokus halqasi (Vanta RINGS) ─────────────────────────── */
-
-/*
-   Halqalar butun ekran foni emas: ular faqat markazdagi muqova ortida,
-   doira ichida chiziladi va chetlariga qarab so'nadi.
-*/
-.sg-halo-slot {
-  position: absolute;
-  left: 50%;
-  bottom: calc(var(--u) * -1);
-  width: calc(var(--u) * 46);
-  height: calc(var(--u) * 46);
-  transform: translateX(-50%);
-  z-index: 0;
-  pointer-events: none;
-  list-style: none;
-}
-
-.sg-halo {
-  position: absolute;
-  inset: 0;
-  /* Past shaffoflik — halqa urg'u beradi, e'tiborni tortib olmaydi */
-  opacity: 0.3;
-  filter: saturate(0.24) brightness(1.05);
-  mix-blend-mode: screen;
-  -webkit-mask-image: radial-gradient(
-    circle at 50% 50%,
-    #000 18%,
-    rgba(0, 0, 0, 0.45) 48%,
-    transparent 74%
-  );
-  mask-image: radial-gradient(
-    circle at 50% 50%,
-    #000 18%,
-    rgba(0, 0, 0, 0.45) 48%,
-    transparent 74%
-  );
-}
-
-.sg-halo canvas {
-  display: block;
-  width: 100% !important;
-  height: 100% !important;
-}
-
-/* Ko'k halqalar ustidagi nozik oltin urg'u */
-.sg-halo::after {
-  content: '';
-  position: absolute;
-  inset: 16%;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 50% 50%,
-    rgba(217, 164, 65, 0.12) 0%,
-    rgba(217, 164, 65, 0.04) 44%,
-    transparent 70%
-  );
-  pointer-events: none;
-}
-
-/* Tadbirlar sahifasida Vanta yo'q — o'rniga sokin oltin aura */
-.sg-halo-slot--event {
-  width: calc(var(--u) * 46);
-  height: calc(var(--u) * 30);
-  bottom: calc(var(--u) * 1.5);
-}
-
-.sg-focus-aura {
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse 50% 50% at 50% 50%,
-    rgba(217, 164, 65, 0.14) 0%,
-    rgba(22, 143, 196, 0.06) 46%,
-    transparent 72%
-  );
-  filter: blur(calc(var(--u) * 0.8));
-  animation: sg-aura 9s ease-in-out infinite;
-}
-
-/* Markazdagi element atrofidagi "nafas" — sezilmas darajada */
-@keyframes sg-aura {
-  0%,
-  100% {
-    opacity: 0.65;
-    transform: scale(0.98);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.04);
-  }
-}
-
 /* ── Markazdagi element haqidagi katta blok ──────────────── */
 
 .sg-focus-info {
@@ -1503,14 +1368,7 @@
   color: var(--sg-gold);
 }
 
-/* Tadbir uchun: nom ostidagi oltin chiziq va bitta qatordagi tafsilot */
-.sg-focus-rule {
-  width: calc(var(--u) * 5);
-  height: 1px;
-  margin: calc(var(--u) * 0.5) 0;
-  background: linear-gradient(to right, transparent, var(--sg-gold), transparent);
-}
-
+/* Yil va sahifalar soni — bitta qatorda */
 .sg-focus-meta {
   display: flex;
   align-items: center;
@@ -1532,13 +1390,6 @@
   width: calc(var(--u) * 0.9);
   height: calc(var(--u) * 0.9);
   color: var(--sg-gold);
-}
-
-.sg-focus-sep {
-  width: calc(var(--u) * 0.28);
-  height: calc(var(--u) * 0.28);
-  border-radius: 50%;
-  background: rgba(217, 164, 65, 0.55);
 }
 
 @keyframes sg-rise {
@@ -1971,16 +1822,9 @@
   .sg-book,
   .sg-book-media,
   .sg-book-text,
-  .sg-book-glow,
   .sg-event,
-  .sg-event-media,
-  .sg-event-text,
-  .sg-event-glow {
+  .sg-event-media {
     transition-duration: 1ms;
-  }
-
-  .sg-focus-aura {
-    animation: none;
   }
 
   .sg-focus-info,

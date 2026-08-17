@@ -3,7 +3,7 @@ import KioskApp from './kiosk/KioskApp';
 
 /*
  * Ikkilamchi ekranlar alohida "chunk" bo'lib yuklanadi.
- * Sabab: /ekran2 three.js va vanta ni tortadi, /ekran esa recharts ni.
+ * Sabab: /ekran2 GSAP va WebGL to'lqin maydonini tortadi, /ekran esa recharts ni.
  * Bittayu bitta bundlega qo'shilsa, kiosk ham ochilishida o'sha
  * og'irlikni yuklab, tahlil qilib o'tiradi — har bir qayta yuklanishda.
  */

@@ -26,7 +26,8 @@ export const HERO_VIDEO = {
      ulangan: 0→10s oldinga, so'ng 10→0s orqaga. Bunda ikkala chok ham aynan
      bir xil kadrga tushadi, shuning uchun aylanish butunlay bilinmaydi.
      Fayl `events-hall.mp4` + `events-hall-reversed.mp4` dan qayta
-     kodlanmasdan (`-c copy`) yig'ilgan — sifat manba bilan bir xil.
+     kodlanmasdan (`-c copy`) yig'ilgan — sifat manba bilan bir xil. Manba
+     kliplar repodan olib tashlangan: tayyor loop mustaqil fayl.
   */
   events: '/videos/events-hall-loop.mp4' as string | null,
   ambient: '/videos/ambient-book.mp4' as string | null,
