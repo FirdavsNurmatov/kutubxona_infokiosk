@@ -32,11 +32,20 @@
   [headers.values]
     Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"
 
-# Videolar og'ir (o'nlab MB) va deyarli o'zgarmaydi — uzoqroq saqlanadi.
+# Videolar og'ir va deyarli o'zgarmaydi — bir yil saqlanadi.
+#
+# `immutable` shart: usiz brauzer sahifa yangilanganda (F5) `max-age` ni
+# e'tiborsiz qoldirib, har bir video uchun revalidate so'rovi yuboradi —
+# aynan shu "videolar yana boshidan yuklanmoqda" hissini berardi.
+#
+# Fayl nomiga hash qo'shilmagani uchun buning narxi bor: videoni almashtirsangiz
+# brauzer eskisini ko'rsatishda davom etadi. Yechim — yangi faylni boshqa nom
+# bilan qo'yish (masalan `intro-building-2.mp4`) va `heroMedia.ts` da yo'lni
+# yangilash.
 [[headers]]
   for = "/videos/*"
   [headers.values]
-    Cache-Control = "public, max-age=604800, stale-while-revalidate=2592000"
+    Cache-Control = "public, max-age=31536000, immutable"
 
 [[headers]]
   for = "/favicon.svg"

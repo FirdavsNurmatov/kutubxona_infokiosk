@@ -11,6 +11,9 @@ dist
 dist-ssr
 *.local
 
+# Videolarning qayta kodlashdan oldingi asl nusxalari — faqat mahalliy zaxira
+video-originals
+
 .vscode/*
 !.vscode/extensions.json
 .idea

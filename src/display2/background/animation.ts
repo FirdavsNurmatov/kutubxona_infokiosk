@@ -17,7 +17,8 @@
  *   harflar            8–16 s
  *
  * Har ikki fabrika `destroy()` qaytaradi: sahifa yopilganda timeline'lar,
- * ticker va canvas resurslari to'liq bo'shatiladi.
+ * ticker va canvas resurslari to'liq bo'shatiladi. `setActive(false)` esa
+ * sahnani DOM'da qoldirib, faqat chizishni to'xtatadi.
  */
 
 import { gsap } from "gsap";
@@ -25,10 +26,59 @@ import { createScene } from "./scene";
 import { createDustField } from "./dust";
 
 export interface SceneController {
+  /**
+   * Bo'lim hozir ekranda ko'rinayotganini bildiradi.
+   *
+   * Sahnalar bo'lim almashganda DOM'dan olib tashlanmaydi — aks holda ular
+   * ichidagi `<video>` har aylanishda qaytadan yuklanardi. Ko'rinmayotgan
+   * sahnaning chizilishi esa mutlaqo keraksiz, shuning uchun bu yerda u
+   * GSAP soatidan uziladi.
+   */
+  setActive(active: boolean): void;
   destroy(): void;
 }
 
 const random = gsap.utils.random;
+
+type Tick = (time: number, deltaTime: number) => void;
+
+/**
+ * GSAP soatiga ulanishni yoqib-o'chiradigan darvoza.
+ *
+ * Sutkalab ishlaydigan ekranda bir vaqtning o'zida to'rtta sahna DOM'da
+ * turadi, lekin ulardan faqat bittasi ko'rinadi. Qolgan uchtasining canvas'ini
+ * bekorga chizib turish protsessorni behuda yeydi.
+ */
+function createTickerGate() {
+  let tick: Tick | null = null;
+  let active = true;
+  let running = false;
+
+  function sync() {
+    if (!tick || running === active) return;
+    if (active) gsap.ticker.add(tick);
+    else gsap.ticker.remove(tick);
+    running = active;
+  }
+
+  return {
+    /** Kadr funksiyasini ulaydi — darvoza ochiq bo'lsa darhol ishga tushadi. */
+    attach(next: Tick) {
+      tick = next;
+      running = false;
+      sync();
+    },
+    detach() {
+      if (tick && running) gsap.ticker.remove(tick);
+      tick = null;
+      running = false;
+    },
+    setActive(next: boolean) {
+      active = next;
+      sync();
+    },
+  };
+}
 
 /* ══ INTRO — kutubxona me'morchiligi ════════════════════════ */
 
@@ -56,7 +106,7 @@ export function createIntroAnimation(refs: IntroRefs): SceneController {
   const resizeObserver = new ResizeObserver(() => dust.resize());
   resizeObserver.observe(refs.root);
 
-  let tick: ((time: number, deltaTime: number) => void) | null = null;
+  const gate = createTickerGate();
   const mm = gsap.matchMedia();
 
   mm.add(
@@ -182,22 +232,17 @@ export function createIntroAnimation(refs: IntroRefs): SceneController {
         yoyo: true,
       });
 
-      tick = (_time, deltaTime) => dust.step(deltaTime / 1000);
-      gsap.ticker.add(tick);
+      gate.attach((_time, deltaTime) => dust.step(deltaTime / 1000));
 
-      return () => {
-        if (tick) {
-          gsap.ticker.remove(tick);
-          tick = null;
-        }
-      };
+      return () => gate.detach();
     },
     refs.root,
   );
 
   return {
+    setActive: gate.setActive,
     destroy() {
-      if (tick) gsap.ticker.remove(tick);
+      gate.detach();
       resizeObserver.disconnect();
       mm.revert();
       dust.destroy();
@@ -225,7 +270,7 @@ export function createAmbientAnimation(refs: AmbientRefs): SceneController {
   const resizeObserver = new ResizeObserver(() => scene.resize());
   resizeObserver.observe(refs.root);
 
-  let tick: ((time: number, deltaTime: number) => void) | null = null;
+  const gate = createTickerGate();
   const mm = gsap.matchMedia();
 
   mm.add(
@@ -325,22 +370,17 @@ export function createAmbientAnimation(refs: AmbientRefs): SceneController {
       });
 
       // Butun sahna GSAP soatida yuradi — alohida rAF sikli yo'q
-      tick = (_time, deltaTime) => scene.step(deltaTime / 1000);
-      gsap.ticker.add(tick);
+      gate.attach((_time, deltaTime) => scene.step(deltaTime / 1000));
 
-      return () => {
-        if (tick) {
-          gsap.ticker.remove(tick);
-          tick = null;
-        }
-      };
+      return () => gate.detach();
     },
     refs.root,
   );
 
   return {
+    setActive: gate.setActive,
     destroy() {
-      if (tick) gsap.ticker.remove(tick);
+      gate.detach();
       resizeObserver.disconnect();
       // revert() matchMedia ichida yaratilgan barcha tween'larni o'ldiradi
       mm.revert();

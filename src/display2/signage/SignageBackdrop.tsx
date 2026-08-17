@@ -22,9 +22,12 @@ interface SignageBackdropProps {
  *   AMBIENT   — to'liq ekran ochiq kitob + bilim oqimi
  *   VIDEO     — fon qora, ekranni video egallaydi
  *
- * Particle Waves doimiy: WebGL konteksti bir marta yaratiladi va bo'lim
- * almashganda faqat sozlamalari o'zgaradi. Hero sahnalar esa (oddiy 2D canvas
- * va rasm qatlamlari) faqat o'z sahifasida DOM'ga qo'shiladi.
+ * **Barcha og'ir qatlamlar doim DOM'da turadi**, ko'rinishi esa `active` va
+ * CSS orqali boshqariladi. Ilgari ular shartli render qilinardi va har
+ * aylanishda (≈96 s) qaytadan yaratilardi: `<video>` manbani nolddan yuklar,
+ * Particle Waves esa yangi WebGL konteksti ochardi. Sutkalab ishlaydigan
+ * ekranda bu tarmoqni ham, drayver xotirasini ham behuda yeydi. Endi ular
+ * bir marta quriladi, bo'lim almashganda faqat to'xtatiladi.
  */
 export default function SignageBackdrop({ mode }: SignageBackdropProps) {
   /*
@@ -45,12 +48,17 @@ export default function SignageBackdrop({ mode }: SignageBackdropProps) {
     <div className="sg-backdrop" aria-hidden="true">
       {!bareVideo && <div className={`sg-sky sg-sky--${mode}`} />}
 
-      {mode === 'intro' && <IntroScene />}
-      {mode === 'books' && <StageScene />}
-      {mode === 'events' && <EventsScene />}
-      {mode === 'ambient' && <AmbientScene />}
+      <IntroScene active={mode === 'intro'} />
+      <StageScene active={mode === 'books'} />
+      <EventsScene active={mode === 'events'} />
+      <AmbientScene active={mode === 'ambient'} />
 
-      {!bareVideo && <ParticleWaves mode={mode} paused={mode === 'video'} />}
+      {/*
+        To'xtatilganda maydon o'zini qora rangga tozalaydi, `mix-blend-mode:
+        screen` ostida esa qora — ko'rinmas. Ya'ni yalang'och video
+        sahifalarida qatlamni yashirish uchun alohida CSS kerak emas.
+      */}
+      <ParticleWaves mode={mode} paused={bareVideo || mode === 'video'} />
 
       {!bareVideo && <div className="sg-vignette" />}
     </div>

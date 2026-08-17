@@ -1,10 +1,16 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { createIntroAnimation, type SceneController } from './animation';
 import { HERO_VIDEO } from './heroMedia';
+import { useSceneVideo } from './useSceneVideo';
 
 gsap.registerPlugin(useGSAP);
+
+interface SceneProps {
+  /** Bo'lim hozir ekrandami. Sahna DOM'da qoladi, faqat chizish to'xtaydi. */
+  active: boolean;
+}
 
 /**
  * INTRO sahifasining foni: yoritilgan Milliy kutubxona binosi.
@@ -22,7 +28,7 @@ gsap.registerPlugin(useGSAP);
  * Har ikki holatda ham havodagi chang canvas'da qoladi: u takrorlanmaydigan
  * oldingi plan bo'lib, videoning davriyligini yumshatadi.
  */
-export default function IntroScene() {
+export default function IntroScene({ active }: SceneProps) {
   const root = useRef<HTMLDivElement>(null);
   const plate = useRef<HTMLDivElement>(null);
   const windowsLeft = useRef<HTMLDivElement>(null);
@@ -33,8 +39,10 @@ export default function IntroScene() {
   const rays = useRef<HTMLDivElement>(null);
   const reflection = useRef<HTMLDivElement>(null);
   const dustCanvas = useRef<HTMLCanvasElement>(null);
+  const controllerRef = useRef<SceneController | null>(null);
 
   const video = HERO_VIDEO.intro;
+  const videoRef = useSceneVideo(active);
 
   useGSAP(
     () => {
@@ -56,15 +64,30 @@ export default function IntroScene() {
           reflection: reflection.current,
         });
       }
-      return () => controller?.destroy();
+      controllerRef.current = controller;
+      return () => {
+        controller?.destroy();
+        controllerRef.current = null;
+      };
     },
     { scope: root },
   );
 
+  /* `useGSAP` layout bosqichida ishlaydi, ya'ni kontroller bu yerga qadar
+     tayyor bo'ladi. Ko'rinmayotgan sahnaning changi chizilmaydi. */
+  useEffect(() => {
+    controllerRef.current?.setActive(active);
+  }, [active]);
+
   return (
-    <div className="d2-hero d2-hero--intro" ref={root} aria-hidden="true">
+    <div
+      className={`d2-hero d2-hero--intro${active ? ' is-active' : ''}`}
+      ref={root}
+      aria-hidden="true"
+    >
       {video ? (
         <video
+          ref={videoRef}
           className="d2-hero-video"
           src={video}
           poster="/images/ekran2/plate-building.png"

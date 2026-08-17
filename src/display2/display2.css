@@ -23,6 +23,8 @@
   --sg-muted: #8ba2c0;
 
   --sg-serif: Georgia, 'Times New Roman', 'Liberation Serif', 'Noto Serif', serif;
+  /* Hero sahnalar orasidagi krossfeyd */
+  --sg-fade: 900ms;
   /* Karusel siljishi — sekin va bir tekis */
   --sg-glide: 1400ms;
   --sg-ease: cubic-bezier(0.32, 0.72, 0.28, 1);
@@ -140,10 +142,34 @@
      • INTRO   — yoritilgan kutubxona binosi
      • AMBIENT — ochiq kitob va bilim oqimi
 */
+/*
+   To'rttala hero sahna ham doim DOM'da turadi (`SignageBackdrop` ga qarang),
+   shuning uchun qaysi biri ko'rinishini CSS hal qiladi.
+
+   `visibility` ataylab `opacity` bilan birga: nol shaffoflikdagi element
+   baribir kompozitsiya qilinaveradi, ya'ni ko'rinmaydigan uchta 1080p video
+   kadr har kadrda GPU ni band qilardi. `visibility: hidden` ularni chizish
+   zanjiridan butunlay chiqaradi. O'chirish krossfeyd tugagach qo'llanadi
+   (`transition-delay`), yoqilishi esa darhol — aks holda kirayotgan sahna
+   ko'rinmay qolardi.
+*/
 .d2-hero {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity var(--sg-fade) ease,
+    visibility 0s linear var(--sg-fade);
+}
+
+.d2-hero.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition:
+    opacity var(--sg-fade) ease,
+    visibility 0s;
 }
 
 /*
