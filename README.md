@@ -7,6 +7,81 @@ xizmat qiladi:
 |---|---|---|
 | `/` | Sensorli infokiosk | Och mavzu, chap menyu, katta qidiruv, kitob katalogi |
 | `/ekran` | Devordagi katta ekran | To'q mavzu, afisha, TOP-10 ro'yxatlar, statistika va diagrammalar |
+| `/ekran2` | O'sha ekranning kinematik fonli versiyasi | GSAP + WebGL to'lqin maydoni |
+| `/map` | Binoning interaktiv xaritasi | Qavatlar va xonalar |
+| `/interface` | **1080×1920 portret infokiosk** | Yetti mustaqil bo'lim, har biri o'z mavzusida |
+
+## `/interface` — portret infokiosk bo'limlari
+
+`kutubxona_rasmlar_interfeysi_1/` dagi maketlar asosida qurilgan. Har bir modul
+o'z yo'liga ega va alohida chunk bo'lib yuklanadi:
+
+| Yo'l | Modul | Nima qiladi |
+|---|---|---|
+| `/interface` | Bosh sahifa | Qavat tanlagich, tezkor xizmatlar, bugungi tadbirlar, bo'limlarga o'tish |
+| `/interface/meros` | Nodir meros | Qo'lyozma va noyob kitoblar katalogi, raqamli varaqlagich |
+| `/interface/allomalar` | Buyuk allomalar | Alloma karuseli, bo'limlar bo'yicha to'liq maqola |
+| `/interface/siymolar` | 100 siymo | Kategoriyalar, qidiruv, sevimlilar, to'liq maqola |
+| `/interface/tarix` | O'zbekiston tarixi | Vaqt lentasi, davr paneli, voqealar, xarita |
+| `/interface/kecha-bugun` | Kecha va bugun | Suriladigan "oldin/hozir" solishtirgichi, shahar tanlagich |
+| `/interface/viktorina` | Bilimingizni sinang | Kategoriyalar, taymerli test, natija ekrani |
+| `/interface/bolalar` | Bolalar bo'limi | Mavzular, yulduz to'plash, xotira va so'z o'yinlari |
+
+### Bo'limlar orasida yurish
+
+URL yozish shart emas. Har bir sahifaning yuqori chap burchagida **menyu tugmasi**
+bor — bosilganda sakkizta bo'lim ro'yxati ochiladi, joriy bo'lim ajratib
+ko'rsatiladi (`src/interface/shell/ModuleMenu.tsx`). Bundan tashqari:
+
+- Bosh sahifadagi "BO'LIMLAR" setkasi — hamma modulga
+- Har bir modulda "Orqaga" va pastki paneldagi "Bosh sahifa" — hub'ga
+
+Menyuning pastida, **faqat `npm run dev` da**, boshqa qurilma ekranlariga
+(`/`, `/ekran`, `/ekran2`, `/map`) havolalar chiqadi — demo ko'rsatishda qulay.
+`npm run build` da bu blok tushib qoladi (`import.meta.env.DEV`).
+
+### Ma'lumot qayerdan keladi
+
+Modullar ma'lumotni **faqat `src/interface/api`** orqali oladi. Hozircha uni
+`src/interface/data/*` dagi mock adapter qaytaradi, lekin har bir funksiya
+`Promise` qaytargani uchun backendga o'tish komponentlarga tegmaydi:
+
+```bash
+# .env
+VITE_API_URL=http://localhost:8000/api
+```
+
+Shu o'zgaruvchi qo'yilsa, `src/interface/api/index.ts` dagi `fetchJson` yo'li
+ishga tushadi. Backend qaytarishi kerak bo'lgan shakl — `src/interface/api/types.ts`.
+
+### Ekran o'lchami
+
+Sahna aynan `1080×1920 px` da quriladi va `transform: scale()` bilan ekranga
+moslashadi (`.if-stage`, `src/interface/interface.css`). Shuning uchun kioskda
+piksel-aniq chiqadi, boshqa ekranlarda esa nisbatini saqlab ko'rinadi.
+
+### Kiosk uchun qo'shilgan narsalar
+
+- **Ekran klaviaturasi** — qidiruv maydoni bosilganda ochiladi, o'zbek lotin /
+  rus kirill / ingliz layoutlari (`src/interface/shell/OnScreenKeyboard.tsx`)
+- **Bo'shlik taymeri** — 90 soniya tegilmasa bosh sahifaga qaytadi
+  (`src/interface/shell/useIdleReset.ts`)
+- Tegish maydonlari ≥ 88 px, hover holatlari o'rniga `:active`
+
+### Rasmlar
+
+`public/interface/` dagi 71 ta `.webp` maketlardan kesib olingan. Qayta yig'ish:
+
+```bash
+./tools/crop-assets.sh   # ImageMagick kerak
+```
+
+Koordinatalar shu skript ichida — maket o'zgarsa, faqat shu fayl tahrirlanadi.
+
+> **Diqqat:** maketlardagi alloma portretlari va "1910-yil" arxiv surati
+> sun'iy intellekt tomonidan chizilgan, haqiqiy tarixiy hujjat emas. Ommaviy
+> ishga tushirishdan oldin ular kutubxonaning real arxiv materiallariga
+> almashtirilishi kerak.
 
 Ikkalasi umumiy i18n va mock ma'lumotdan foydalanadi. Hozircha barcha ma'lumot
 `src/data/mockData.ts` dan olinadi.
@@ -21,6 +96,24 @@ npm run preview    # yig'ilgan versiyani ko'rish
 npm run typecheck  # TypeScript tekshiruvi
 npm run lint       # ESLint
 ```
+
+### Katta ekranni kioskda ochish (ovoz bilan)
+
+`/ekran2` pleylistidagi videolar **ovozi bilan** ijro etiladi. Brauzerlar ovozli
+videoni foydalanuvchi bosmasdan avtomatik ijro etishga ruxsat bermaydi, shuning
+uchun kiosk mashinasida Chrome shu flag bilan ochilishi kerak:
+
+```bash
+google-chrome \
+  --kiosk \
+  --autoplay-policy=no-user-gesture-required \
+  --start-fullscreen \
+  http://localhost:5173/ekran2
+```
+
+Flag bo'lmasa ekran qotib qolmaydi — video ovozsiz ijro etiladi
+(`src/display2/signage/VideoSlide.tsx`). Ovoz kartasi tizim darajasida ochiq va
+tovush balandligi 0 bo'lmasligini ham tekshirish kerak.
 
 ## Netlify'ga chiqarish
 

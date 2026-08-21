@@ -16,8 +16,9 @@ import type { CSSProperties } from 'react';
  * Chapga va o'ngga nechta uya chiziladi.
  *
  * 0…2 — doim ko'rinadi (jami 5 ta element)
- * 3    — KITOBLARDA hech qachon ko'rinmaydi (sahifada 5 tadan ortiq muqova
- *        bo'lmasligi kerak); TADBIRLARDA ultra-keng ekranda ochiladi
+ * 3    — ultra-keng panelda (≈3:1 dan keng) ochiladi va sahifada 7 ta element
+ *        bo'ladi — KITOBLARDA ham, TADBIRLARDA ham. Tor ekranda yopiq qoladi:
+ *        u yerda buncha element uchun joy yo'q (`display2.css`, media so'rovi)
  * 4    — ko'rinmas zaxira: yangi element shu yerda paydo bo'lib, keyingi
  *        qadamda ko'rinishga suriladi, shuning uchun aylanish uzluksiz
  *        tuyuladi va hech qayerda sakrash bo'lmaydi.

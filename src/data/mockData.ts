@@ -32,8 +32,9 @@ export interface Book {
   collections: ('new' | 'recommended')[];
 }
 
-/* Rasmlar loyiha ichida (public/images) — kiosk internetsiz ham ishlashi kerak.
-   Manba: Pexels (bepul litsenziya), keyinchalik kutubxonaning o'z rasmlariga almashtiriladi. */
+/* TADBIR rasmlari (kitob muqovasi emas) — loyiha ichida, chunki kiosk
+   internetsiz ham ishlashi kerak. Manba: Pexels (bepul litsenziya),
+   keyinchalik kutubxonaning o'z rasmlariga almashtiriladi. */
 const IMG = {
   meeting: '/images/meeting.jpg',
   books: '/images/books.jpg',
@@ -75,6 +76,9 @@ const PUB = {
   gafurGulom: { uz: "G'afur G'ulom NMIU", ru: 'Изд. им. Гафура Гуляма', en: 'Gafur Gulom Publishing' },
   akademnashr: { uz: 'Akademnashr', ru: '«Академнашр»', en: 'Akademnashr' },
   hilol: { uz: 'Hilol-nashr', ru: '«Хилол-нашр»', en: 'Hilol-Nashr' },
+  nurliDunyo: { uz: 'Nurli dunyo', ru: '«Нурли дунё»', en: 'Nurli Dunyo' },
+  yoshlar: { uz: 'Yoshlar nashriyot uyi', ru: 'Изд. дом «Ёшлар»', en: 'Yoshlar Publishing House' },
+  globalBooks: { uz: 'Global Books', ru: 'Global Books', en: 'Global Books' },
 };
 
 export const events: LibraryEvent[] = [
@@ -300,6 +304,20 @@ export const events: LibraryEvent[] = [
   },
 ];
 
+/*
+ * KITOB MUQOVALARI — `public/images/books/`.
+ *
+ * Hammasi HAQIQIY muqova: o'zbekcha nashrlar asaxiy.uz katalogidan,
+ * o'zbekchasi chiqmagan kitoblar esa Open Library ochiq arxividan olingan.
+ * Muqova topilmagan kitob katalogga umuman kiritilmagan — bu /ekran2 dagi
+ * qoidaning o'zi (`display2/data/books.ts`), endi kioskda ham amal qiladi.
+ *
+ * Shu sababli ba'zi yozuvlarning sarlavhasi topilgan nashrga qarab
+ * aniqlashtirilgan (masalan Frankl kitobi o'zbekchada "Hayotga «ha» de"
+ * nomi bilan chiqqan) — muqova bilan sarlavha bir kitobga tegishli bo'lishi shart.
+ *
+ * Koha ulanganda muqova yo'li backenddan keladi; `Book` shakli o'zgarmaydi.
+ */
 const coreBooks: Book[] = [
   {
     id: 1,
@@ -319,19 +337,19 @@ const coreBooks: Book[] = [
     copies: 6,
     rating: 4.7,
     ratingCount: 1420,
-    cover: IMG.shelf,
+    cover: '/images/books/ikki-eshik-orasi.jpg',
     collections: ['new'],
   },
   {
     id: 2,
     rank: 2,
-    title: { uz: 'Sevgi istirobi', ru: 'Муки любви', en: 'The Torment of Love' },
-    author: { uz: "Erkin A'zam", ru: 'Эркин Аъзам', en: "Erkin A'zam" },
+    title: { uz: 'Dunyoning ishlari', ru: 'Дела мирские', en: 'The Ways of the World' },
+    author: { uz: "O'tkir Hoshimov", ru: 'Уткир Хашимов', en: "O'tkir Hoshimov" },
     category: CAT.prose,
     description: {
-      uz: "Zamonaviy o'zbek nasrining yorqin namunasi — qissa va hikoyalar to'plami.",
-      ru: 'Яркий образец современной узбекской прозы — сборник повестей и рассказов.',
-      en: 'A vivid example of modern Uzbek prose — a collection of novellas and stories.',
+      uz: "Ona mehri va oddiy odamlar hayoti haqidagi qissa va hikoyalar to'plami.",
+      ru: 'Сборник повестей и рассказов о материнской любви и жизни обычных людей.',
+      en: "A collection of novellas and stories about a mother's love and ordinary lives.",
     },
     publisher: PUB.yangiAsr,
     year: 2022,
@@ -340,7 +358,7 @@ const coreBooks: Book[] = [
     copies: 4,
     rating: 4.5,
     ratingCount: 640,
-    cover: IMG.open,
+    cover: '/images/books/dunyoning-ishlari.jpg',
     collections: ['new'],
   },
   {
@@ -365,7 +383,7 @@ const coreBooks: Book[] = [
     copies: 9,
     rating: 4.8,
     ratingCount: 1980,
-    cover: IMG.stack,
+    cover: '/images/books/boburnoma.jpg',
     collections: ['new'],
   },
   {
@@ -386,7 +404,7 @@ const coreBooks: Book[] = [
     copies: 0,
     rating: 4.4,
     ratingCount: 380,
-    cover: IMG.reading,
+    cover: '/images/books/notiq-haqida.jpg',
     collections: ['new'],
   },
   {
@@ -411,7 +429,7 @@ const coreBooks: Book[] = [
     copies: 12,
     rating: 4.8,
     ratingCount: 2460,
-    cover: IMG.meeting,
+    cover: '/images/books/sapiens.jpg',
     collections: ['new'],
   },
   {
@@ -432,7 +450,7 @@ const coreBooks: Book[] = [
     copies: 15,
     rating: 4.7,
     ratingCount: 3120,
-    cover: IMG.desk,
+    cover: '/images/books/atom-odatlar.jpg',
     collections: ['new'],
   },
   {
@@ -453,7 +471,7 @@ const coreBooks: Book[] = [
     copies: 7,
     rating: 4.6,
     ratingCount: 1740,
-    cover: IMG.hall,
+    cover: '/images/books/1984.jpg',
     collections: ['new'],
   },
   {
@@ -474,7 +492,7 @@ const coreBooks: Book[] = [
     copies: 5,
     rating: 4.5,
     ratingCount: 820,
-    cover: IMG.books,
+    cover: '/images/books/ufq.jpg',
     collections: ['new'],
   },
   {
@@ -495,19 +513,19 @@ const coreBooks: Book[] = [
     copies: 4,
     rating: 4.4,
     ratingCount: 560,
-    cover: IMG.kids,
+    cover: '/images/books/diyonat.jpg',
     collections: ['new'],
   },
   {
     id: 10,
     rank: 10,
-    title: { uz: 'Tanlangan asarlar', ru: 'Избранные произведения', en: 'Selected Works' },
+    title: { uz: 'Sohibqiron', ru: 'Сохибкиран', en: 'Sohibqiron' },
     author: { uz: 'Abdulla Oripov', ru: 'Абдулла Орипов', en: 'Abdulla Oripov' },
     category: CAT.poetry,
     description: {
-      uz: "O'zbekiston Qahramoni, xalq shoiri she'rlaridan saylanma.",
-      ru: 'Избранные стихотворения народного поэта, Героя Узбекистана.',
-      en: 'Selected poems by the People’s Poet and Hero of Uzbekistan.',
+      uz: "Amir Temur siymosiga bag'ishlangan she'riy drama — xalq shoiri qalamiga mansub.",
+      ru: 'Поэтическая драма об Амире Темуре, написанная народным поэтом.',
+      en: 'A verse drama about Amir Temur by the People’s Poet of Uzbekistan.',
     },
     publisher: PUB.gafurGulom,
     year: 2022,
@@ -516,7 +534,7 @@ const coreBooks: Book[] = [
     copies: 8,
     rating: 4.7,
     ratingCount: 1180,
-    cover: IMG.open,
+    cover: '/images/books/abdulla-oripov.jpg',
     collections: ['new'],
   },
 
@@ -538,19 +556,19 @@ const coreBooks: Book[] = [
     copies: 11,
     rating: 4.8,
     ratingCount: 1250,
-    cover: IMG.stack,
+    cover: '/images/books/alkimyogar.jpg',
     collections: ['recommended'],
   },
   {
     id: 12,
     rank: 2,
-    title: { uz: 'Mayda-chuyda voqealar', ru: 'Мелочи жизни', en: 'Trifles of Life' },
+    title: { uz: 'Semiz va oriq', ru: 'Толстый и тонкий', en: 'Fat and Thin' },
     author: { uz: 'Anton Chexov', ru: 'Антон Чехов', en: 'Anton Chekhov' },
     category: CAT.prose,
     description: {
-      uz: "Rus adabiyoti klassigining qisqa hikoyalar to'plami.",
-      ru: 'Сборник коротких рассказов классика русской литературы.',
-      en: 'A collection of short stories by the Russian master of the form.',
+      uz: "Rus adabiyoti klassigining mashhur hikoyalari to'plami.",
+      ru: 'Сборник известных рассказов классика русской литературы.',
+      en: 'A collection of the best-known short stories by the Russian master.',
     },
     publisher: PUB.sharq,
     year: 2007,
@@ -559,7 +577,7 @@ const coreBooks: Book[] = [
     copies: 6,
     rating: 4.7,
     ratingCount: 980,
-    cover: IMG.reading,
+    cover: '/images/books/mayda-chuyda.jpg',
     collections: ['recommended'],
   },
   {
@@ -580,7 +598,7 @@ const coreBooks: Book[] = [
     copies: 14,
     rating: 4.6,
     ratingCount: 870,
-    cover: IMG.shelf,
+    cover: '/images/books/otkan-kunlar.jpg',
     collections: ['recommended'],
   },
   {
@@ -601,7 +619,7 @@ const coreBooks: Book[] = [
     copies: 5,
     rating: 4.8,
     ratingCount: 1540,
-    cover: IMG.meeting,
+    cover: '/images/books/jinoyat-va-jazo.jpg',
     collections: ['recommended'],
   },
   {
@@ -622,7 +640,7 @@ const coreBooks: Book[] = [
     copies: 7,
     rating: 4.5,
     ratingCount: 760,
-    cover: IMG.desk,
+    cover: '/images/books/mehrobdan-chayon.jpg',
     collections: ['recommended'],
   },
   {
@@ -647,7 +665,7 @@ const coreBooks: Book[] = [
     copies: 18,
     rating: 4.9,
     ratingCount: 2100,
-    cover: IMG.hall,
+    cover: '/images/books/garri-potter-1.jpg',
     collections: ['recommended'],
   },
   {
@@ -668,7 +686,7 @@ const coreBooks: Book[] = [
     copies: 0,
     rating: 4.6,
     ratingCount: 1100,
-    cover: IMG.books,
+    cover: '/images/books/don-kixot.jpg',
     collections: ['recommended'],
   },
   {
@@ -697,7 +715,7 @@ const coreBooks: Book[] = [
     copies: 10,
     rating: 4.9,
     ratingCount: 1850,
-    cover: IMG.kids,
+    cover: '/images/books/quron-tarjimasi.jpg',
     collections: ['recommended'],
   },
   {
@@ -718,32 +736,32 @@ const coreBooks: Book[] = [
     copies: 6,
     rating: 4.7,
     ratingCount: 900,
-    cover: IMG.open,
+    cover: '/images/books/paygambar.jpg',
     collections: ['recommended'],
   },
   {
     id: 20,
     rank: 10,
-    title: { uz: "Inson qal'asi", ru: 'Цитадель', en: 'The Wisdom of the Sands' },
-    author: {
-      uz: 'Antuan de Sent-Ekzyuperi',
-      ru: 'Антуан де Сент-Экзюпери',
-      en: 'Antoine de Saint-Exupéry',
+    title: {
+      uz: 'Turkiy guliston yoxud axloq',
+      ru: 'Тюркский цветник, или Нравственность',
+      en: 'Turkic Rose Garden, or Morality',
     },
+    author: { uz: 'Abdulla Avloniy', ru: 'Абдулла Авлони', en: 'Abdulla Avloniy' },
     category: CAT.philosophy,
     description: {
-      uz: "Muallifning tugallanmagan falsafiy vasiyatnomasi.",
-      ru: 'Незавершённое философское завещание автора.',
-      en: "The author's unfinished philosophical testament.",
+      uz: "Jadid ma'rifatparvarining axloq va tarbiya haqidagi mashhur darsligi.",
+      ru: 'Известный учебник джадидского просветителя о нравственности и воспитании.',
+      en: 'The celebrated textbook on ethics and upbringing by the Jadid educator.',
     },
-    publisher: PUB.akademnashr,
-    year: 1999,
-    pages: 512,
-    isbn: '978-9943-49-077-1',
+    publisher: PUB.gafurGulom,
+    year: 2021,
+    pages: 192,
+    isbn: '978-9943-03-712-9',
     copies: 0,
     rating: 4.6,
     ratingCount: 830,
-    cover: IMG.stack,
+    cover: '/images/books/turkiy-guliston.jpg',
     collections: ['recommended'],
   },
 ];
@@ -765,7 +783,7 @@ const moreBooks: Book[] = [
       en: "Temur's precepts on statecraft and the art of war.",
     },
     publisher: PUB.gafurGulom, year: 2021, pages: 368, isbn: '978-9943-03-812-6',
-    copies: 12, rating: 4.8, ratingCount: 2240, cover: IMG.stack, collections: [],
+    copies: 12, rating: 4.8, ratingCount: 2240, cover: '/images/books/temur-tuzuklari.jpg', collections: [],
   },
   {
     id: 22, rank: 12,
@@ -778,7 +796,7 @@ const moreBooks: Book[] = [
       en: 'A historical novel about Babur and the Mughal empire.',
     },
     publisher: PUB.sharq, year: 2022, pages: 544, isbn: '978-9943-26-401-3',
-    copies: 8, rating: 4.7, ratingCount: 1310, cover: IMG.shelf, collections: [],
+    copies: 8, rating: 4.7, ratingCount: 1310, cover: '/images/books/yulduzli-tunlar.jpg', collections: [],
   },
   {
     id: 23, rank: 13,
@@ -791,20 +809,20 @@ const moreBooks: Book[] = [
       en: 'A new history of the world seen from the East.',
     },
     publisher: PUB.akademnashr, year: 2023, pages: 704, isbn: '978-9943-49-388-8',
-    copies: 5, rating: 4.6, ratingCount: 890, cover: IMG.books, collections: [],
+    copies: 5, rating: 4.6, ratingCount: 890, cover: '/images/books/ipak-yollari.jpg', collections: [],
   },
   {
     id: 24, rank: 14,
-    title: { uz: 'Firdavs ul-iqbol', ru: 'Фирдавс ул-икбол', en: 'Firdaws al-Iqbal' },
-    author: { uz: 'Shermuhammad Munis', ru: 'Шермухаммад Мунис', en: 'Shermuhammad Munis' },
+    title: { uz: "Ulug'bek xazinasi", ru: 'Сокровищница Улугбека', en: "Ulugbek's Treasure" },
+    author: { uz: 'Odil Yoqubov', ru: 'Адыл Якубов', en: 'Odil Yoqubov' },
     category: CAT.history,
     description: {
-      uz: 'Xiva xonligi tarixiga oid muhim manba.',
-      ru: 'Важный источник по истории Хивинского ханства.',
-      en: 'A key source on the history of the Khanate of Khiva.',
+      uz: "Mirzo Ulug'bek davri, ilm va hokimiyat to'qnashuvi haqidagi tarixiy roman.",
+      ru: 'Исторический роман об эпохе Мирзо Улугбека, столкновении науки и власти.',
+      en: 'A historical novel on the age of Ulugh Beg and the clash of science and power.',
     },
     publisher: PUB.gafurGulom, year: 2003, pages: 456, isbn: '978-9943-03-522-4',
-    copies: 0, rating: 4.4, ratingCount: 210, cover: IMG.hall, collections: [],
+    copies: 0, rating: 4.4, ratingCount: 210, cover: '/images/books/ulugbek-xazinasi.jpg', collections: [],
   },
 
   /* ─ Ilmiy-ommabop ─ */
@@ -819,7 +837,7 @@ const moreBooks: Book[] = [
       en: 'A brief history of tomorrow — humankind and technology.',
     },
     publisher: PUB.akademnashr, year: 2024, pages: 448, isbn: '978-9943-49-540-0',
-    copies: 9, rating: 4.6, ratingCount: 1480, cover: IMG.desk, collections: [],
+    copies: 9, rating: 4.6, ratingCount: 1480, cover: '/images/books/homo-deus.jpg', collections: [],
   },
   {
     id: 26, rank: 16,
@@ -832,7 +850,7 @@ const moreBooks: Book[] = [
       en: 'The universe, black holes and time explained simply.',
     },
     publisher: PUB.akademnashr, year: 2022, pages: 256, isbn: '978-9943-49-241-6',
-    copies: 7, rating: 4.7, ratingCount: 1620, cover: IMG.reading, collections: [],
+    copies: 7, rating: 4.7, ratingCount: 1620, cover: '/images/books/vaqtning-qisqacha-tarixi.jpg', collections: [],
   },
   {
     id: 27, rank: 17,
@@ -845,7 +863,7 @@ const moreBooks: Book[] = [
       en: 'Evolution seen from the point of view of the gene.',
     },
     publisher: PUB.akademnashr, year: 2021, pages: 384, isbn: '978-9943-49-165-5',
-    copies: 4, rating: 4.5, ratingCount: 640, cover: IMG.open, collections: [],
+    copies: 4, rating: 4.5, ratingCount: 640, cover: '/images/books/xudbin-gen.jpg', collections: [],
   },
   {
     id: 28, rank: 18,
@@ -858,7 +876,7 @@ const moreBooks: Book[] = [
       en: 'The role of sleep and dreams in human health.',
     },
     publisher: PUB.akademnashr, year: 2024, pages: 368, isbn: '978-9943-49-604-9',
-    copies: 11, rating: 4.6, ratingCount: 1050, cover: IMG.meeting, collections: [],
+    copies: 11, rating: 4.6, ratingCount: 1050, cover: '/images/books/nima-uchun-uxlaymiz.jpg', collections: [],
   },
 
   /* ─ She'riyat ─ */
@@ -873,7 +891,7 @@ const moreBooks: Book[] = [
       en: 'A quintet of epic poems — the summit of Uzbek literature.',
     },
     publisher: PUB.gafurGulom, year: 1991, pages: 880, isbn: '978-9943-03-601-6',
-    copies: 15, rating: 4.9, ratingCount: 3180, cover: IMG.stack, collections: [],
+    copies: 15, rating: 4.9, ratingCount: 3180, cover: '/images/books/xamsa.jpg', collections: [],
   },
   {
     id: 30, rank: 20,
@@ -886,11 +904,11 @@ const moreBooks: Book[] = [
       en: "The People's Poet's best-known epic poem and verses.",
     },
     publisher: PUB.gafurGulom, year: 2021, pages: 296, isbn: '978-9943-03-744-0',
-    copies: 9, rating: 4.8, ratingCount: 1420, cover: IMG.open, collections: [],
+    copies: 9, rating: 4.8, ratingCount: 1420, cover: '/images/books/ruhlar-isyoni.jpg', collections: [],
   },
   {
     id: 31, rank: 21,
-    title: { uz: 'Ishq kelganda', ru: 'Когда приходит любовь', en: 'When Love Comes' },
+    title: { uz: 'Saylanma', ru: 'Избранное', en: 'Selected Poems' },
     author: { uz: 'Muhammad Yusuf', ru: 'Мухаммад Юсуф', en: 'Muhammad Yusuf' },
     category: CAT.poetry,
     description: {
@@ -899,7 +917,7 @@ const moreBooks: Book[] = [
       en: 'Modern Uzbek poetry in a plain, heartfelt voice.',
     },
     publisher: PUB.yangiAsr, year: 2023, pages: 208, isbn: '978-9943-27-702-0',
-    copies: 6, rating: 4.7, ratingCount: 980, cover: IMG.kids, collections: [],
+    copies: 6, rating: 4.7, ratingCount: 980, cover: '/images/books/ishq-kelganda.jpg', collections: [],
   },
   {
     id: 32, rank: 22,
@@ -912,7 +930,7 @@ const moreBooks: Book[] = [
       en: 'Quatrains on life, time and wisdom.',
     },
     publisher: PUB.sharq, year: 2008, pages: 176, isbn: '978-9943-26-090-9',
-    copies: 8, rating: 4.7, ratingCount: 1240, cover: IMG.reading, collections: [],
+    copies: 8, rating: 4.7, ratingCount: 1240, cover: '/images/books/ruboiylar.jpg', collections: [],
   },
   {
     id: 33, rank: 23,
@@ -925,7 +943,7 @@ const moreBooks: Book[] = [
       en: 'A classic of world poetry.',
     },
     publisher: PUB.sharq, year: 2005, pages: 192, isbn: '978-9943-26-044-2',
-    copies: 0, rating: 4.5, ratingCount: 520, cover: IMG.books, collections: [],
+    copies: 0, rating: 4.5, ratingCount: 520, cover: '/images/books/sonetlar.jpg', collections: [],
   },
 
   /* ─ Psixologiya ─ */
@@ -940,7 +958,7 @@ const moreBooks: Book[] = [
       en: 'The two systems that drive the way we think.',
     },
     publisher: PUB.akademnashr, year: 2023, pages: 512, isbn: '978-9943-49-455-7',
-    copies: 10, rating: 4.7, ratingCount: 1890, cover: IMG.desk, collections: [],
+    copies: 10, rating: 4.7, ratingCount: 1890, cover: '/images/books/tez-va-sekin-fikrlash.jpg', collections: [],
   },
   {
     id: 35, rank: 25,
@@ -953,11 +971,11 @@ const moreBooks: Book[] = [
       en: 'The science of why people say yes.',
     },
     publisher: PUB.akademnashr, year: 2022, pages: 400, isbn: '978-9943-49-302-4',
-    copies: 7, rating: 4.6, ratingCount: 1130, cover: IMG.meeting, collections: [],
+    copies: 7, rating: 4.6, ratingCount: 1130, cover: '/images/books/tasir-psixologiyasi.jpg', collections: [],
   },
   {
     id: 36, rank: 26,
-    title: { uz: 'Hayot ma’nosini izlab', ru: 'Человек в поисках смысла', en: "Man's Search for Meaning" },
+    title: { uz: 'Hayotga «ha» de', ru: 'Сказать жизни «да»', en: "Man's Search for Meaning" },
     author: { uz: 'Viktor Frankl', ru: 'Виктор Франкл', en: 'Viktor Frankl' },
     category: CAT.psychology,
     description: {
@@ -966,7 +984,7 @@ const moreBooks: Book[] = [
       en: 'The foundations of logotherapy, born of the camps.',
     },
     publisher: PUB.akademnashr, year: 2021, pages: 224, isbn: '978-9943-49-198-3',
-    copies: 13, rating: 4.9, ratingCount: 2470, cover: IMG.shelf, collections: [],
+    copies: 13, rating: 4.9, ratingCount: 2470, cover: '/images/books/hayot-manosini-izlab.jpg', collections: [],
   },
   {
     id: 37, rank: 27,
@@ -979,7 +997,7 @@ const moreBooks: Book[] = [
       en: 'Why managing emotions can matter more than IQ.',
     },
     publisher: PUB.akademnashr, year: 2023, pages: 384, isbn: '978-9943-49-478-6',
-    copies: 6, rating: 4.5, ratingCount: 860, cover: IMG.hall, collections: [],
+    copies: 6, rating: 4.5, ratingCount: 860, cover: '/images/books/emotsional-intellekt.jpg', collections: [],
   },
 
   /* ─ Diniy adabiyot ─ */
@@ -994,7 +1012,7 @@ const moreBooks: Book[] = [
       en: 'One of the most authoritative collections of hadith.',
     },
     publisher: PUB.hilol, year: 2022, pages: 912, isbn: '978-9943-38-070-6',
-    copies: 8, rating: 4.9, ratingCount: 1760, cover: IMG.stack, collections: [],
+    copies: 8, rating: 4.9, ratingCount: 1760, cover: '/images/books/sahihi-buxoriy.jpg', collections: [],
   },
   {
     id: 39, rank: 29,
@@ -1007,7 +1025,7 @@ const moreBooks: Book[] = [
       en: 'A classic work on spiritual growth and ethics.',
     },
     publisher: PUB.hilol, year: 2021, pages: 448, isbn: '978-9943-38-011-9',
-    copies: 5, rating: 4.7, ratingCount: 640, cover: IMG.open, collections: [],
+    copies: 5, rating: 4.7, ratingCount: 640, cover: '/images/books/kimyoi-saodat.jpg', collections: [],
   },
   {
     id: 40, rank: 30,
@@ -1020,7 +1038,7 @@ const moreBooks: Book[] = [
       en: 'The celebrated Turkic retelling of the stories of the prophets.',
     },
     publisher: PUB.gafurGulom, year: 2004, pages: 528, isbn: '978-9943-03-655-9',
-    copies: 4, rating: 4.6, ratingCount: 410, cover: IMG.books, collections: [],
+    copies: 4, rating: 4.6, ratingCount: 410, cover: '/images/books/qisasi-rabguziy.jpg', collections: [],
   },
 
   /* ─ Bolalar adabiyoti ─ */
@@ -1035,7 +1053,7 @@ const moreBooks: Book[] = [
       en: 'The famous tale written for grown-ups too.',
     },
     publisher: PUB.yangiAsr, year: 2023, pages: 128, isbn: '978-9943-27-655-9',
-    copies: 20, rating: 4.9, ratingCount: 3420, cover: IMG.kids, collections: [],
+    copies: 20, rating: 4.9, ratingCount: 3420, cover: '/images/books/kichkina-shahzoda.jpg', collections: [],
   },
   {
     id: 42, rank: 32,
@@ -1048,20 +1066,20 @@ const moreBooks: Book[] = [
       en: 'The adventures of a boy who finds a magic cap.',
     },
     publisher: PUB.gafurGulom, year: 2022, pages: 320, isbn: '978-9943-03-880-5',
-    copies: 16, rating: 4.8, ratingCount: 2180, cover: IMG.reading, collections: [],
+    copies: 16, rating: 4.8, ratingCount: 2180, cover: '/images/books/sariq-devni-minib.jpg', collections: [],
   },
   {
     id: 43, rank: 33,
-    title: { uz: 'Alisaning mo‘jizalar mamlakatidagi sarguzashtlari', ru: 'Алиса в Стране чудес', en: "Alice's Adventures in Wonderland" },
+    title: { uz: 'Alisa ko‘zgu orti o‘lkasida', ru: 'Алиса в Зазеркалье', en: 'Through the Looking-Glass' },
     author: { uz: 'Lyuis Kerroll', ru: 'Льюис Кэрролл', en: 'Lewis Carroll' },
     category: CAT.children,
     description: {
-      uz: 'Quyon inidan boshlangan aql bovar qilmas sayohat.',
-      ru: 'Невероятное путешествие, начавшееся с кроличьей норы.',
-      en: 'An impossible journey that begins down a rabbit hole.',
+      uz: 'Ko‘zgu ortidagi shatranj taxtasiga aylangan sehrli o‘lka sayohati.',
+      ru: 'Путешествие по волшебной стране за зеркалом, ставшей шахматной доской.',
+      en: 'A journey through the looking-glass into a land laid out as a chessboard.',
     },
     publisher: PUB.yangiAsr, year: 2021, pages: 192, isbn: '978-9943-27-401-2',
-    copies: 11, rating: 4.6, ratingCount: 1290, cover: IMG.meeting, collections: [],
+    copies: 11, rating: 4.6, ratingCount: 1290, cover: '/images/books/alisa.jpg', collections: [],
   },
   {
     id: 44, rank: 34,
@@ -1074,7 +1092,7 @@ const moreBooks: Book[] = [
       en: 'The story of a mischievous boy on the Mississippi.',
     },
     publisher: PUB.sharq, year: 2006, pages: 288, isbn: '978-9943-26-166-1',
-    copies: 9, rating: 4.5, ratingCount: 940, cover: IMG.shelf, collections: [],
+    copies: 9, rating: 4.5, ratingCount: 940, cover: '/images/books/tom-soyer.jpg', collections: [],
   },
   {
     id: 45, rank: 35,
@@ -1087,7 +1105,7 @@ const moreBooks: Book[] = [
       en: 'A tale of a little onion boy and his friends.',
     },
     publisher: PUB.gafurGulom, year: 1996, pages: 224, isbn: '978-9943-03-490-6',
-    copies: 12, rating: 4.4, ratingCount: 760, cover: IMG.hall, collections: [],
+    copies: 12, rating: 4.4, ratingCount: 760, cover: '/images/books/chipollino.jpg', collections: [],
   },
 
   /* ─ Falsafa ─ */
@@ -1102,7 +1120,7 @@ const moreBooks: Book[] = [
       en: 'The stoic notes a Roman emperor wrote to himself.',
     },
     publisher: PUB.akademnashr, year: 2022, pages: 256, isbn: '978-9943-49-288-1',
-    copies: 8, rating: 4.8, ratingCount: 1560, cover: IMG.desk, collections: [],
+    copies: 8, rating: 4.8, ratingCount: 1560, cover: '/images/books/ozim-bilan-suhbatlar.jpg', collections: [],
   },
   {
     id: 47, rank: 37,
@@ -1115,7 +1133,7 @@ const moreBooks: Book[] = [
       en: 'A dialogue on justice and the ideal state.',
     },
     publisher: PUB.akademnashr, year: 2002, pages: 512, isbn: '978-9943-49-155-6',
-    copies: 0, rating: 4.5, ratingCount: 620, cover: IMG.stack, collections: [],
+    copies: 0, rating: 4.5, ratingCount: 620, cover: '/images/books/davlat.jpg', collections: [],
   },
 
   /* ─ Badiiy adabiyot ─ */
@@ -1130,7 +1148,7 @@ const moreBooks: Book[] = [
       en: 'A portrait of early twentieth-century society through one woman’s fate.',
     },
     publisher: PUB.gafurGulom, year: 2022, pages: 336, isbn: '978-9943-03-838-6',
-    copies: 10, rating: 4.8, ratingCount: 1680, cover: IMG.open, collections: [],
+    copies: 10, rating: 4.8, ratingCount: 1680, cover: '/images/books/kecha-va-kunduz.jpg', collections: [],
   },
   {
     id: 49, rank: 39,
@@ -1143,7 +1161,7 @@ const moreBooks: Book[] = [
       en: 'A multi-volume novel about the criminal world and conscience.',
     },
     publisher: PUB.sharq, year: 2023, pages: 640, isbn: '978-9943-26-522-5',
-    copies: 14, rating: 4.7, ratingCount: 2890, cover: IMG.books, collections: [],
+    copies: 14, rating: 4.7, ratingCount: 2890, cover: '/images/books/shaytanat.jpg', collections: [],
   },
   {
     id: 50, rank: 40,
@@ -1156,7 +1174,7 @@ const moreBooks: Book[] = [
       en: "An old fisherman's struggle with a great fish.",
     },
     publisher: PUB.yangiAsr, year: 2021, pages: 144, isbn: '978-9943-27-388-6',
-    copies: 7, rating: 4.6, ratingCount: 1170, cover: IMG.reading, collections: [],
+    copies: 7, rating: 4.6, ratingCount: 1170, cover: '/images/books/chol-va-dengiz.jpg', collections: [],
   },
   {
     id: 51, rank: 41,
@@ -1169,7 +1187,365 @@ const moreBooks: Book[] = [
       en: 'Dreams and loneliness in Jazz Age America.',
     },
     publisher: PUB.akademnashr, year: 2023, pages: 224, isbn: '978-9943-49-511-0',
-    copies: 6, rating: 4.4, ratingCount: 830, cover: IMG.kids, collections: [],
+    copies: 6, rating: 4.4, ratingCount: 830, cover: '/images/books/buyuk-getsbi.jpg', collections: [],
+  },
+
+  /* ── Fondni kengaytirish ────────────────────────────────
+     Quyidagi yozuvlar muqovasi topilgani uchun qo'shilgan:
+     avval haqiqiy muqova, keyin kitob — teskarisi emas. */
+
+  /* ─ O'zbek nasri ─ */
+  {
+    id: 52, rank: 42,
+    title: { uz: 'Tushda kechgan umrlar', ru: 'Жизни, прожитые во сне', en: 'Lives Lived in a Dream' },
+    author: { uz: "O'tkir Hoshimov", ru: 'Уткир Хашимов', en: "O'tkir Hoshimov" },
+    category: CAT.prose,
+    description: {
+      uz: 'Urush va muhojirlik yillarida sinovdan o‘tgan taqdirlar haqidagi roman.',
+      ru: 'Роман о судьбах, испытанных годами войны и изгнания.',
+      en: 'A novel of lives tested by war and exile.',
+    },
+    publisher: PUB.yangiAsr, year: 2022, pages: 352, isbn: '978-9943-27-518-7',
+    copies: 9, rating: 4.7, ratingCount: 1340, cover: '/images/books/tushda-kechgan-umrlar.jpg', collections: [],
+  },
+  {
+    id: 53, rank: 43,
+    title: { uz: 'Alvido, bolalik', ru: 'Прощай, детство', en: 'Farewell, Childhood' },
+    author: { uz: 'Tohir Malik', ru: 'Тахир Малик', en: 'Tohir Malik' },
+    category: CAT.prose,
+    description: {
+      uz: 'Bolalikdan voyaga yetish ostonasigacha bo‘lgan yo‘l haqidagi qissa.',
+      ru: 'Повесть о пути от детства до порога взрослой жизни.',
+      en: 'A novella about the road from childhood to the threshold of adulthood.',
+    },
+    publisher: PUB.sharq, year: 2021, pages: 240, isbn: '978-9943-26-477-8',
+    copies: 11, rating: 4.6, ratingCount: 1520, cover: '/images/books/alvido-bolalik.jpg', collections: [],
+  },
+  {
+    id: 54, rank: 44,
+    title: { uz: 'Momoqo‘shiq', ru: 'Момокошик', en: 'Momoqoshiq' },
+    author: { uz: 'Nazar Eshonqul', ru: 'Назар Эшонкул', en: 'Nazar Eshonqul' },
+    category: CAT.prose,
+    description: {
+      uz: 'Zamonaviy o‘zbek nasrining ramziy va falsafiy yo‘nalishidagi asarlar.',
+      ru: 'Произведения символического и философского направления современной узбекской прозы.',
+      en: 'Works from the symbolic, philosophical strand of modern Uzbek prose.',
+    },
+    publisher: PUB.yoshlar, year: 2023, pages: 288, isbn: '978-9943-31-204-6',
+    copies: 5, rating: 4.4, ratingCount: 380, cover: '/images/books/momoqoshiq.jpg', collections: [],
+  },
+  {
+    id: 55, rank: 45,
+    title: { uz: 'Ozod', ru: 'Озод', en: 'Ozod' },
+    author: { uz: 'Isajon Sulton', ru: 'Исажон Султон', en: 'Isajon Sulton' },
+    category: CAT.prose,
+    description: {
+      uz: '«Dunyo — ulkan ko‘zgudir» turkumidagi falsafiy roman.',
+      ru: 'Философский роман из цикла «Мир — огромное зеркало».',
+      en: 'A philosophical novel from the cycle "The World Is a Vast Mirror".',
+    },
+    publisher: PUB.yoshlar, year: 2022, pages: 304, isbn: '978-9943-31-118-6',
+    copies: 7, rating: 4.5, ratingCount: 460, cover: '/images/books/ozod.jpg', collections: [],
+  },
+  {
+    id: 56, rank: 46,
+    title: { uz: 'Qutlug‘ qon', ru: 'Священная кровь', en: 'Sacred Blood' },
+    author: { uz: 'Oybek', ru: 'Ойбек', en: 'Oybek' },
+    category: CAT.prose,
+    description: {
+      uz: 'XX asr boshidagi Toshkent hayoti va Yo‘lchi taqdiri haqidagi roman.',
+      ru: 'Роман о жизни Ташкента начала XX века и судьбе Йулчи.',
+      en: 'A novel of early twentieth-century Tashkent and the fate of Yo‘lchi.',
+    },
+    publisher: PUB.gafurGulom, year: 2021, pages: 512, isbn: '978-9943-03-694-8',
+    copies: 10, rating: 4.7, ratingCount: 1180, cover: '/images/books/qutlug-qon.jpg', collections: [],
+  },
+
+  /* ─ Tarix ─ */
+  {
+    id: 57, rank: 47,
+    title: { uz: 'Navoiy', ru: 'Навои', en: 'Navoi' },
+    author: { uz: 'Oybek', ru: 'Ойбек', en: 'Oybek' },
+    category: CAT.history,
+    description: {
+      uz: 'Alisher Navoiy hayoti va davri haqidagi tarixiy-biografik roman.',
+      ru: 'Историко-биографический роман о жизни и эпохе Алишера Навои.',
+      en: 'A historical biography in novel form of Alisher Navoi and his age.',
+    },
+    publisher: PUB.gafurGulom, year: 2020, pages: 576, isbn: '978-9943-03-660-3',
+    copies: 8, rating: 4.8, ratingCount: 1420, cover: '/images/books/navoiy-roman.jpg', collections: [],
+  },
+  {
+    id: 58, rank: 48,
+    title: { uz: 'Avlodlar dovoni', ru: 'Перевал поколений', en: 'The Pass of Generations' },
+    author: { uz: 'Pirimqul Qodirov', ru: 'Пиримкул Кадыров', en: 'Pirimqul Qodirov' },
+    category: CAT.history,
+    description: {
+      uz: 'Humoyun va Akbar davri — «Yulduzli tunlar»ning davomi.',
+      ru: 'Эпоха Хумаюна и Акбара — продолжение «Звёздных ночей».',
+      en: 'The age of Humayun and Akbar — the sequel to "Starry Nights".',
+    },
+    publisher: PUB.sharq, year: 2022, pages: 520, isbn: '978-9943-26-455-6',
+    copies: 6, rating: 4.6, ratingCount: 720, cover: '/images/books/avlodlar-dovoni.jpg', collections: [],
+  },
+
+  /* ─ She'riyat ─ */
+  {
+    id: 59, rank: 49,
+    title: { uz: 'Saylanma', ru: 'Избранное', en: 'Selected Poems' },
+    author: { uz: 'Zulfiya', ru: 'Зульфия', en: 'Zulfiya' },
+    category: CAT.poetry,
+    description: {
+      uz: 'O‘zbek shoirasining eng mashhur she’rlaridan tuzilgan to‘plam.',
+      ru: 'Сборник самых известных стихотворений узбекской поэтессы.',
+      en: 'A selection of the best-known poems by the Uzbek poet.',
+    },
+    publisher: PUB.gafurGulom, year: 2021, pages: 224, isbn: '978-9943-03-728-0',
+    copies: 7, rating: 4.6, ratingCount: 640, cover: '/images/books/zulfiya-saylanma.jpg', collections: [],
+  },
+
+  /* ─ Jahon adabiyoti ─ */
+  {
+    id: 60, rank: 50,
+    title: { uz: 'Jamila', ru: 'Джамиля', en: 'Jamila' },
+    author: { uz: 'Chingiz Aytmatov', ru: 'Чингиз Айтматов', en: 'Chingiz Aitmatov' },
+    category: CAT.prose,
+    description: {
+      uz: 'Urush yillaridagi sevgi haqidagi mashhur qissa.',
+      ru: 'Знаменитая повесть о любви в годы войны.',
+      en: 'The celebrated novella of love in wartime.',
+    },
+    publisher: PUB.yoshlar, year: 2022, pages: 128, isbn: '978-9943-31-090-5',
+    copies: 13, rating: 4.8, ratingCount: 1960, cover: '/images/books/jamila.jpg', collections: [],
+  },
+  {
+    id: 61, rank: 51,
+    title: { uz: 'Oq kema', ru: 'Белый пароход', en: 'The White Ship' },
+    author: { uz: 'Chingiz Aytmatov', ru: 'Чингиз Айтматов', en: 'Chingiz Aitmatov' },
+    category: CAT.prose,
+    description: {
+      uz: 'Ertak va haqiqat chegarasida yashagan bola haqidagi qissa.',
+      ru: 'Повесть о мальчике, живущем на грани сказки и реальности.',
+      en: 'A novella about a boy living on the border of fable and reality.',
+    },
+    publisher: PUB.yangiAsr, year: 2021, pages: 176, isbn: '978-9943-27-466-1',
+    copies: 9, rating: 4.7, ratingCount: 1380, cover: '/images/books/oq-kema.jpg', collections: [],
+  },
+  {
+    id: 62, rank: 52,
+    title: { uz: 'Asrga tatigulik kun', ru: 'И дольше века длится день', en: 'The Day Lasts More than a Hundred Years' },
+    author: { uz: 'Chingiz Aytmatov', ru: 'Чингиз Айтматов', en: 'Chingiz Aitmatov' },
+    category: CAT.prose,
+    description: {
+      uz: 'Xotira, an’ana va zamon o‘rtasidagi ziddiyat haqidagi roman.',
+      ru: 'Роман о противоречии между памятью, традицией и временем.',
+      en: 'A novel on the tension between memory, tradition and modernity.',
+    },
+    publisher: PUB.sharq, year: 2023, pages: 448, isbn: '978-9943-26-540-9',
+    copies: 6, rating: 4.8, ratingCount: 1140, cover: '/images/books/asrga-tatigulik-kun.jpg', collections: [],
+  },
+  {
+    id: 63, rank: 53,
+    title: { uz: 'Yuz yillik yolg‘izlik', ru: 'Сто лет одиночества', en: 'One Hundred Years of Solitude' },
+    author: { uz: 'Gabriel Garsia Markes', ru: 'Габриэль Гарсиа Маркес', en: 'Gabriel García Márquez' },
+    category: CAT.prose,
+    description: {
+      uz: 'Buendia oilasining yetti avlodi haqidagi sehrli realizm durdonasi.',
+      ru: 'Шедевр магического реализма о семи поколениях рода Буэндиа.',
+      en: 'The masterpiece of magical realism about seven generations of the Buendía family.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 448, isbn: '978-9943-49-522-6',
+    copies: 8, rating: 4.7, ratingCount: 1620, cover: '/images/books/yuz-yillik-yolgizlik.jpg', collections: [],
+  },
+  {
+    id: 64, rank: 54,
+    title: { uz: 'Urush va tinchlik', ru: 'Война и мир', en: 'War and Peace' },
+    author: { uz: 'Lev Tolstoy', ru: 'Лев Толстой', en: 'Leo Tolstoy' },
+    category: CAT.prose,
+    description: {
+      uz: '1812-yil urushi fonida bir necha oilaning taqdiri — jahon romanchiligining cho‘qqisi.',
+      ru: 'Судьбы нескольких семей на фоне войны 1812 года — вершина мирового романа.',
+      en: 'The fates of several families against the war of 1812 — a summit of the novel form.',
+    },
+    publisher: PUB.sharq, year: 2020, pages: 1408, isbn: '978-9943-26-288-0',
+    copies: 4, rating: 4.7, ratingCount: 980, cover: '/images/books/urush-va-tinchlik.jpg', collections: [],
+  },
+  {
+    id: 65, rank: 55,
+    title: { uz: 'Anna Karenina', ru: 'Анна Каренина', en: 'Anna Karenina' },
+    author: { uz: 'Lev Tolstoy', ru: 'Лев Толстой', en: 'Leo Tolstoy' },
+    category: CAT.prose,
+    description: {
+      uz: 'Sevgi, oila va jamiyat qonunlari to‘qnashuvi haqidagi roman.',
+      ru: 'Роман о столкновении любви, семьи и законов общества.',
+      en: 'A novel on the collision of love, family and the rules of society.',
+    },
+    publisher: PUB.sharq, year: 2021, pages: 864, isbn: '978-9943-26-372-6',
+    copies: 7, rating: 4.7, ratingCount: 1240, cover: '/images/books/anna-karenina.jpg', collections: [],
+  },
+  {
+    id: 66, rank: 56,
+    title: { uz: 'Telba', ru: 'Идиот', en: 'The Idiot' },
+    author: { uz: 'Fyodor Dostoyevskiy', ru: 'Фёдор Достоевский', en: 'Fyodor Dostoevsky' },
+    category: CAT.prose,
+    description: {
+      uz: 'Beg‘ubor qalbli knyaz Mishkin va uni o‘rab olgan dunyo haqidagi roman.',
+      ru: 'Роман о чистом сердцем князе Мышкине и окружающем его мире.',
+      en: 'A novel about the pure-hearted Prince Myshkin and the world around him.',
+    },
+    publisher: PUB.akademnashr, year: 2022, pages: 640, isbn: '978-9943-49-366-6',
+    copies: 5, rating: 4.6, ratingCount: 860, cover: '/images/books/telba.jpg', collections: [],
+  },
+  {
+    id: 67, rank: 57,
+    title: { uz: 'Evrilish', ru: 'Превращение', en: 'The Metamorphosis' },
+    author: { uz: 'Frans Kafka', ru: 'Франц Кафка', en: 'Franz Kafka' },
+    category: CAT.prose,
+    description: {
+      uz: 'Bir tongda hasharotga aylanib qolgan odam haqidagi qissa.',
+      ru: 'Повесть о человеке, однажды утром превратившемся в насекомое.',
+      en: 'The novella of a man who wakes transformed into an insect.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 128, isbn: '978-9943-49-498-4',
+    copies: 9, rating: 4.5, ratingCount: 740, cover: '/images/books/evrilish.jpg', collections: [],
+  },
+  {
+    id: 68, rank: 58,
+    title: { uz: 'Begona', ru: 'Посторонний', en: 'The Stranger' },
+    author: { uz: 'Alber Kamyu', ru: 'Альбер Камю', en: 'Albert Camus' },
+    category: CAT.philosophy,
+    description: {
+      uz: 'Absurd falsafasining adabiy ifodasi — Merso hikoyasi.',
+      ru: 'Литературное выражение философии абсурда — история Мерсо.',
+      en: 'The philosophy of the absurd in literary form — the story of Meursault.',
+    },
+    publisher: PUB.akademnashr, year: 2022, pages: 192, isbn: '978-9943-49-341-3',
+    copies: 6, rating: 4.5, ratingCount: 690, cover: '/images/books/begona.jpg', collections: [],
+  },
+  {
+    id: 69, rank: 59,
+    title: { uz: 'Graf Monte-Kristo', ru: 'Граф Монте-Кристо', en: 'The Count of Monte Cristo' },
+    author: { uz: 'Aleksandr Dyuma', ru: 'Александр Дюма', en: 'Alexandre Dumas' },
+    category: CAT.prose,
+    description: {
+      uz: 'Nohaq qamalgan Edmon Dantesning qasos va kechirim yo‘li.',
+      ru: 'Путь мести и прощения несправедливо заключённого Эдмона Дантеса.',
+      en: 'The revenge and redemption of the wrongly imprisoned Edmond Dantès.',
+    },
+    publisher: PUB.globalBooks, year: 2023, pages: 1120, isbn: '978-9943-77-204-1',
+    copies: 8, rating: 4.8, ratingCount: 2040, cover: '/images/books/graf-monte-kristo.jpg', collections: [],
+  },
+
+  /* ─ Bolalar adabiyoti ─ */
+  {
+    id: 70, rank: 60,
+    title: { uz: 'Shum bola', ru: 'Озорник', en: 'The Mischief-Maker' },
+    author: { uz: "G'afur G'ulom", ru: 'Гафур Гулям', en: 'Gafur Gulom' },
+    category: CAT.children,
+    description: {
+      uz: 'Uydan chiqib ketgan shumtaka bolaning sarguzashtlari.',
+      ru: 'Приключения озорного мальчишки, ушедшего из дома.',
+      en: 'The adventures of a mischievous boy who runs away from home.',
+    },
+    publisher: PUB.gafurGulom, year: 2022, pages: 240, isbn: '978-9943-03-855-3',
+    copies: 17, rating: 4.8, ratingCount: 2560, cover: '/images/books/shum-bola.jpg', collections: [],
+  },
+  {
+    id: 71, rank: 61,
+    title: { uz: 'Sariq devning o‘limi', ru: 'Смерть жёлтого дива', en: 'The Death of the Yellow Div' },
+    author: { uz: 'Xudoyberdi To‘xtaboyev', ru: 'Худайберды Тухтабаев', en: 'Xudoyberdi Toxtaboyev' },
+    category: CAT.children,
+    description: {
+      uz: '«Sariq devni minib» qissasining davomi.',
+      ru: 'Продолжение повести «Оседлав жёлтого дива».',
+      en: 'The sequel to "Riding the Yellow Div".',
+    },
+    publisher: PUB.gafurGulom, year: 2022, pages: 288, isbn: '978-9943-03-886-7',
+    copies: 12, rating: 4.7, ratingCount: 1480, cover: '/images/books/sariq-devning-olimi.jpg', collections: [],
+  },
+  {
+    id: 72, rank: 62,
+    title: { uz: 'Oq So‘yloq', ru: 'Белый Клык', en: 'White Fang' },
+    author: { uz: 'Jek London', ru: 'Джек Лондон', en: 'Jack London' },
+    category: CAT.children,
+    description: {
+      uz: 'Yovvoyi tabiatdan odamlar orasiga tushgan bo‘ri-it qissasi.',
+      ru: 'История волка-пса, попавшего из дикой природы к людям.',
+      en: 'The story of a wolf-dog who comes from the wild to live among people.',
+    },
+    publisher: PUB.nurliDunyo, year: 2022, pages: 256, isbn: '978-9943-58-311-4',
+    copies: 10, rating: 4.6, ratingCount: 1100, cover: '/images/books/oq-soyloq.jpg', collections: [],
+  },
+  {
+    id: 73, rank: 63,
+    title: { uz: 'Robinzon Kruzo', ru: 'Робинзон Крузо', en: 'Robinson Crusoe' },
+    author: { uz: 'Daniel Defo', ru: 'Даниэль Дефо', en: 'Daniel Defoe' },
+    category: CAT.children,
+    description: {
+      uz: 'Yolg‘iz orolda yigirma sakkiz yil yashagan dengizchi hikoyasi.',
+      ru: 'История моряка, прожившего двадцать восемь лет на необитаемом острове.',
+      en: 'The story of a sailor who spends twenty-eight years on a desert island.',
+    },
+    publisher: PUB.globalBooks, year: 2023, pages: 320, isbn: '978-9943-77-166-2',
+    copies: 11, rating: 4.5, ratingCount: 890, cover: '/images/books/robinzon-kruzo.jpg', collections: [],
+  },
+  {
+    id: 74, rank: 64,
+    title: { uz: 'Kapitan Grant bolalari', ru: 'Дети капитана Гранта', en: "In Search of the Castaways" },
+    author: { uz: 'Jyul Vern', ru: 'Жюль Верн', en: 'Jules Verne' },
+    category: CAT.children,
+    description: {
+      uz: 'Yo‘qolgan otani izlab uch qit’ani kezgan bolalar sarguzashti.',
+      ru: 'Приключения детей, обошедших три континента в поисках пропавшего отца.',
+      en: 'Children cross three continents in search of their missing father.',
+    },
+    publisher: PUB.nurliDunyo, year: 2021, pages: 480, isbn: '978-9943-58-244-5',
+    copies: 8, rating: 4.6, ratingCount: 760, cover: '/images/books/kapitan-grant.jpg', collections: [],
+  },
+
+  /* ─ Ilmiy-ommabop va psixologiya ─ */
+  {
+    id: 75, rank: 65,
+    title: { uz: 'Ajoyib yangi dunyo', ru: 'О дивный новый мир', en: 'Brave New World' },
+    author: { uz: 'Oldos Haksli', ru: 'Олдос Хаксли', en: 'Aldous Huxley' },
+    category: CAT.prose,
+    description: {
+      uz: 'Baxt majburiy bo‘lgan jamiyat haqidagi distopiya.',
+      ru: 'Антиутопия об обществе, где счастье стало обязательным.',
+      en: 'A dystopia of a society where happiness is compulsory.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 288, isbn: '978-9943-49-533-2',
+    copies: 7, rating: 4.6, ratingCount: 1050, cover: '/images/books/ajoyib-yangi-dunyo.jpg', collections: [],
+  },
+  {
+    id: 76, rank: 66,
+    title: {
+      uz: 'Qanday qilib do‘st orttirish va odamlarga ta’sir etish mumkin?',
+      ru: 'Как завоёвывать друзей и оказывать влияние на людей',
+      en: 'How to Win Friends and Influence People',
+    },
+    author: { uz: 'Deyl Karnegi', ru: 'Дейл Карнеги', en: 'Dale Carnegie' },
+    category: CAT.psychology,
+    description: {
+      uz: 'Muloqot va insoniy munosabatlar bo‘yicha klassik qo‘llanma.',
+      ru: 'Классическое руководство по общению и человеческим отношениям.',
+      en: 'The classic handbook on communication and human relations.',
+    },
+    publisher: PUB.akademnashr, year: 2022, pages: 352, isbn: '978-9943-49-318-5',
+    copies: 14, rating: 4.6, ratingCount: 2680, cover: '/images/books/dost-orttirish.jpg', collections: [],
+  },
+  {
+    id: 77, rank: 67,
+    title: { uz: 'Boy ota, kambag‘al ota', ru: 'Богатый папа, бедный папа', en: 'Rich Dad Poor Dad' },
+    author: { uz: 'Robert Kiyosaki', ru: 'Роберт Кийосаки', en: 'Robert Kiyosaki' },
+    category: CAT.psychology,
+    description: {
+      uz: 'Moliyaviy savodxonlik va pulga munosabat haqidagi mashhur kitob.',
+      ru: 'Известная книга о финансовой грамотности и отношении к деньгам.',
+      en: 'The well-known book on financial literacy and attitudes to money.',
+    },
+    publisher: PUB.akademnashr, year: 2023, pages: 288, isbn: '978-9943-49-487-8',
+    copies: 16, rating: 4.4, ratingCount: 3040, cover: '/images/books/boy-ota-kambagal-ota.jpg', collections: [],
   },
 ];
 
@@ -1464,6 +1840,83 @@ export const latestBooks = [
   ...newBooks,
   ...books.filter((b) => !b.collections.includes('new')).sort((a, b) => b.year - a.year),
 ].slice(0, 24);
+
+/*
+ * MUALLIF PORTRETLARI — `public/images/authors/`.
+ *
+ * Manba: Wikipedia/Wikimedia. Har bir rasm Wikidata orqali tekshirilgan —
+ * maqola qahramoni odam (P31 = Q5) bo'lmasa, rasm olinmagan. Shu sababli
+ * bu yerda maqbara, xarita yoki kitob muqovasi yo'q.
+ *
+ * Kalit — muallifning O'ZBEKCHA ismi: kitob yozuvlaridagi `author.uz` bilan
+ * bir xil, ya'ni til almashganda bog'lanish uzilmaydi.
+ *
+ * Ro'yxatda yo'q muallif uchun kioskda ism bosh harflari ko'rsatiladi
+ * (KioskAuthors) — bo'sh doira yoki soxta rasm chiqmaydi.
+ */
+const AUTHOR_PHOTOS: Record<string, string> = {
+  'Abdulla Avloniy': '/images/authors/abdulla-avloniy.jpg',
+  'Abdulla Qodiriy': '/images/authors/abdulla-qodiriy.jpg',
+  'Aflotun': '/images/authors/aflotun.jpg',
+  'Alber Kamyu': '/images/authors/alber-kamyu.jpg',
+  'Aleksandr Dyuma': '/images/authors/aleksandr-dyuma.jpg',
+  'Alisher Navoiy': '/images/authors/alisher-navoiy.jpg',
+  'Amir Temur': '/images/authors/amir-temur.jpg',
+  'Anton Chexov': '/images/authors/anton-chexov.jpg',
+  'Antuan de Sent-Ekzyuperi': '/images/authors/antuan-de-sent-ekzyuperi.jpg',
+  'Chingiz Aytmatov': '/images/authors/chingiz-aytmatov.jpg',
+  'Cho‘lpon': '/images/authors/cholpon.jpg',
+  'Daniel Defo': '/images/authors/daniel-defo.jpg',
+  'Deniel Goulman': '/images/authors/deniel-goulman.jpg',
+  'Deniel Kaneman': '/images/authors/deniel-kaneman.jpg',
+  'Deyl Karnegi': '/images/authors/deyl-karnegi.jpg',
+  'Erkin Vohidov': '/images/authors/erkin-vohidov.jpg',
+  'Ernest Xeminguey': '/images/authors/ernest-xeminguey.jpg',
+  'Frans Kafka': '/images/authors/frans-kafka.jpg',
+  'Frensis Skott Fitsjerald': '/images/authors/frensis-skott-fitsjerald.jpg',
+  'Fyodor Dostoyevskiy': '/images/authors/fyodor-dostoyevskiy.jpg',
+  'G\'afur G\'ulom': '/images/authors/gafur-gulom.jpg',
+  'Gabriel Garsia Markes': '/images/authors/gabriel-garsia-markes.jpg',
+  'Halil Jibron': '/images/authors/halil-jibron.jpg',
+  'Imom al-Buxoriy': '/images/authors/imom-al-buxoriy.jpg',
+  'Isajon Sulton': '/images/authors/isajon-sulton.jpg',
+  'Janni Rodari': '/images/authors/janni-rodari.jpg',
+  'Jek London': '/images/authors/jek-london.jpg',
+  'Jeyms Klir': '/images/authors/jeyms-klir.jpg',
+  'Joan Rouling': '/images/authors/joan-rouling.jpg',
+  'Jorj Oruell': '/images/authors/jorj-oruell.jpg',
+  'Jyul Vern': '/images/authors/jyul-vern.jpg',
+  'Lev Tolstoy': '/images/authors/lev-tolstoy.jpg',
+  'Lyuis Kerroll': '/images/authors/lyuis-kerroll.jpg',
+  'Mark Avreliy': '/images/authors/mark-avreliy.jpg',
+  'Mark Tulliy Tsitseron': '/images/authors/mark-tulliy-tsitseron.jpg',
+  'Mark Tven': '/images/authors/mark-tven.jpg',
+  'Metyu Uoker': '/images/authors/metyu-uoker.jpg',
+  'Migel de Servantes': '/images/authors/migel-de-servantes.jpg',
+  'Muhammad Sodiq Muhammad Yusuf': '/images/authors/muhammad-sodiq-muhammad-yusuf.jpg',
+  'Muhammad Yusuf': '/images/authors/muhammad-yusuf.jpg',
+  'Nazar Eshonqul': '/images/authors/nazar-eshonqul.jpg',
+  'O\'tkir Hoshimov': '/images/authors/otkir-hoshimov.jpg',
+  'Oldos Haksli': '/images/authors/oldos-haksli.jpg',
+  'Oybek': '/images/authors/oybek.jpg',
+  'Paulo Koelo': '/images/authors/paulo-koelo.jpg',
+  'Piter Frankopan': '/images/authors/piter-frankopan.jpg',
+  'Richard Dokinz': '/images/authors/richard-dokinz.jpg',
+  'Robert Chialdini': '/images/authors/robert-chialdini.jpg',
+  'Robert Kiyosaki': '/images/authors/robert-kiyosaki.jpg',
+  'Said Ahmad': '/images/authors/said-ahmad.jpg',
+  'Stiven Xoking': '/images/authors/stiven-xoking.jpg',
+  'Uilyam Shekspir': '/images/authors/uilyam-shekspir.jpg',
+  'Umar Xayyom': '/images/authors/umar-xayyom.jpg',
+  'Viktor Frankl': '/images/authors/viktor-frankl.jpg',
+  'Yuval Noy Harari': '/images/authors/yuval-noy-harari.jpg',
+  'Zahiriddin Muhammad Bobur': '/images/authors/zahiriddin-muhammad-bobur.jpg',
+};
+
+/** Muallif portreti yo'li yoki null — kalit sifatida o'zbekcha ism beriladi. */
+export function authorPhoto(nameUz: string): string | null {
+  return AUTHOR_PHOTOS[nameUz] ?? null;
+}
 
 export interface Genre {
   id: string;

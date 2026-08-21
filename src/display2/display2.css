@@ -592,11 +592,14 @@
 .sg-label {
   position: absolute;
   top: calc(var(--u) * 2.6);
-  left: max(calc(var(--u) * 3), calc(50vw - var(--u) * 58));
+  /* Yorliq INTRO ustuni bilan bitta sozlagichdan oziqlanadi (`--intro-safe`),
+     shuning uchun ustun surilganda u ham birga suriladi va tekislangan qoladi */
+  left: max(calc(var(--u) * 3), calc(50vw - var(--u) * var(--intro-safe, 58)));
   z-index: 3;
   display: flex;
   align-items: baseline;
   gap: calc(var(--u) * 1.1);
+  transform: scaleY(2);
 }
 
 .sg-label-index {
@@ -623,13 +626,29 @@
    o'rtada esa bino uchun bo'sh joy qoladi.
 */
 .sg-intro {
+  /*
+     Kompozitsiyaning gorizontal xavfsiz zonasi: markazdan chetgacha necha u.
+     Butun sahifada X o'qi bo'yicha o'zgartiriladigan YAGONA son — kattalashsa
+     nom chapga, soat va ko'rsatkichlar o'ngga BIRGALIKDA suriladi, bo'lim
+     yorlig'i (`.sg-label`) ham shu qiymatdan o'qiydi.
+
+     5760x1632 da markazdan chetgacha 99u bor. 58u da ustunlar kadrning
+     o'rtasiga to'planib, fondagi bino ustiga chiqib qolardi; 76u da ular
+     binodan chetga chiqadi va chekkada ~23u nafas qoladi.
+
+     Tor ekranlarda (16:9, 21:9) `max()` baribir 3u ni tanlaydi — u yerdagi
+     joylashuv bu qiymatdan mutlaqo ta'sirlanmaydi.
+  */
+  --intro-safe: 76;
+
   position: relative;
   flex: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   align-content: start;
   gap: calc(var(--u) * 4);
-  padding: calc(var(--u) * 7.5) max(calc(var(--u) * 3), calc(50vw - var(--u) * 58)) 0;
+  padding: calc(var(--u) * 8.5)
+    max(calc(var(--u) * 3), calc(50vw - var(--u) * var(--intro-safe))) 0;
 }
 
 /* ── Chap ustun: emblema va nom ──────────────────────────── */
@@ -638,6 +657,7 @@
   display: flex;
   align-items: center;
   gap: calc(var(--u) * 1.8);
+  transform: scaleY(2);
 }
 
 .sg-intro-logo {
@@ -669,6 +689,14 @@
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--sg-gold);
+  /*
+     Oltin yog'du `text-shadow` bilan — `drop-shadow()` filtri bilan emas.
+     Filtr matnni alohida yuzaga ko'chiradi; INTRO da u to'xtovsiz (repeat: -1)
+     animatsiya qilinardi, ya'ni bo'lim ochiq turgan 13 sekund davomida yozuv
+     har kadrda qaytadan chiziladi. `text-shadow` esa bir marta bo'yaladi,
+     "nafas" ni endi shaffoflik beradi (`IntroSlide.tsx`).
+  */
+  text-shadow: 0 0 calc(var(--u) * 0.9) rgba(217, 164, 65, 0.45);
 }
 
 /* ── O'ng ustun: soat, sana, ko'rsatkichlar ──────────────── */
@@ -678,7 +706,8 @@
   flex-direction: column;
   align-items: flex-end;
   /* Yorliq bilan bir sathda boshlanadi */
-  margin-top: calc(var(--u) * -4.4);
+  /* margin-top: calc(var(--u) * 2.4); */
+  transform: scaleY(2);
 }
 
 .sg-intro-time {
@@ -895,8 +924,8 @@
    qolsa, kompozitsiya joyidan qimirlay olmaydi.
 */
 .sg-carousel--split {
-  --split-shift: 10;
-  --panel-w: 23.5;
+  --split-shift: 12;
+  --panel-w: 20;
 }
 
 .sg-carousel--split .sg-book-track {
@@ -941,11 +970,11 @@
 */
 .sg-carousel--split .sg-focus-info {
   position: absolute;
-  left: calc(50% - var(--u) * calc(var(--split-shift) - 12));
+  left: calc(53% - var(--u) * calc(var(--split-shift) - 12));
   top: 50%;
   transform: translateY(-50%);
   align-items: flex-start;
-  gap: calc(var(--u) * 0.55);
+  gap: calc(var(--u) * 2.55);
   width: calc(var(--u) * var(--panel-w));
   max-width: none;
   margin: 0;
@@ -983,6 +1012,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transform: scaleY(2);
 }
 
 /* Nashr yili va sahifalar soni */
@@ -1129,7 +1159,6 @@
     rgba(217, 164, 65, 0.12) 66%,
     transparent 100%
   );
-  filter: blur(calc(var(--u) * 0.6));
 }
 
 .sg-book,
@@ -1140,9 +1169,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* Uyaning standart qiymatlari — quyida [data-slot] bo'yicha almashtiriladi */
+  /* Uyaning standart qiymatlari — quyida [data-slot] bo'yicha almashtiriladi.
+     0-uya (markaz) ularni hech qayerda qayta belgilamaydi, shuning uchun
+     `--slot-x` aynan 0 bo'lishi shart — aks holda tanlangan element
+     kompozitsiya markazidan siljib qoladi. */
   --slot-x: 0;
-  --slot-scale: 1;
+  --slot-scale: 1.3;
   --slot-opacity: 1;
   --slot-blur: 0px;
   --slot-dir: 1;
@@ -1157,13 +1189,30 @@
 .sg-book-media,
 .sg-event-media {
   position: relative;
+}
+
+/*
+   Masshtab va blur faqat KITOB muqovasiga tegadi.
+
+   Tadbirda ular butun kartochkaga (`.sg-event-card`) qo'llanadi, chunki u
+   yerda rasm — kartochkaning uchdan bir ustuni, mustaqil eksponat emas.
+   Ikkala qatlamga ham berilsa uya koeffitsiyenti kvadratga ko'tariladi
+   (markazda 1.3 × 1.3 = 1.69): rasm o'z ustunidan chiqib, chapda sanani,
+   o'ngda esa nomni bosadi va tasvirning o'zi ortiqcha kesiladi.
+*/
+.sg-book-media {
   transform: scale(var(--slot-scale));
   transform-origin: 50% 100%;
+  /*
+     Blur o'zi qoladi — muqovalar qatoridagi chuqurlik tuyg'usi shundan.
+     Lekin u O'TISHGA qo'shilmaydi: animatsiya qilinganda muqova 1400 ms
+     davomida har kadrda qaytadan blurlanadi (9 ta muqova × 84 kadr), qadam
+     oxirida bir marta hisoblanganda esa xuddi shu ko'rinish tekinga tushadi.
+     1–3px oralig'ida sakrash ko'zga tashlanmaydi.
+  */
   filter: blur(var(--slot-blur));
-  transition:
-    transform var(--sg-glide) var(--sg-ease),
-    filter var(--sg-glide) ease;
-  will-change: transform, filter;
+  transition: transform var(--sg-glide) var(--sg-ease);
+  will-change: transform;
 }
 
 .sg-book-media img,
@@ -1376,6 +1425,7 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transform: scaleY(2);
 }
 
 .sg-focus-author {
@@ -1384,6 +1434,7 @@
   letter-spacing: 0.05em;
   color: rgba(234, 241, 250, 0.82);
   text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1) rgba(0, 6, 18, 0.9);
+  transform: scaleY(2);
 }
 
 .sg-focus-genre {
@@ -1392,6 +1443,7 @@
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--sg-gold);
+  transform: scaleY(2);
 }
 
 /* Yil va sahifalar soni — bitta qatorda */
@@ -1404,6 +1456,7 @@
   font-size: calc(var(--u) * 0.92);
   letter-spacing: 0.08em;
   color: rgba(234, 241, 250, 0.85);
+  transform: scaleY(2);
 }
 
 .sg-focus-meta span {
@@ -1441,15 +1494,19 @@
    katta blok yo'q.
 */
 .sg-event-track {
-  height: calc(var(--u) * 14);
+  height: calc(var(--u) * 30);
 }
 
 .sg-event {
   width: calc(var(--u) * 32);
-  /* Kartochkalar bir sathda markazlashadi (kitoblardagidek pastki tayanch emas) */
+  /* Kartochkalar bir sathda markazlashadi (kitoblardagidek pastki tayanch emas).
+     Manfiy margin FOKUSDAGI kartochka balandligining yarmiga teng (25 / 2):
+     markazda turgani ekranning o'q chizig'ida qoladi, past uyalar esa undan
+     bir oz yuqorida osilib turadi. Oddiy kartochka balandligi olinsa
+     (20 / 2 = 10), tanlangani 2.5u pastga siljib ketadi. */
   bottom: auto;
   top: 50%;
-  margin-top: calc(var(--u) * -5.8);
+  margin-top: calc(var(--u) * -12.5);
 }
 
 .sg-event-card {
@@ -1458,7 +1515,7 @@
   grid-template-columns: calc(var(--u) * 6.8) calc(var(--u) * 11) minmax(0, 1fr);
   align-items: stretch;
   width: 100%;
-  height: calc(var(--u) * 9.4);
+  height: calc(var(--u) * 20);
   overflow: hidden;
   border-radius: calc(var(--u) * 0.5);
   /*
@@ -1470,12 +1527,25 @@
   border: 1px solid rgba(134, 156, 224, 0.2);
   transform: scale(var(--slot-scale));
   transform-origin: 50% 50%;
-  filter: blur(var(--slot-blur));
+  /*
+     Bu yerda ataylab `filter: blur()` YO'Q.
+
+     Har qanday filtr elementni alohida rendering yuzasiga ko'chiradi va uni
+     animatsiya qilish har kadrda qaytadan rasterlashni talab qiladi. Ekranda
+     bir vaqtda 9 ta kartochka bor, ularning ostida esa to'liq ekran video
+     ijro etiladi — kuchsiz kiosk kompyuterida shu ikkisi birga kadr byudjetini
+     yeb qo'yadi va butun bo'lim seskanib harakatlanadi.
+
+     Yo'qotish esa deyarli nol: ko'rinadigan uyalarda blur bor-yo'g'i 0.5px va
+     1.4px edi, chuqurlikni asosan shaffoflik va masshtab beradi.
+
+     Shu sababdan `box-shadow` va `border-color` ham o'tishdan chiqarildi:
+     ikkalasi ham kompozitorda emas, qayta bo'yashda hisoblanadi. Ular fokus
+     almashganda bir zumda o'zgaradi — gradient ramka (::before/::after)
+     allaqachon shunday paydo bo'lib, shunday yo'qoladi.
+  */
   transition:
     transform var(--sg-glide) var(--sg-ease),
-    filter var(--sg-glide) ease,
-    border-color var(--sg-glide) ease,
-    box-shadow var(--sg-glide) ease,
     height var(--sg-glide) var(--sg-ease);
 }
 
@@ -1493,7 +1563,7 @@
    `padding` ramka qalinligini belgilaydi.
 */
 .sg-event.is-focus .sg-event-card {
-  height: calc(var(--u) * 11.6);
+  height: calc(var(--u) * 25);
   border: 0;
   background: linear-gradient(180deg, rgba(13, 21, 52, 0.86), rgba(5, 10, 28, 0.76));
   box-shadow:
@@ -1566,6 +1636,14 @@
   justify-content: center;
   gap: calc(var(--u) * 0.1);
   padding: 0 calc(var(--u) * 0.4);
+  /*
+     Vertikal cho'zish butun ustunga bir marta beriladi — kun, oy va vaqtning
+     har biriga alohida emas. Sabab: `scaleY` element balandligini faqat
+     ko'rinishda o'zgartiradi, joylashuv qutisini emas. Uchala yozuv o'z
+     markazidan cho'zilsa, ular bir-birining ustiga chiqib ketadi; ustun
+     cho'zilganda esa oralaridagi masofa ham birga o'sadi.
+  */
+  transform: scaleY(2);
 }
 
 .sg-event-day {
@@ -1622,9 +1700,15 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: calc(var(--u) * 0.7);
+  gap: calc(var(--u) * 2.7);
   min-width: 0;
   padding: 0 calc(var(--u) * 1.2);
+}
+
+/* Markazdagi kartochkada yozuv rasmdan biroz uzoqroq turadi — shrift va
+   o'lchamlar o'zgarmaydi, faqat rasm bilan matn orasidagi nafas kengayadi. */
+.sg-event.is-focus .sg-event-body {
+  padding-left: calc(var(--u) * 2.4);
 }
 
 .sg-event-title {
@@ -1638,11 +1722,13 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  transform: scaleY(2);
 }
 
 .sg-event.is-focus .sg-event-title {
   font-size: calc(var(--u) * 1.18);
   color: #f6faff;
+  transform: scaleY(2);
 }
 
 .sg-event-place {
@@ -1652,6 +1738,7 @@
   font-size: calc(var(--u) * 0.7);
   color: var(--sg-muted);
   min-width: 0;
+  transform: scaleY(2);
 }
 
 .sg-event-place svg {
@@ -1694,8 +1781,9 @@
    va tadbirlarning keyingi juftligi ochiladi. Markazdagi element o'lchami esa
    o'zgarmaydi — u har doim ekranning vizual markazi bo'lib qoladi.
 
-   KITOBLAR bundan mustasno: u yerda ko'rinadigan muqovalar soni har qanday
-   ekranda 5 tadan oshmaydi, shuning uchun 3-uya bu yerda ham ochilmaydi.
+   Bu bosqichda KITOBLAR hamon 5 ta bo'lib qoladi: 3-uya faqat undan ham keng
+   kadrda (quyidagi `min-aspect-ratio: 3 / 1` blokida) ochiladi, chunki 7 ta
+   muqova va ma'lumot paneli markazdan chetgacha ~68u joy talab qiladi.
 */
 @media (min-aspect-ratio: 2 / 1) {
   /* Keng panelda tadbirlarning ikkinchi juftligi ham ochiladi */
@@ -1731,19 +1819,148 @@
     --slot-x: 92;
   }
 
+  /* 4-uya — ko'rinmas zaxira, yangi kartochka shu yerda tug'iladi. U 3-uyadan
+     ALBATTA uzoqroqda turishi kerak: aks holda element avval markazga qarab
+     emas, markazdan qochib siljiydi va aylanishda sakrash ko'rinadi. */
   .sg-event[data-slot='4'] {
-    --slot-x: 88;
+    --slot-x: 108;
   }
 }
 
-/* Eng keng panellarda (32:9) tadbirlarning uchinchi juftligi ham ko'rinadi */
+/*
+   ══ Eng keng panellar (≈3.5:1, masalan 5760x1632) ═══════════
+
+   Bunday kadrda markazdan chetgacha ~99u joy bor. Yuqoridagi jadval 16:9 va
+   21:9 uchun yig'ilgan, shuning uchun bu yerda kompozitsiya kadrning atigi
+   yarmini egallaydi: chetlar bo'sh qoladi, markazda esa elementlar
+   bir-biriga tegib turadi. Ikkala karusel ham shu blokda qaytadan yoyiladi.
+
+   Qoida bitta: uyaning `--slot-x` i qo'shnisining CHEKKASIDAN hisoblanadi,
+   markazidan emas — chunki ko'zga ko'rinadigan oraliqni aynan chekkalar
+   beradi, element eni esa `--slot-scale` ga bog'liq:
+
+       slot_x(n) = |chekka(n-1)| + oraliq + eni(n) / 2
+
+   Eni: KITOBDA 19u x masshtab, TADBIRDA 32u x masshtab. Masshtabni
+   o'zgartirsangiz `--slot-x` ni ham shu formula bilan qayta hisoblang,
+   aks holda oraliqlar notekis bo'lib qoladi.
+*/
 @media (min-aspect-ratio: 3 / 1) {
+  /* ── KITOBLAR: 5 emas, 7 muqova ────────────────────────────────────
+     3-uya ochiladi (ilgari u har qanday ekranda yopiq edi), yon muqovalar
+     esa kattalashadi — bo'shab yotgan chekka joy aynan shuni ko'taradi.
+     Har bir muqova qo'shnisidan ~3.5u (≈100 px) uzoqda turadi. */
+  .sg-book[data-slot='1'] {
+    --slot-scale: 0.62;
+    --slot-opacity: 0.58;
+  }
+
+  .sg-book[data-slot='2'] {
+    --slot-scale: 0.47;
+    --slot-opacity: 0.34;
+  }
+
+  .sg-book[data-slot='3'] {
+    --slot-scale: 0.36;
+    --slot-opacity: 0.2;
+    --slot-blur: 2.4px;
+  }
+
+  /* 4-uya — ko'rinmas zaxira: yangi muqova shu yerda tug'ilib, keyingi
+     qadamda 3-uyaga suriladi. 3-uyadan uzoqroqda turishi shart. */
+  .sg-book[data-slot='4'] {
+    --slot-scale: 0.3;
+    --slot-opacity: 0;
+  }
+
+  /*
+     Joylashuv `.sg-carousel--split` bilan yoziladi: asosiy jadvaldagi
+     nosimmetrik uyalar aynan shu tanlagich ostida turadi va u kuchliroq —
+     qisqa `.sg-book[data-slot]` yozuvi ularni yenga olmaydi.
+
+     Nosimmetriya sababi o'zgarmagan: o'ng tomonda muqovalar tanlangan kitob
+     panelidan (markazdan +25.3u da tugaydi) KEYIN boshlanadi, chap tomonda
+     esa to'g'ridan-to'g'ri qahramon muqovaning yonidan.
+  */
+  .sg-carousel--split .sg-book[data-side='l'][data-slot='1'] {
+    --slot-x: 22;
+  }
+
+  .sg-carousel--split .sg-book[data-side='l'][data-slot='2'] {
+    --slot-x: 36;
+  }
+
+  .sg-carousel--split .sg-book[data-side='l'][data-slot='3'] {
+    --slot-x: 48;
+  }
+
+  .sg-carousel--split .sg-book[data-side='l'][data-slot='4'] {
+    --slot-x: 59;
+  }
+
+  .sg-carousel--split .sg-book[data-side='r'][data-slot='1'] {
+    --slot-x: 47;
+  }
+
+  .sg-carousel--split .sg-book[data-side='r'][data-slot='2'] {
+    --slot-x: 61;
+  }
+
+  .sg-carousel--split .sg-book[data-side='r'][data-slot='3'] {
+    --slot-x: 73;
+  }
+
+  .sg-carousel--split .sg-book[data-side='r'][data-slot='4'] {
+    --slot-x: 84;
+  }
+
+  /* ── TADBIRLAR: uchinchi juftlik ochiladi, oraliqlar kengayadi ──────
+     Fokusdagi kartochka 1.3 masshtabda 42u eni oladi va 1-uya unga 2.5u
+     kirib turardi — "tegib turgan" ko'rinish shundan edi. Endi yon
+     kartochkalar kichrayib chetga yoyiladi: fokus atrofida ~5u nafas
+     qoladi, 3-uya esa kadr chekkasidan ~4u beri tugaydi (ilgari u
+     chekkadan chiqib, kesilib ketardi). */
+  .sg-event[data-slot='1'] {
+    --slot-x: 40;
+    --slot-scale: 0.85;
+  }
+
+  .sg-event[data-slot='2'] {
+    --slot-x: 68;
+    --slot-scale: 0.62;
+    --slot-opacity: 0.3;
+  }
+
   .sg-event[data-slot='3'] {
+    --slot-x: 88;
+    --slot-scale: 0.4;
     --slot-opacity: 0.22;
+  }
+
+  .sg-event[data-slot='4'] {
+    --slot-x: 100;
+    --slot-scale: 0.32;
+    --slot-opacity: 0;
   }
 }
 
 /* ══ AMBIENT ═══════════════════════════════════════════════ */
+
+.sg-a-parent{
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-evenly; */
+}
+
+.sg-ambient1{
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  /* Yozuv kadr pastki chetida — kitob va uning nuriga xalaqit bermaydi */
+  padding-top: calc(var(--u) * 2.6);
+}
 
 .sg-ambient {
   flex: 1;
@@ -1754,6 +1971,17 @@
   padding-bottom: calc(var(--u) * 2.6);
 }
 
+.sg-ambient-welcome {
+  margin: 0;
+  font-size: calc(var(--u) * 0.85);
+  font-weight: 500;
+  letter-spacing: 0.55em;
+  text-indent: 0.55em;
+  text-transform: uppercase;
+  color: rgb(255, 166, 0);
+  transform: scaleY(2);
+}
+
 .sg-ambient-brand {
   margin: 0;
   font-size: calc(var(--u) * 0.85);
@@ -1761,7 +1989,8 @@
   letter-spacing: 0.55em;
   text-indent: 0.55em;
   text-transform: uppercase;
-  color: rgba(217, 164, 65, 0.38);
+  color: rgb(255, 166, 0);
+  transform: scaleY(2);
 }
 
 /* ══ VIDEO ═════════════════════════════════════════════════ */
@@ -1849,7 +2078,8 @@
   .sg-book-media,
   .sg-book-text,
   .sg-event,
-  .sg-event-media {
+  /* Tadbirda masshtab va blur kartochkaning o'zida — rasmda emas */
+  .sg-event-card {
     transition-duration: 1ms;
   }
 

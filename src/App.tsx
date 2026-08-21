@@ -10,6 +10,7 @@ import KioskApp from './kiosk/KioskApp';
 const DisplayApp = lazy(() => import('./display/DisplayApp'));
 const Display2App = lazy(() => import('./display2/Display2App'));
 const MapApp = lazy(() => import('./map/MapApp'));
+const InterfaceApp = lazy(() => import('./interface/InterfaceApp'));
 
 /** Devordagi katta ekran shu yo'l ostida ochiladi. */
 const DISPLAY_PATH = '/ekran';
@@ -17,14 +18,17 @@ const DISPLAY_PATH = '/ekran';
 const DISPLAY2_PATH = '/ekran2';
 /** Bino xaritasi — kiosk va ekrandan mustaqil bo'lim. */
 const MAP_PATH = '/map';
+/** 1080×1920 infokiosk interfeysi (maketlardan qurilgan modullar). */
+const INTERFACE_PATH = '/interface';
 
-type Surface = 'kiosk' | 'display' | 'display2' | 'map';
+type Surface = 'kiosk' | 'display' | 'display2' | 'map' | 'interface';
 
 function surfaceFromPath(pathname: string): Surface {
   // "/ekran2" ni "/ekran" dan oldin tekshiramiz — aks holda prefiks mos kelib ketadi
   if (pathname.startsWith(DISPLAY2_PATH)) return 'display2';
   if (pathname.startsWith(DISPLAY_PATH)) return 'display';
   if (pathname.startsWith(MAP_PATH)) return 'map';
+  if (pathname.startsWith(INTERFACE_PATH)) return 'interface';
   return 'kiosk';
 }
 
@@ -38,6 +42,7 @@ const FALLBACK_BG: Record<Surface, string> = {
   display: '#010F26',
   display2: '#04111F',
   map: '#E8EDF7',
+  interface: '#061530',
 };
 
 function renderSurface(surface: Surface) {
@@ -48,6 +53,8 @@ function renderSurface(surface: Surface) {
       return <DisplayApp />;
     case 'map':
       return <MapApp />;
+    case 'interface':
+      return <InterfaceApp />;
     default:
       return <KioskApp />;
   }
@@ -55,10 +62,12 @@ function renderSurface(surface: Surface) {
 
 /**
  * Bitta build bir nechta ekranga xizmat qiladi:
- *   /       → sensorli infokiosk (och mavzu)
- *   /ekran  → devordagi katta ekran (to'q mavzu, afisha va statistika)
- *   /ekran2 → o'sha ekranning kinematik animatsion fonli versiyasi
- *   /map    → binoning interaktiv 3D xaritasi (qavat va xonalar)
+ *   /          → sensorli infokiosk (och mavzu)
+ *   /ekran     → devordagi katta ekran (to'q mavzu, afisha va statistika)
+ *   /ekran2    → o'sha ekranning kinematik animatsion fonli versiyasi
+ *   /map       → binoning interaktiv 3D xaritasi (qavat va xonalar)
+ *   /interface → 1080×1920 portret infokiosk: meros, allomalar, siymolar,
+ *                tarix, kecha-bugun, viktorina va bolalar bo'limlari
  * Netlify har qanday yo'lni index.html ga yo'naltiradi (netlify.toml).
  */
 export default function App() {

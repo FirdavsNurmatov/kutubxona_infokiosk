@@ -964,6 +964,10 @@ body[data-app='kiosk'] {
 
 .k-cover img { width: 100%; height: 100%; object-fit: cover; }
 
+/* Muallif portreti — doira ichini to'liq to'ldiradi.
+   Rasm yo'q bo'lsa shu joyda ism bosh harflari turadi (KioskAuthors). */
+.k-author-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
 /* Pastki chaqiruv paneli
 .k-cta {
   flex-shrink: 0;

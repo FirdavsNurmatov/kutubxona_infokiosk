@@ -1,0 +1,261 @@
+/* O'zbekistonning 100 siymosi — maket: 100tasiymooq.png
+   Sarlavha to'q ko'k, kontent qismi och. */
+
+.sy-hero {
+  position: relative;
+  flex: none;
+  overflow: hidden;
+  /* Kollaj surati uchun ajratilgan joy. 1080 sahnada surat 360px,
+     matn esa 300px dan boshlanadi — maketdagidek. Kengroq sahnada
+     surat ham o'sadi, aks holda yuzlar juda qattiq kesiladi. */
+  --sy-photo: clamp(360px, 33cqw, 470px);
+  padding: calc(var(--sy-photo) - 60px) var(--if-edge-lg) 34px;
+  color: #F4F8FF;
+  background: #0B2A55;
+}
+.sy-hero-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: var(--sy-photo);
+  object-fit: cover;
+  object-position: center 26%;
+}
+.sy-hero-scrim {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: var(--sy-photo);
+  /* Tepadagi to'q qatlam — emblema va shior yuzlar ustida ham o'qilsin */
+  background: linear-gradient(
+    180deg,
+    rgba(11, 42, 85, 0.74) 0%,
+    rgba(11, 42, 85, 0.24) 24%,
+    rgba(11, 42, 85, 0.55) 58%,
+    #0B2A55 100%
+  );
+}
+.sy-flag,
+.sy-title,
+.sy-tags,
+.sy-lead-row { position: relative; z-index: 1; }
+
+.sy-hero-top {
+  position: absolute;
+  left: var(--if-edge-lg);
+  right: var(--if-edge-lg);
+  top: 26px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  z-index: 2;
+}
+.sy-hero-top img { width: 82px; height: 82px; object-fit: contain; }
+/* Kollaj ustidagi och joylarda ham o'qilsin */
+.sy-hero-top b,
+.sy-hero-motto { text-shadow: 0 2px 10px rgba(4, 18, 40, 0.75); }
+.sy-hero-top b {
+  font-size: 19px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.sy-hero-top b span { display: block; font-size: 15px; font-weight: 500; opacity: 0.8; }
+.sy-hero-motto {
+  margin-left: auto;
+  max-width: 300px;
+  text-align: right;
+  font-size: 18px;
+  line-height: 1.3;
+  color: #CFE0F6;
+}
+
+.sy-flag {
+  height: 10px;
+  /* Bayroq chizig'i chekkadan chekkaga cho'ziladi */
+  margin: 0 calc(-1 * var(--if-edge-lg)) 22px;
+  background: linear-gradient(90deg, #1EA0E0 0 33%, #FFFFFF 33% 66%, #1E9E5A 66%);
+  opacity: 0.9;
+}
+
+.sy-title {
+  margin: 0;
+  font-size: 74px;
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.sy-title em {
+  font-style: normal;
+  background: linear-gradient(180deg, #FBEBC0, #D9A441);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sy-tags {
+  margin: 14px 0 18px;
+  font-size: 21px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-align: center;
+  color: #CFE0F6;
+}
+.sy-lead-row {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+}
+.sy-lead-row p {
+  flex: 1;
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.45;
+  color: #D6E5F8;
+}
+.sy-start {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: none;
+  color: #fff;
+  font-size: 19px;
+  font-weight: 600;
+  text-align: left;
+}
+.sy-start i {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  height: 74px;
+  border-radius: 999px;
+  border: 2px solid rgba(255, 255, 255, 0.55);
+}
+
+.sy-body { padding: 30px var(--if-edge) 40px; }
+
+.sy-search {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  height: 84px;
+  margin-bottom: 26px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1px solid var(--m-card-line);
+  background: #fff;
+  color: var(--m-muted);
+  font-size: 22px;
+  text-align: left;
+}
+.sy-search span { flex: 1; }
+.sy-search[data-filled='1'] span { color: var(--m-text); }
+
+.sy-head {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+.sy-head h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  color: #12325F;
+}
+.sy-head::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: #C9D6E8;
+}
+.sy-pill {
+  flex: none;
+  height: 56px;
+  padding: 0 22px;
+  white-space: nowrap;
+  border-radius: 999px;
+  border: 1px solid var(--m-card-line);
+  background: #fff;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--m-accent);
+}
+
+/* "To'liq ro'yxat" plitasi */
+.sy-all {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 186px;
+  border-radius: var(--m-radius);
+  border: 1px dashed #B9C9DF;
+  background: #F7FAFE;
+  color: #12325F;
+}
+.sy-all b { font-size: 22px; font-weight: 700; }
+.sy-all small { font-size: 18px; color: var(--m-muted); }
+
+.sy-quote {
+  position: relative;
+  overflow: hidden;
+  min-height: 150px;
+  margin-top: 30px;
+  border-radius: var(--m-radius);
+  display: grid;
+  place-items: center;
+  text-align: center;
+  color: #F2E6C8;
+}
+.sy-quote img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+}
+.sy-quote span {
+  position: relative;
+  max-width: 620px;
+  padding: 20px;
+  font-size: 24px;
+  font-style: italic;
+  line-height: 1.4;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
+}
+.sy-quote::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 22, 48, 0.55);
+}
+
+/* Ro'yxat sahifasi */
+.sy-listpage { padding: 24px var(--if-edge) 40px; }
+.sy-empty {
+  padding: 60px 0;
+  text-align: center;
+  font-size: 24px;
+  color: var(--m-muted);
+}
+.sy-fav {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: rgba(8, 24, 52, 0.55);
+  color: #fff;
+  backdrop-filter: blur(4px);
+}
+.sy-fav[aria-pressed='true'] { color: #FFC64B; }

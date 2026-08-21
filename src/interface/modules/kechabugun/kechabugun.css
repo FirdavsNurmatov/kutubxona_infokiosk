@@ -1,0 +1,298 @@
+/* Kecha va bugun — maket: ozbekiston_xozir_va_oldin.png (och mavzu) */
+
+.kb-orn {
+  position: absolute;
+  top: 0;
+  width: 190px;
+  height: 340px;
+  object-fit: cover;
+  pointer-events: none;
+  opacity: 0.9;
+}
+/* 1080 sahnada chekkada (0), kengroq sahnada ravoq yonida qoladi */
+.kb-orn[data-side='l'] { left: max(0px, var(--if-gap)); }
+.kb-orn[data-side='r'] { right: max(0px, var(--if-gap)); transform: scaleX(-1); }
+
+.kb-arch {
+  position: relative;
+  flex: none;
+  /* 1080 maketda aynan 960px (0 60px chekka) — kengroq sahnada markazda */
+  width: min(960px, 100% - 120px);
+  margin-inline: auto;
+  padding: 40px 50px 30px;
+  text-align: center;
+  border-radius: 260px 260px 0 0 / 180px 180px 0 0;
+  background: #FBF7EF;
+  box-shadow: 0 10px 40px rgba(20, 50, 47, 0.08);
+}
+.kb-arch img { width: 130px; height: 130px; object-fit: contain; }
+.kb-arch h1 {
+  margin: 10px 0 0;
+  font-size: 58px;
+  font-weight: 800;
+  line-height: 1.06;
+  color: #0F5C55;
+}
+.kb-arch h1 em {
+  display: block;
+  font-style: normal;
+  font-size: 66px;
+}
+.kb-arch h1 em b { color: #A5722A; font-weight: 800; }
+.kb-arch h1 em i { font-style: normal; color: #6F8B88; }
+.kb-arch p {
+  margin: 14px auto 0;
+  max-width: 620px;
+  font-size: 23px;
+  line-height: 1.35;
+  color: #4C6663;
+}
+
+.kb-body { position: relative; padding: 26px var(--if-edge) 40px; }
+
+/* ── Solishtirgich ─────────────────────────────────── */
+.kb-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 0;
+}
+.kb-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 74px;
+  border-radius: 18px 18px 0 0;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #fff;
+}
+.kb-tab[data-kind='before'] { background: linear-gradient(180deg, #A87A2E, #8A6120); }
+.kb-tab[data-kind='after'] { background: linear-gradient(180deg, #0F7A6E, #0B5E55); }
+.kb-tab[aria-pressed='false'] { opacity: 0.55; }
+
+.kb-compare {
+  position: relative;
+  overflow: hidden;
+  height: 620px;
+  border-radius: 0 0 22px 22px;
+  background: #DED7C8;
+  touch-action: none;
+  user-select: none;
+}
+.kb-compare img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.kb-compare-after { clip-path: inset(0 0 0 var(--split, 50%)); }
+
+.kb-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: var(--split, 50%);
+  width: 4px;
+  margin-left: -2px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 14px rgba(0, 0, 0, 0.35);
+}
+.kb-handle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  margin: -38px 0 0 -38px;
+  border-radius: 999px;
+  background: #fff;
+  color: #14322F;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35);
+}
+
+.kb-year {
+  position: absolute;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  font-size: 21px;
+  font-weight: 600;
+  color: #fff;
+  backdrop-filter: blur(6px);
+}
+.kb-year[data-side='l'] { left: 20px; background: rgba(40, 36, 28, 0.6); }
+.kb-year[data-side='r'] { right: 20px; background: rgba(12, 52, 74, 0.6); }
+
+.kb-place {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 22px;
+  border-radius: 999px;
+  background: rgba(24, 32, 30, 0.66);
+  color: #fff;
+  font-size: 21px;
+  backdrop-filter: blur(6px);
+}
+
+.kb-hint {
+  margin: 12px 0 0;
+  text-align: center;
+  font-size: 18px;
+  color: var(--m-muted);
+}
+
+/* ── Shahar tanlagich ──────────────────────────────── */
+.kb-rule {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 30px 0 18px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #12403C;
+  justify-content: center;
+}
+.kb-rule::before,
+.kb-rule::after {
+  content: '';
+  flex: 1;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #C6BFAF, transparent);
+}
+
+.kb-cities {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.kb-city {
+  position: relative;
+  overflow: hidden;
+  height: 200px;
+  border-radius: 18px;
+  border: 3px solid transparent;
+}
+.kb-city img { width: 100%; height: 100%; object-fit: cover; }
+.kb-city[aria-pressed='true'] {
+  border-color: #0F7A6E;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(15, 92, 85, 0.28);
+}
+.kb-city span {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 30px 14px 12px;
+  background: linear-gradient(180deg, transparent, rgba(12, 30, 28, 0.85));
+  color: #fff;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ── Hikoya ────────────────────────────────────────── */
+.kb-story {
+  margin-top: 20px;
+  padding: 22px 26px;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  background: #fff;
+  font-size: 21px;
+  line-height: 1.5;
+}
+
+/* ── Arxiv materiallari ────────────────────────────── */
+.kb-archive {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 30px;
+  padding: 28px 20px;
+  border-radius: var(--m-radius);
+  background: linear-gradient(180deg, #10467F, #0C3563);
+  color: #fff;
+}
+.kb-archive-title {
+  grid-column: 1 / -1;
+  margin: 0 0 22px;
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+.kb-arch-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 0 12px;
+  color: #fff;
+  text-align: center;
+}
+.kb-arch-item + .kb-arch-item { border-left: 1px solid rgba(255, 255, 255, 0.16); }
+.kb-arch-item i {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 999px;
+}
+.kb-arch-item b { font-size: 20px; font-weight: 600; line-height: 1.25; }
+.kb-arch-item small { font-size: 16px; opacity: 0.75; }
+
+/* ── Xususiyat plitalari ───────────────────────────── */
+.kb-features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-top: 24px;
+}
+.kb-feature {
+  padding: 22px 20px;
+  border-radius: 16px;
+  border: 1px solid var(--m-card-line);
+  background: #FAFAF7;
+  text-align: center;
+}
+.kb-feature i { color: #0F7A6E; }
+.kb-feature b {
+  display: block;
+  margin: 12px 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #12403C;
+}
+.kb-feature small { font-size: 17px; line-height: 1.35; color: var(--m-muted); }
+
+.kb-cta-row { display: flex; justify-content: center; margin-top: 30px; }
+.kb-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 92px;
+  padding: 0 50px;
+  border-radius: 18px;
+  border: 3px solid #C9A85E;
+  background: linear-gradient(180deg, #12796D, #0C5A50);
+  color: #fff;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}

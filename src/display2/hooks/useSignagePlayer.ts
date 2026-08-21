@@ -7,7 +7,10 @@ export interface SignagePlayer {
   slide: SignageSlide | undefined;
   /** Keyingi slaydga o'tish — video tugaganda yoki xatolikda chaqiriladi. */
   next: () => void;
-  /** Boshiga qaytish — xatolikdan tiklanishda ishlatiladi. */
+  /**
+   * Boshlang'ich holatga qaytish — xatolikdan tiklanishda ishlatiladi.
+   * `?slide=` bilan qotirilgan bo'lsa o'sha bo'limga qaytadi.
+   */
   reset: () => void;
 }
 
@@ -56,7 +59,10 @@ export function useSignagePlayer(
     setIndex((current) => (lengthRef.current ? (current + 1) % lengthRef.current : 0));
   }, []);
 
-  const reset = useCallback(() => setIndex(0), []);
+  /* Tiklanish qotirilgan bo'limni buzmasligi kerak: LED panelni sozlayotganda
+     ekran bir marta xato bersa, `?slide=events` bilan ochilgan sahifa
+     INTRO'ga sakrab ketmasin. */
+  const reset = useCallback(() => setIndex(pinned ?? 0), [pinned]);
 
   // Pleylist qisqarsa indeks chegaradan chiqib ketmasin
   useEffect(() => {

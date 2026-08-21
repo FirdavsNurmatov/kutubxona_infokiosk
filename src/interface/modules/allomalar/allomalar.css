@@ -1,0 +1,87 @@
+/* Buyuk allomalar — maket: buyuk_allomalar.png */
+
+.all-hero {
+  position: relative;
+  flex: none;
+  height: 560px;
+  overflow: hidden;
+  text-align: center;
+}
+.all-hero-orn {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 300px;
+  object-fit: cover;
+  opacity: 0.85;
+}
+.all-hero-orn[data-side='l'] { left: 0; -webkit-mask-image: linear-gradient(90deg, #000 40%, transparent); mask-image: linear-gradient(90deg, #000 40%, transparent); }
+.all-hero-orn[data-side='r'] { right: 0; -webkit-mask-image: linear-gradient(270deg, #000 40%, transparent); mask-image: linear-gradient(270deg, #000 40%, transparent); }
+
+.all-hero-inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding-inline: max(60px, var(--if-gap));
+}
+.all-logo { width: 130px; height: 130px; object-fit: contain; margin-bottom: 6px; }
+.all-hero h1 {
+  margin: 0;
+  font-size: 82px;
+  font-weight: 800;
+  line-height: 0.96;
+  letter-spacing: 0.01em;
+  background: linear-gradient(180deg, #FBEBC0 15%, #D9A441 70%, #B57F22 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.all-hero-sub {
+  margin: 12px 0 16px;
+  font-size: 27px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+.all-hero p {
+  max-width: 640px;
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.42;
+  color: #DCCDA6;
+}
+
+/* Naqshli ramka chizig'i */
+.all-rule {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 20px;
+  color: var(--m-accent);
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  justify-content: center;
+}
+.all-rule::before,
+.all-rule::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--m-card-line), transparent);
+}
+
+.all-body { padding: 30px var(--if-edge) 40px; }
+.all-block { margin-bottom: 30px; }
+
+.all-panel {
+  padding: 24px 22px;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  background: linear-gradient(180deg, rgba(12, 36, 96, 0.6), rgba(8, 24, 68, 0.6));
+}

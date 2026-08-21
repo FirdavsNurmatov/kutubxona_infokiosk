@@ -1,0 +1,174 @@
+/* Bilimingizni sinang (kattalar) — maket: bilimingizni_sinang.png */
+
+.vk-hero {
+  position: relative;
+  flex: none;
+  min-height: 560px;
+  overflow: hidden;
+  padding: 30px var(--if-edge-lg) 40px;
+}
+.vk-hero-img {
+  position: absolute;
+  /* 1080 maketda -20px (chekkadan chiqib turadi), kengroq sahnada
+     kontent ustuni bilan birga markazga suriladi */
+  right: calc(var(--if-edge-lg) - 60px);
+  top: 20px;
+  width: 620px;
+  height: 560px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 60px rgba(140, 90, 240, 0.35));
+  /* Maket kesimining to'rtburchak cheti fonga singib ketsin */
+  -webkit-mask-image: radial-gradient(72% 72% at 52% 48%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(72% 72% at 52% 48%, #000 58%, transparent 100%);
+}
+.vk-hero > div { position: relative; max-width: 560px; }
+
+.vk-hero h1 {
+  margin: 0;
+  font-size: 62px;
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+}
+.vk-hero h1 em {
+  display: block;
+  font-style: normal;
+  font-size: 88px;
+  background: linear-gradient(92deg, #4FA8FF 0%, #A855F7 48%, #F472B6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.vk-hero-sub {
+  margin: 10px 0 20px;
+  font-size: 30px;
+  font-weight: 500;
+  color: #9C8FD6;
+}
+.vk-hero p {
+  margin: 0 0 30px;
+  font-size: 22px;
+  line-height: 1.45;
+  color: #B7B0CE;
+}
+
+.vk-start {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 92px;
+  padding: 0 44px;
+  border-radius: 999px;
+  background: linear-gradient(92deg, #7C3AED, #C026D3);
+  color: #fff;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  box-shadow: 0 0 40px rgba(168, 85, 247, 0.55);
+}
+.vk-how {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  font-size: 20px;
+  color: var(--m-muted);
+}
+
+.vk-body { padding: 10px var(--if-edge-lg) 40px; }
+
+/* ── Kategoriyalar ─────────────────────────────────── */
+.vk-cats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.vk-cat {
+  display: flex;
+  gap: 18px;
+  padding: 22px 20px;
+  border-radius: 18px;
+  border: 1px solid var(--m-card-line);
+  background: rgba(255, 255, 255, 0.03);
+  text-align: left;
+}
+.vk-cat-icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 72px;
+  height: 72px;
+  border-radius: 18px;
+}
+.vk-cat b { display: block; font-size: 26px; font-weight: 700; }
+.vk-cat p { margin: 6px 0 12px; font-size: 17px; line-height: 1.35; color: var(--m-muted); }
+.vk-badge {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ── Natijalar ─────────────────────────────────────── */
+.vk-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  margin-top: 26px;
+  padding: 26px 10px;
+  border-radius: 20px;
+  border: 1px solid var(--m-card-line);
+  background: rgba(255, 255, 255, 0.025);
+}
+.vk-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+.vk-stat + .vk-stat { border-left: 1px solid var(--m-card-line); }
+.vk-stat b { font-size: 46px; font-weight: 800; line-height: 1; }
+.vk-stat small { font-size: 18px; color: var(--m-muted); }
+
+/* ── Tavsiya etilgan o'yin ─────────────────────────── */
+.vk-featured {
+  display: grid;
+  grid-template-columns: 430px 1fr;
+  gap: 26px;
+  margin-top: 26px;
+  padding: 24px;
+  border-radius: 22px;
+  border: 1px solid var(--m-card-line);
+  background: rgba(255, 255, 255, 0.03);
+}
+.vk-featured img { width: 100%; height: 290px; border-radius: 16px; object-fit: cover; }
+.vk-featured-body { display: flex; flex-direction: column; justify-content: center; }
+.vk-chip {
+  align-self: flex-start;
+  padding: 7px 18px;
+  margin-bottom: 14px;
+  border-radius: 8px;
+  background: #2563EB;
+  font-size: 17px;
+  font-weight: 600;
+}
+.vk-featured h3 { margin: 0 0 14px; font-size: 38px; font-weight: 700; line-height: 1.14; }
+.vk-meta { display: flex; gap: 26px; margin-bottom: 16px; font-size: 20px; color: var(--m-muted); }
+.vk-meta span { display: flex; align-items: center; gap: 9px; }
+.vk-featured p { margin: 0 0 22px; font-size: 20px; line-height: 1.45; color: #C5BEDC; }
+.vk-play {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  min-height: 88px;
+  padding: 0 40px;
+  border-radius: 16px;
+  background: linear-gradient(92deg, #2563EB, #3B82F6);
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: 0 0 36px rgba(59, 130, 246, 0.5);
+}

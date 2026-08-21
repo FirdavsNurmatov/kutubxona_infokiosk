@@ -14,8 +14,15 @@ export default function AmbientSlide() {
   const { t } = useI18n();
 
   return (
-    <div className="sg-ambient">
-      <p className="sg-ambient-brand">{t.libraryName.join(' ')}</p>
+    <div className='sg-a-parent'>
+      <div className='sg-ambient1'>
+        {/* Salomlashuv INTRO yorlig'i bilan bitta manbadan olinadi — uch tilda
+            tarjimasi tayyor va matn ikki joyda ajralib ketmaydi. */}
+        <p className="sg-ambient-welcome">{t.screen2.welcome}</p>
+      </div>
+      <div className="sg-ambient">
+        <p className="sg-ambient-brand">{t.libraryName.join(' ')}</p>
+      </div>
     </div>
   );
 }

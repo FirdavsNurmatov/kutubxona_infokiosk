@@ -1,0 +1,314 @@
+/* Allomalar, 100 siymo va Nodir meros modullari uchun umumiy naqsh:
+   kategoriya plitalari → yozuvlar karuseli → tavsiya bloki → to'liq detal. */
+
+/* ── Yozuvlar karuseli ─────────────────────────────── */
+.enc-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.enc-arrow {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+  color: var(--m-accent);
+}
+.enc-arrow:disabled { opacity: 0.3; }
+
+.enc-track {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 14px;
+}
+
+/* Doira ko'rinishi — allomalar maketidagi portretlar */
+.enc-person {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 4px;
+}
+.enc-person img {
+  width: 158px;
+  height: 158px;
+  border-radius: 999px;
+  object-fit: cover;
+  border: 3px solid var(--m-accent);
+  box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.25);
+}
+.enc-person[aria-pressed='true'] img {
+  box-shadow: 0 0 0 5px rgba(0, 0, 0, 0.25), 0 0 26px var(--m-accent);
+}
+.enc-person b {
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-align: center;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+.enc-person small { font-size: 17px; color: var(--m-muted); }
+
+/* Kartochka ko'rinishi — siymolar va meros */
+.enc-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+  text-align: left;
+}
+.enc-card img {
+  width: 100%;
+  height: 210px;
+  object-fit: cover;
+  flex: none;
+}
+.enc-card-body { padding: 14px 16px 16px; }
+.enc-card b { display: block; font-size: 21px; font-weight: 700; line-height: 1.2; }
+.enc-card small { display: block; margin-top: 5px; font-size: 16px; color: var(--m-muted); }
+
+/* ── Kategoriya plitalari ──────────────────────────── */
+.enc-cats {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 4), 1fr);
+  /* Qatorlar balandligi aniq belgilanadi — `min-height` ba'zi brauzerlarda
+     tugma ichidagi barcha bola absolute bo'lganda qatorni ushlab turmaydi. */
+  grid-auto-rows: minmax(186px, auto);
+  gap: 14px;
+}
+.enc-cat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 146px;
+  padding: 16px 12px;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+  text-align: center;
+}
+.enc-cat[aria-pressed='true'] {
+  border-color: var(--m-accent);
+  box-shadow: 0 0 22px rgba(223, 179, 88, 0.35), inset 0 0 30px rgba(223, 179, 88, 0.1);
+}
+.enc-cat-icon { color: var(--m-accent); }
+.enc-cat b { font-size: 20px; font-weight: 600; line-height: 1.22; }
+.enc-cat small { font-size: 16px; color: var(--m-muted); }
+
+/* Rasmli kategoriya kartochkasi (100 siymo maketi) */
+.enc-cat-photo {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  min-height: 186px;
+  height: 100%;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  text-align: left;
+}
+.enc-cat-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.enc-cat-photo-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(6, 18, 40, 0.1) 30%, rgba(6, 18, 40, 0.88) 100%);
+}
+.enc-cat-photo-label {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+.enc-cat-photo-label i {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(6px);
+}
+.enc-cat-photo-label b { display: block; font-size: 22px; font-weight: 700; }
+.enc-cat-photo-label small { font-size: 16px; opacity: 0.85; }
+
+/* ── Tavsiya etilgan blok ──────────────────────────── */
+.enc-featured {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 0;
+  overflow: hidden;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+}
+.enc-featured[data-flip='1'] { grid-template-columns: 400px 1fr; }
+.enc-featured-media {
+  position: relative;
+  min-height: 330px;
+}
+.enc-featured-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.enc-featured-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px 32px;
+}
+.enc-badge {
+  align-self: flex-start;
+  padding: 8px 20px;
+  margin-bottom: 16px;
+  border-radius: 999px;
+  border: 1px solid var(--m-accent);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+.enc-featured-text h3 { margin: 0 0 6px; font-size: 42px; font-weight: 700; line-height: 1.08; }
+.enc-featured-text .enc-years { font-size: 21px; color: var(--m-muted); margin-bottom: 14px; }
+.enc-featured-text p { margin: 0 0 22px; font-size: 20px; line-height: 1.42; }
+
+/* ── To'liq detal ──────────────────────────────────── */
+.enc-detail {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  background: var(--m-bg);
+}
+.enc-detail-hero {
+  position: relative;
+  flex: none;
+  /* 1080 sahnada aynan 400px; kengroq sahnada portret shunchalik qattiq
+     kesilmasligi uchun balandlik ham biroz o'sadi. */
+  height: clamp(400px, 37cqw, 520px);
+  overflow: hidden;
+}
+.enc-detail-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 28%;
+}
+.enc-detail-hero-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.35) 0%, transparent 35%, var(--m-bg) 100%);
+}
+.enc-detail-heading {
+  position: absolute;
+  left: var(--if-edge);
+  right: var(--if-edge);
+  bottom: 22px;
+}
+.enc-detail-heading h2 { margin: 0; font-size: 52px; font-weight: 800; line-height: 1.05; }
+.enc-detail-heading span { font-size: 23px; color: var(--m-muted); }
+
+.enc-tabs {
+  display: flex;
+  gap: 10px;
+  flex: none;
+  padding: 20px var(--if-edge) 14px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.enc-tabs::-webkit-scrollbar { display: none; }
+.enc-tab {
+  flex: none;
+  min-height: 68px;
+  padding: 0 26px;
+  border-radius: 14px;
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+  font-size: 20px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.enc-tab[aria-selected='true'] {
+  background: var(--m-accent);
+  border-color: var(--m-accent);
+  color: var(--m-accent-ink);
+}
+
+.enc-detail-body { padding: 8px var(--if-edge) 40px; }
+.enc-detail-body p {
+  margin: 0 0 20px;
+  font-size: 23px;
+  line-height: 1.55;
+}
+.enc-facts {
+  margin-top: 8px;
+  padding: 22px 26px;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+}
+.enc-facts h4 {
+  margin: 0 0 14px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+.enc-facts li {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-size: 20px;
+  line-height: 1.4;
+}
+.enc-facts ul { list-style: none; margin: 0; padding: 0; }
+.enc-facts li:last-child { margin-bottom: 0; }
+.enc-facts li::before { content: '◆'; color: var(--m-accent); flex: none; }
+
+/* ── Ro'yxat ko'rinishi ────────────────────────────── */
+.enc-list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+.enc-list-item {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: var(--m-radius);
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+  text-align: left;
+}
+.enc-list-item img { width: 100%; height: 240px; object-fit: cover; flex: none; }
+.enc-list-item span { padding: 14px 16px 16px; }
+.enc-list-item b { display: block; font-size: 20px; font-weight: 700; line-height: 1.22; }
+.enc-list-item small { display: block; margin-top: 4px; font-size: 16px; color: var(--m-muted); }

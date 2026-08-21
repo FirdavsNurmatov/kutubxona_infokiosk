@@ -57,17 +57,14 @@ export default function IntroSlide({ active }: { active: boolean }) {
         { opacity: 0.93 },
         { opacity: 1, duration: 9.2, ease: 'sine.inOut', repeat: -1, yoyo: true },
       );
+      /* Faqat `opacity` — u kompozitorda hisoblanadi va qayta bo'yash talab
+         qilmaydi. Ilgari bu yerda `drop-shadow()` animatsiya qilinardi: filtr
+         yozuvni alohida yuzaga ko'chirib, har kadrda qaytadan rasterlatardi.
+         Yog'duning o'zi endi statik `text-shadow` bo'lib CSS'da turadi. */
       gsap.fromTo(
         '.sg-intro-tagline',
-        { filter: 'drop-shadow(0 0 0px rgba(217,164,65,0))' },
-        {
-          filter: 'drop-shadow(0 0 14px rgba(217,164,65,0.45))',
-          duration: 6.4,
-          ease: 'sine.inOut',
-          repeat: -1,
-          yoyo: true,
-          delay: 1.6,
-        },
+        { opacity: 0.82 },
+        { opacity: 1, duration: 6.4, ease: 'sine.inOut', repeat: -1, yoyo: true, delay: 1.6 },
       );
     },
     { scope: root },
