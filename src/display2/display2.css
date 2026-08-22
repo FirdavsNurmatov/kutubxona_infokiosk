@@ -8,7 +8,23 @@
    ══════════════════════════════════════════════════════════════ */
 
 .d2-root {
-  --u: min(1vw, 1.7778vh);
+  /* Kadr birligi. `--u0` — maketning o'z o'lchovi, `--u` esa hozirgi
+     kontekstniki: yozuv bloklari uni o'zlari uchun kattalashtiradi. */
+  --u0: min(1vw, 1.7778vh);
+  --u: var(--u0);
+
+  /*
+     YOZUV KATTALIGI — bitta sozlagich.
+
+     Ilgari bu yerda `transform: scaleY(2)` turardi: u faqat balandlikni
+     ikkilantirar, kengligini esa tegmasdi — shuning uchun harflar cho'zilib
+     ko'rinardi. Endi blok ichidagi `--u` ning o'zi kattalashadi, ya'ni
+     shrift ham, oraliqlar ham proporsional o'sadi va matn o'z qutisida
+     to'g'ri qatorlanadi.
+
+     Kattaroq/kichikroq kerak bo'lsa — faqat shu raqam o'zgaradi.
+  */
+  --sg-text-zoom: 1.6;
 
   /* Asosiy — to'q navy */
   --sg-navy-900: #04111f;
@@ -591,15 +607,15 @@
 */
 .sg-label {
   position: absolute;
-  top: calc(var(--u) * 2.6);
-  /* Yorliq INTRO ustuni bilan bitta sozlagichdan oziqlanadi (`--intro-safe`),
-     shuning uchun ustun surilganda u ham birga suriladi va tekislangan qoladi */
-  left: max(calc(var(--u) * 3), calc(50vw - var(--u) * var(--intro-safe, 58)));
+  /* Joylashuv maket birligida (`--u0`): yozuv kattalashsa ham yorliq
+     o'z burchagida qoladi va INTRO ustuni bilan tekislangan turadi */
+  top: calc(var(--u0) * 2.6);
+  left: max(calc(var(--u0) * 3), calc(50vw - var(--u0) * var(--intro-safe, 58)));
   z-index: 3;
   display: flex;
   align-items: baseline;
   gap: calc(var(--u) * 1.1);
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-label-index {
@@ -657,7 +673,7 @@
   display: flex;
   align-items: center;
   gap: calc(var(--u) * 1.8);
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-intro-logo {
@@ -707,7 +723,7 @@
   align-items: flex-end;
   /* Yorliq bilan bir sathda boshlanadi */
   /* margin-top: calc(var(--u) * 2.4); */
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-intro-time {
@@ -881,6 +897,9 @@
 /* ══ Bo'lim sarlavhasi (KITOBLAR / TADBIRLAR) ══════════════ */
 
 .sg-section {
+  /* `relative` — muqova manbasi yozuvi (`.sg-credit`) shu bo'limning
+     chekkasiga bog'lanadi, kadrga emas */
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1012,7 +1031,7 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 /* Nashr yili va sahifalar soni */
@@ -1295,6 +1314,15 @@
   z-index: 1;
 }
 
+/* 5-uya — ko'rinmas zaxira (eng chetdagi element shu yerdan chiqadi) */
+.sg-book[data-slot='5'],
+.sg-event[data-slot='5'] {
+  --slot-scale: 0.5;
+  --slot-opacity: 0;
+  --slot-blur: 3px;
+  z-index: 0;
+}
+
 .sg-book[data-slot='0'],
 .sg-event[data-slot='0'] {
   z-index: 5;
@@ -1411,6 +1439,10 @@
   --slot-x: 66;
 }
 
+.sg-book[data-slot='5'] {
+  --slot-x: 76;
+}
+
 .sg-book-text {
   gap: calc(var(--u) * 0.3);
   margin-top: calc(var(--u) * 1.3);
@@ -1449,6 +1481,27 @@
     0 0 calc(var(--u) * 0.9) rgba(1, 5, 14, 0.9);
 }
 
+/*
+   Muqova manbasi — kadrning o'ng pastki burchagi.
+
+   Trekning tashqarisida, mutlaq joylashuvda: karusel elementlari o'z
+   uyalarida surilib turadi, bu yozuv esa qimirlamaydi. Rangi fon bilan
+   deyarli qo'shilib ketadi — u ma'lumot emas, huquqiy izoh.
+*/
+.sg-credit {
+  position: absolute;
+  right: calc(var(--u0) * 3);
+  bottom: calc(var(--u0) * 1.6);
+  z-index: 6;
+  margin: 0;
+  font-size: calc(var(--u0) * 0.62);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(180, 200, 224, 0.34);
+  text-shadow: 0 calc(var(--u0) * 0.06) calc(var(--u0) * 0.5) rgba(1, 5, 14, 0.9);
+  pointer-events: none;
+}
+
 /* ── Markazdagi element haqidagi katta blok ──────────────── */
 
 .sg-focus-info {
@@ -1482,7 +1535,7 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-focus-author {
@@ -1491,7 +1544,7 @@
   letter-spacing: 0.05em;
   color: rgba(234, 241, 250, 0.82);
   text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1) rgba(0, 6, 18, 0.9);
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-focus-genre {
@@ -1500,7 +1553,7 @@
   letter-spacing: 0.26em;
   text-transform: uppercase;
   color: var(--sg-gold);
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 /* Yil va sahifalar soni — bitta qatorda */
@@ -1513,7 +1566,7 @@
   font-size: calc(var(--u) * 0.92);
   letter-spacing: 0.08em;
   color: rgba(234, 241, 250, 0.85);
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-focus-meta span {
@@ -1694,13 +1747,11 @@
   gap: calc(var(--u) * 0.1);
   padding: 0 calc(var(--u) * 0.4);
   /*
-     Vertikal cho'zish butun ustunga bir marta beriladi — kun, oy va vaqtning
-     har biriga alohida emas. Sabab: `scaleY` element balandligini faqat
-     ko'rinishda o'zgartiradi, joylashuv qutisini emas. Uchala yozuv o'z
-     markazidan cho'zilsa, ular bir-birining ustiga chiqib ketadi; ustun
-     cho'zilganda esa oralaridagi masofa ham birga o'sadi.
+     Kattalashtirish butun ustunga bir marta beriladi — kun, oy va vaqtning
+     har biriga alohida emas: `--u` meros bo'lib o'tadi, shuning uchun uchala
+     yozuv ham, ular orasidagi masofa ham birdek o'sadi.
   */
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-event-day {
@@ -1779,13 +1830,12 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-event.is-focus .sg-event-title {
   font-size: calc(var(--u) * 1.18);
   color: #f6faff;
-  transform: scaleY(2);
 }
 
 .sg-event-place {
@@ -1795,7 +1845,7 @@
   font-size: calc(var(--u) * 0.7);
   color: var(--sg-muted);
   min-width: 0;
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-event-place svg {
@@ -1828,6 +1878,11 @@
 
 .sg-event[data-slot='4'] {
   --slot-x: 98;
+  --slot-opacity: 0;
+}
+
+.sg-event[data-slot='5'] {
+  --slot-x: 112;
   --slot-opacity: 0;
 }
 
@@ -1864,6 +1919,10 @@
     --slot-x: 82;
   }
 
+  .sg-book[data-slot='5'] {
+    --slot-x: 96;
+  }
+
   .sg-event[data-slot='1'] {
     --slot-x: 33;
   }
@@ -1881,6 +1940,10 @@
      emas, markazdan qochib siljiydi va aylanishda sakrash ko'rinadi. */
   .sg-event[data-slot='4'] {
     --slot-x: 108;
+  }
+
+  .sg-event[data-slot='5'] {
+    --slot-x: 124;
   }
 }
 
@@ -1903,29 +1966,43 @@
    aks holda oraliqlar notekis bo'lib qoladi.
 */
 @media (min-aspect-ratio: 3 / 1) {
-  /* ── KITOBLAR: 5 emas, 7 muqova ────────────────────────────────────
-     3-uya ochiladi (ilgari u har qanday ekranda yopiq edi), yon muqovalar
+  /* ── KITOBLAR: 5 emas, 9 muqova ────────────────────────────────────
+     3- va 4-uyalar ochiladi (tor ekranda ikkalasi ham yopiq), yon muqovalar
      esa kattalashadi — bo'shab yotgan chekka joy aynan shuni ko'taradi.
-     Har bir muqova qo'shnisidan ~3.5u (≈100 px) uzoqda turadi. */
+     5760 px kadrda markazdan chetgacha ~99u bor, shuning uchun muqovalar
+     zich turishi shart emas: har biri qo'shnisidan ~4u (≈115 px) nafas
+     oladi va eng chetdagisi kadr chekkasidan ~20u beri tugaydi.
+
+     Shaffoflik ataylab yuqori: bu qator ekranning asosiy mazmuni, chetdagi
+     muqovalar "so'nib yo'qolayotgan" emas, uzoqroqda turgan bo'lib
+     ko'rinishi kerak. Blur esa chuqurlikni saqlab qoladi. */
   .sg-book[data-slot='1'] {
-    --slot-scale: 0.62;
-    --slot-opacity: 0.58;
+    --slot-scale: 0.68;
+    --slot-opacity: 0.78;
+    --slot-blur: 0.8px;
   }
 
   .sg-book[data-slot='2'] {
-    --slot-scale: 0.47;
-    --slot-opacity: 0.34;
+    --slot-scale: 0.54;
+    --slot-opacity: 0.62;
+    --slot-blur: 1.4px;
   }
 
   .sg-book[data-slot='3'] {
+    --slot-scale: 0.44;
+    --slot-opacity: 0.46;
+    --slot-blur: 1.9px;
+  }
+
+  .sg-book[data-slot='4'] {
     --slot-scale: 0.36;
-    --slot-opacity: 0.2;
+    --slot-opacity: 0.32;
     --slot-blur: 2.4px;
   }
 
-  /* 4-uya — ko'rinmas zaxira: yangi muqova shu yerda tug'ilib, keyingi
-     qadamda 3-uyaga suriladi. 3-uyadan uzoqroqda turishi shart. */
-  .sg-book[data-slot='4'] {
+  /* 5-uya — ko'rinmas zaxira: yangi muqova shu yerda tug'ilib, keyingi
+     qadamda 4-uyaga suriladi. 4-uyadan uzoqroqda turishi shart. */
+  .sg-book[data-slot='5'] {
     --slot-scale: 0.3;
     --slot-opacity: 0;
   }
@@ -1940,35 +2017,43 @@
      esa to'g'ridan-to'g'ri qahramon muqovaning yonidan.
   */
   .sg-carousel--split .sg-book[data-side='l'][data-slot='1'] {
-    --slot-x: 22;
+    --slot-x: 23;
   }
 
   .sg-carousel--split .sg-book[data-side='l'][data-slot='2'] {
-    --slot-x: 36;
+    --slot-x: 38.5;
   }
 
   .sg-carousel--split .sg-book[data-side='l'][data-slot='3'] {
-    --slot-x: 48;
+    --slot-x: 52;
   }
 
   .sg-carousel--split .sg-book[data-side='l'][data-slot='4'] {
-    --slot-x: 59;
+    --slot-x: 63.5;
+  }
+
+  .sg-carousel--split .sg-book[data-side='l'][data-slot='5'] {
+    --slot-x: 75;
   }
 
   .sg-carousel--split .sg-book[data-side='r'][data-slot='1'] {
-    --slot-x: 47;
+    --slot-x: 47.5;
   }
 
   .sg-carousel--split .sg-book[data-side='r'][data-slot='2'] {
-    --slot-x: 61;
+    --slot-x: 63;
   }
 
   .sg-carousel--split .sg-book[data-side='r'][data-slot='3'] {
-    --slot-x: 73;
+    --slot-x: 76.5;
+  }
+
+  .sg-carousel--split .sg-book[data-side='r'][data-slot='5'] {
+    --slot-x: 99;
   }
 
   .sg-carousel--split .sg-book[data-side='r'][data-slot='4'] {
-    --slot-x: 84;
+    --slot-x: 88;
   }
 
   /* ── TADBIRLAR: uchinchi juftlik ochiladi, oraliqlar kengayadi ──────
@@ -1997,6 +2082,12 @@
   .sg-event[data-slot='4'] {
     --slot-x: 100;
     --slot-scale: 0.32;
+    --slot-opacity: 0;
+  }
+
+  .sg-event[data-slot='5'] {
+    --slot-x: 116;
+    --slot-scale: 0.28;
     --slot-opacity: 0;
   }
 }
@@ -2036,7 +2127,7 @@
   text-indent: 0.55em;
   text-transform: uppercase;
   color: rgb(255, 166, 0);
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-ambient-brand {
@@ -2047,7 +2138,7 @@
   text-indent: 0.55em;
   text-transform: uppercase;
   color: rgb(255, 166, 0);
-  transform: scaleY(2);
+  --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 /* ══ VIDEO ═════════════════════════════════════════════════ */

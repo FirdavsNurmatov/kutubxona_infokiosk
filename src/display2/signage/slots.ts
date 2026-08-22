@@ -16,14 +16,15 @@ import type { CSSProperties } from 'react';
  * Chapga va o'ngga nechta uya chiziladi.
  *
  * 0…2 — doim ko'rinadi (jami 5 ta element)
- * 3    — ultra-keng panelda (≈3:1 dan keng) ochiladi va sahifada 7 ta element
- *        bo'ladi — KITOBLARDA ham, TADBIRLARDA ham. Tor ekranda yopiq qoladi:
- *        u yerda buncha element uchun joy yo'q (`display2.css`, media so'rovi)
- * 4    — ko'rinmas zaxira: yangi element shu yerda paydo bo'lib, keyingi
+ * 3…4  — ultra-keng panelda (≈3:1 dan keng) ochiladi va KITOBLAR sahifasida
+ *        9 ta muqova turadi. Tor ekranda yopiq qoladi: u yerda buncha
+ *        element uchun joy yo'q (`display2.css`, media so'rovi). TADBIRLARDA
+ *        bu uyalar ko'rinmaydi — kartochkalar muqovadan ancha keng.
+ * 5    — ko'rinmas zaxira: yangi element shu yerda paydo bo'lib, keyingi
  *        qadamda ko'rinishga suriladi, shuning uchun aylanish uzluksiz
  *        tuyuladi va hech qayerda sakrash bo'lmaydi.
  */
-export const SLOT_RANGE = 4;
+export const SLOT_RANGE = 5;
 
 export interface SlotAttrs {
   'data-slot': string;

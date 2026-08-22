@@ -33,37 +33,69 @@ interface BookRecord {
 }
 
 /**
- * Haqiqiy muqovalar (`public/images/books/`) — faqat nashri aniq topilganlari.
+ * Muqovalar — `public/images/books/`.
  *
- * Ro'yxatda yo'q kitob muqovasiz qoladi va ekranda uning o'rniga nomi
- * yozilgan tipografik muqova chiziladi (`BookCard`) — begona muqova
- * ishlatilmaydi.
+ * Kalit — `public/books.json` dagi `id`. Ro'yxatda yo'q kitob muqovasiz
+ * qoladi va ekranda uning o'rniga nomi yozilgan tipografik muqova chiziladi
+ * (`BookCard`) — begona kitobning muqovasi ishlatilmaydi.
+ *
+ * Manba: 26 tasi asaxiy.uz kitob do'koni katalogidan olingan (har biri
+ * sarlavha va muallif bo'yicha qo'lda tekshirilgan), 13 tasi loyihada
+ * ilgaridan bor edi. Shu sababli ekranda kichkina "Muqovalar: asaxiy.uz"
+ * yozuvi turadi (`BooksSlide`). Yangi muqova qo'shilsa — faylni shu papkaga
+ * tashlab, pastga bitta qator yozish kifoya.
  */
 const COVERS: Record<number, string> = {
+  1: 'hozirgi-zamon.jpg',
+  2: 'yangi-ozbekiston-strategiyasi.jpg',
+  3: 'qorqma.jpg',
+  4: 'lolazor.jpg',
+  5: 'muhammad-yusuf-saylanma.jpg',
+  6: 'qorakoz-majnun.jpg',
+  7: 'odamiylik-mulki.jpg',
+  8: 'odam-bolish-qiyin.jpg',
   9: 'oq-kema.jpg',
   10: 'asrga-tatigulik-kun.jpg',
+  11: 'besh-bolali-yigitcha.jpg',
+  12: 'liderlar-kitobi.jpg',
+  13: 'chinor.jpg',
+  14: 'sohibqiron.jpg',
+  15: 'turkiston-qaygusi.jpg',
+  16: 'ozbegim.jpg',
+  19: 'jayhun-ustida-bulutlar.jpg',
+  21: 'kafansiz-komilganlar.jpg',
   24: 'otkan-kunlar.jpg',
   25: 'mehrobdan-chayon.jpg',
   26: 'kecha-va-kunduz.jpg',
   27: 'turkiy-guliston.jpg',
+  28: 'oila-yoki-oilani-boshqarish.jpg',
+  29: 'padarkush.jpg',
   30: 'navoiy-roman.jpg',
+  31: 'sarob.jpg',
+  32: 'sinchalak.jpg',
   33: 'dunyoning-ishlari.jpg',
   34: 'yulduzli-tunlar.jpg',
   35: 'ulugbek-xazinasi.jpg',
   36: 'ufq.jpg',
+  37: 'mahbub-ul-qulub.jpg',
   38: 'boburnoma.jpg',
+  39: 'yaldo-kechasi.jpg',
+  44: 'puankare.jpg',
+  46: 'tirilish.jpg',
   47: 'urush-va-tinchlik.jpg',
+  49: 'faust.jpg',
+  50: 'parij-bibi-maryam.jpg',
 };
-
 /**
  * Kitoblar ro'yxati.
  *
- * Ataylab o'zgaruvchan massiv: JSON o'qilgach elementlar SHU massivga
- * qo'shiladi. Shu sababli uni sinxron boshlang'ich qiymat sifatida ishlatsa
- * bo'ladi (`BooksSlide` → `useSignageResource`) — ekran hech qachon
- * "yuklanmoqda" holatini ko'rsatmaydi.
+ * JSON o'qilgach massiv butunlay ALMASHTIRILADI (`let`), ichiga qo'shilmaydi.
+ * Bu muhim: `BooksSlide` shu ro'yxatni React holatining boshlang'ich qiymati
+ * qilib oladi, va agar biz o'sha massivning ICHINI to'ldirsak, React uchun
+ * "eski" va "yangi" qiymat bitta obyekt bo'lib qoladi — ekran qayta
+ * chizilmaydi va kitoblar bo'limi bo'sh turaveradi.
  */
-export const signageBooks: SignageBook[] = [];
+export let signageBooks: SignageBook[] = [];
 
 function toSignageBook(book: BookRecord): SignageBook {
   const cover = COVERS[book.id];
@@ -107,8 +139,9 @@ async function loadLocalBooks(): Promise<SignageBook[]> {
     const data: unknown = await response.json();
     if (!Array.isArray(data)) throw new Error('kutilgan shaklda emas');
 
-    signageBooks.push(...data.filter(isRecord).map(toSignageBook));
-    if (signageBooks.length === 0) throw new Error("ro'yxat bo'sh");
+    const books = data.filter(isRecord).map(toSignageBook);
+    if (books.length === 0) throw new Error("ro'yxat bo'sh");
+    signageBooks = books;
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error);
     report('warn', `books.json: ${reason}`);

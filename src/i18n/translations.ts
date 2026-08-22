@@ -224,6 +224,8 @@ export interface Translation {
       books: string;
       events: string;
     };
+    /** Muqova suratlarining manbasi — kitoblar bo'limi chekkasidagi kichik yozuv. */
+    credits: string;
   };
   /** Haftaning qisqartirilgan nomlari (0 = yakshanba). */
   daysShort: string[];
@@ -427,6 +429,7 @@ export const translations: Record<Lang, Translation> = {
         books: 'Hozircha yangi kitoblar mavjud emas.',
         events: 'Hozircha yaqin tadbirlar mavjud emas.',
       },
+      credits: 'Muqova suratlari: asaxiy.uz',
     },
     daysShort: ['YAK', 'DUS', 'SES', 'CHO', 'PAY', 'JUM', 'SHA'],
     days: ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'],
@@ -656,6 +659,7 @@ export const translations: Record<Lang, Translation> = {
         books: 'Пока нет новых поступлений.',
         events: 'Пока нет ближайших мероприятий.',
       },
+      credits: 'Изображения обложек: asaxiy.uz',
     },
     daysShort: ['ВС', 'ПН', 'ВТ', 'СР', 'ЧТ', 'ПТ', 'СБ'],
     days: ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'],
@@ -858,6 +862,7 @@ export const translations: Record<Lang, Translation> = {
         books: 'No new arrivals at the moment.',
         events: 'No upcoming events at the moment.',
       },
+      credits: 'Cover images: asaxiy.uz',
     },
     daysShort: ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
     days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
