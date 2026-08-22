@@ -1217,6 +1217,7 @@
 
 .sg-book-media img,
 .sg-book-media .sg-media-fallback,
+.sg-book-media .sg-book-plate,
 .sg-event-media img,
 .sg-event-media .sg-media-fallback {
   position: relative;
@@ -1322,6 +1323,62 @@
 */
 .sg-book-media img {
   object-fit: contain;
+}
+
+/*
+   Muqovasiz kitob — tipografik muqova.
+
+   `public/books.json` dagi ellikta kitobning hammasida ham skan qilingan
+   muqova yo'q. Bo'sh gradient qatorni buzadi, o'ylab topilgan muqova esa
+   yolg'on bo'lardi — shuning uchun kitobning o'z nomi muqovaga aylanadi:
+   to'q navy fon, tepada oltin chiziq, o'rtada nom, pastda muallif.
+   Uzoqdan qaraganda bu ham qator ichida haqiqiy muqovadek turadi.
+*/
+.sg-book-plate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--u) * 0.55);
+  padding: calc(var(--u) * 1.6) calc(var(--u) * 1.2);
+  text-align: center;
+  background:
+    linear-gradient(160deg, rgba(24, 44, 76, 0.96), rgba(8, 18, 34, 0.98) 62%),
+    #0a1526;
+  /* Ichki oltin hoshiya — muqova qog'ozining ramkasi taassuroti */
+  box-shadow:
+    inset 0 0 0 calc(var(--u) * 0.06) rgba(217, 164, 65, 0.28),
+    0 calc(var(--u) * 1.4) calc(var(--u) * 3) rgba(0, 4, 14, 0.72);
+  overflow: hidden;
+}
+
+.sg-book-plate-title {
+  font-size: calc(var(--u) * 1.24);
+  line-height: 1.3;
+  letter-spacing: 0.01em;
+  color: rgba(238, 244, 252, 0.94);
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.sg-book-plate-rule {
+  width: calc(var(--u) * 3.2);
+  height: calc(var(--u) * 0.07);
+  background: rgba(217, 164, 65, 0.62);
+}
+
+.sg-book-plate-author {
+  font-size: calc(var(--u) * 0.86);
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(207, 178, 122, 0.9);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Muqova: 1920 da ~422×634 px — ekranning haqiqiy qahramoni */

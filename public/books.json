@@ -1,0 +1,452 @@
+[
+  {
+    "id": 1,
+    "author": "Shavkat Mirziyoyev",
+    "title": "Hozirgi zamon va Yangi O‘zbekiston",
+    "genre": "Ijtimoiy-siyosiy / publitsistik asar",
+    "year": 2024,
+    "pages": 512,
+    "annotation": "O‘zbekistonning bugungi taraqqiyoti, ichki va tashqi siyosati, xalqaro maydondagi o‘rni hamda Yangi O‘zbekistonni barpo etish jarayonlari tahlil qilinadi."
+  },
+  {
+    "id": 2,
+    "author": "Shavkat Mirziyoyev",
+    "title": "Yangi O‘zbekiston strategiyasi",
+    "genre": "Ijtimoiy-siyosiy / publitsistik asar",
+    "year": 2021,
+    "pages": 464,
+    "annotation": "Yangi O‘zbekistonni rivojlantirishning ustuvor yo‘nalishlari, inson qadri, iqtisodiy va ijtimoiy taraqqiyot hamda islohotlarning strategik maqsadlari yoritiladi."
+  },
+  {
+    "id": 3,
+    "author": "Javlon Jovliyev",
+    "title": "Qo‘rqma",
+    "genre": "Roman",
+    "year": 2022,
+    "pages": 368,
+    "annotation": "Jadidlar va milliy uyg‘onish davri, Vatan ozodligi uchun kurash hamda yosh avlodning tarixiy xotirasi va milliy o‘zligini anglash masalalari tasvirlanadi."
+  },
+  {
+    "id": 4,
+    "author": "Murod Muhammad Do‘st",
+    "title": "Lolazor",
+    "genre": "Roman",
+    "year": 2021,
+    "pages": 670,
+    "annotation": "Siyosiy hokimiyat, mansab, insoniy munosabatlar va jamiyatdagi ma’naviy o‘zgarishlar murakkab obrazlar hamda kinoyaviy tasvirlar orqali ochib beriladi."
+  },
+  {
+    "id": 5,
+    "author": "Muhammad Yusuf",
+    "title": "Saylanma",
+    "genre": "She’rlar va dostonlar to‘plami",
+    "year": 2007,
+    "pages": 288,
+    "annotation": "Shoirning eng sara she’rlari, “Ko‘hna quduq” va “Qora quyosh” dostonlari hamda shoir haqidagi xotiralar jamlangan."
+  },
+  {
+    "id": 6,
+    "author": "Said Ahmad",
+    "title": "Qorako‘z majnun",
+    "genre": "Hikoyalar to‘plami",
+    "year": 2013,
+    "pages": 232,
+    "annotation": "Insoniy mehr, sadoqat, vafodorlik va hayotning murakkab kechinmalari ta’sirchan hikoyalar orqali tasvirlanadi."
+  },
+  {
+    "id": 7,
+    "author": "Tohir Malik",
+    "title": "Odamiylik mulki",
+    "genre": "Axloqiy-ma’rifiy asar",
+    "year": 2022,
+    "pages": 952,
+    "annotation": "Odamiylik, axloq, odob, vijdon, tarbiya va insonning jamiyatdagi mas’uliyati haqida hayotiy va falsafiy mulohazalar beriladi."
+  },
+  {
+    "id": 8,
+    "author": "O‘lmas Umarbekov",
+    "title": "Odam bo‘lish qiyin",
+    "genre": "Roman",
+    "year": 2019,
+    "pages": 352,
+    "annotation": "Yoshlar hayoti, muhabbat, ma’naviy-axloqiy muammolar, insoniy munosabatlar va hayotiy tanlovlar tasvirlanadi."
+  },
+  {
+    "id": 9,
+    "author": "Chingiz Aytmatov",
+    "title": "Oq kema",
+    "genre": "Qissa",
+    "year": 2018,
+    "pages": 164,
+    "annotation": "Bolalikning beg‘ubor olami, inson va tabiat munosabati, qadimiy afsonalar hamda kattalar dunyosidagi shafqatsizlik yetti yoshli bolaning nigohi orqali yoritiladi."
+  },
+  {
+    "id": 10,
+    "author": "Chingiz Aytmatov",
+    "title": "Asrga tatigulik kun",
+    "genre": "Roman",
+    "year": 2018,
+    "pages": 336,
+    "annotation": "Inson taqdiri, xotira, tarix va zamonaviylik masalalari Edigey hayoti hamda uning atrofidagi voqealar orqali yoritiladi."
+  },
+  {
+    "id": 11,
+    "author": "Xudoyberdi To‘xtaboyev",
+    "title": "Besh bolali yigitcha",
+    "genre": "Qissa",
+    "year": 2019,
+    "pages": 240,
+    "annotation": "Urush yillaridagi bolalar hayoti, mashaqqat, mehr-oqibat va insoniylik yosh qahramonning sarguzashtlari orqali tasvirlanadi."
+  },
+  {
+    "id": 12,
+    "author": "Otabek Xasanov",
+    "title": "Liderlar kitobi",
+    "genre": "Ma’rifiy / motivatsion asar",
+    "year": 2023,
+    "pages": null,
+    "annotation": "Yetakchilik, shaxsiy rivojlanish, mas’uliyat, maqsad sari intilish va muvaffaqiyatga erishish tamoyillari haqida amaliy tavsiyalar beriladi."
+  },
+  {
+    "id": 13,
+    "author": "Asqad Muxtor",
+    "title": "Chinor",
+    "genre": "Roman",
+    "year": 2018,
+    "pages": 352,
+    "annotation": "Bir necha avlod taqdiri orqali inson, Vatan, tarix, urush va tinchlik, ma’naviy qadriyatlar hamda hayot davomiyligi tasvirlanadi."
+  },
+  {
+    "id": 14,
+    "author": "Abdulla Oripov",
+    "title": "Sohibqiron",
+    "genre": "Drama",
+    "year": 2018,
+    "pages": 160,
+    "annotation": "Amir Temur siymosi, uning davlat boshqaruvi, Vatan va xalq taqdiri, adolat hamda tarix oldidagi mas’uliyati dramatik voqealar orqali yoritiladi."
+  },
+  {
+    "id": 15,
+    "author": "Alixonto‘ra Sog‘uniy",
+    "title": "Turkiston qayg‘usi",
+    "genre": "Tarixiy-memuar / publitsistik asar",
+    "year": 2020,
+    "pages": 368,
+    "annotation": "Turkistonning tarixiy taqdiri, milliy ozodlik, mustamlakachilik davri va xalqning istiqlol yo‘lidagi kurashi muallifning xotiralari va qarashlari asosida yoritiladi."
+  },
+  {
+    "id": 16,
+    "author": "Erkin Vohidov",
+    "title": "O‘zbegim",
+    "genre": "She’rlar / dostonlar to‘plami",
+    "year": 2019,
+    "pages": null,
+    "annotation": "O‘zbek xalqining tarixi, milliy g‘ururi, Vatan va xalq taqdiri shoirning jo‘shqin va vatanparvarlik ruhidagi she’rlari orqali ifodalanadi."
+  },
+  {
+    "id": 17,
+    "author": "Ibroyim Yusupov",
+    "title": "Tanlangan asarlar",
+    "genre": "She’rlar to‘plami",
+    "year": 2018,
+    "pages": null,
+    "annotation": "Shoirning Vatan, xalq, tabiat, muhabbat va insoniylik haqidagi sara she’rlari jamlangan."
+  },
+  {
+    "id": 18,
+    "author": "Maqsud Shayxzoda",
+    "title": "Sulton Jaloliddin Manguberdi",
+    "genre": "Tarixiy drama",
+    "year": 2018,
+    "pages": 160,
+    "annotation": "Jaloliddin Manguberdi hayoti, uning mo‘g‘ul bosqiniga qarshi kurashi, jasorati, Vatanga sadoqati va ozodlik g‘oyalari tasvirlanadi."
+  },
+  {
+    "id": 19,
+    "author": "Mirkarim Osim",
+    "title": "Jayhun ustida bulutlar",
+    "genre": "Tarixiy qissa",
+    "year": 2019,
+    "pages": null,
+    "annotation": "Tarixiy voqealar va shaxslar taqdiri orqali Vatan, xalq, hokimiyat va insonning tarixiy sinovlar oldidagi mas’uliyati yoritiladi."
+  },
+  {
+    "id": 20,
+    "author": "Qahramon Rajabov",
+    "title": "Ibrohimbek qo‘rboshi",
+    "genre": "Tarixiy-biografik asar",
+    "year": 2021,
+    "pages": null,
+    "annotation": "Ibrohimbek qo‘rboshi hayoti, Turkistondagi istiqlolchilik harakati va sovet hokimiyatiga qarshi kurashning tarixiy jarayonlari yoritiladi."
+  },
+  {
+    "id": 21,
+    "author": "Shukrullo",
+    "title": "Kafansiz ko‘milganlar",
+    "genre": "Qissa / hikoyalar",
+    "year": null,
+    "pages": null,
+    "annotation": "Inson ruhiyati, yolg‘izlik, qishloq hayoti, mehr-oqibat va jamiyatdagi murakkab munosabatlar realistik va psixologik tasvirlar orqali ochiladi."
+  },
+  {
+    "id": 22,
+    "author": "Ulug‘bek Dolimov",
+    "title": "Is’hoqxon Ibrat",
+    "genre": "Ilmiy-biografik / ma’rifiy asar",
+    "year": 2020,
+    "pages": null,
+    "annotation": "Is’hoqxon Ibratning hayoti, ilmiy-ma’rifiy faoliyati, jadidchilik harakatidagi o‘rni va milliy ta’lim rivojiga qo‘shgan hissasi yoritiladi."
+  },
+  {
+    "id": 23,
+    "author": "Xurshid Davron",
+    "title": "Samarqand xayoli",
+    "genre": "Tarixiy-badiiy / publitsistik asar",
+    "year": 2019,
+    "pages": null,
+    "annotation": "Samarqandning boy tarixi, buyuk ajdodlar merosi, shahar ruhi va tarixiy xotira shoirona hamda falsafiy mushohadalar orqali talqin qilinadi."
+  },
+  {
+    "id": 24,
+    "author": "Abdulla Qodiriy",
+    "title": "O‘tkan kunlar",
+    "genre": "Roman",
+    "year": 2024,
+    "pages": 576,
+    "annotation": "Otabek va Kumush muhabbati fonida XIX asr Turkistonidagi ijtimoiy-siyosiy hayot, urf-odatlar va milliy fojealar tasvirlanadi."
+  },
+  {
+    "id": 25,
+    "author": "Abdulla Qodiriy",
+    "title": "Mehrobdan chayon",
+    "genre": "Roman",
+    "year": 2022,
+    "pages": 328,
+    "annotation": "Anvar va Ra’noning taqdiri orqali adolatsizlik, mansabparastlik va eski tuzum illatlari ochib beriladi."
+  },
+  {
+    "id": 26,
+    "author": "Abdulhamid Cho‘lpon",
+    "title": "Kecha va kunduz",
+    "genre": "Roman",
+    "year": 2023,
+    "pages": 320,
+    "annotation": "Zebi taqdiri orqali mustamlaka davridagi jamiyat, ayol qismati va inson erkinligi muammolari yoritiladi."
+  },
+  {
+    "id": 27,
+    "author": "Abdulla Avloniy",
+    "title": "Turkiy guliston yoxud axloq",
+    "genre": "Ma’rifiy-axloqiy asar",
+    "year": 2024,
+    "pages": 112,
+    "annotation": "Inson tarbiyasi, yaxshi va yomon xulqlar, ilm-ma’rifat hamda milliy ong haqida pand-nasihatlar beriladi."
+  },
+  {
+    "id": 28,
+    "author": "Abdurauf Fitrat",
+    "title": "Oila yoki oilani boshqarish tartiblari",
+    "genre": "Ijtimoiy-ma’rifiy asar",
+    "year": 2024,
+    "pages": 160,
+    "annotation": "Oila tarbiyasi, er-xotin munosabatlari, farzand tarbiyasi va jamiyat taraqqiyotida oilaning o‘rni haqida."
+  },
+  {
+    "id": 29,
+    "author": "Mahmudxo‘ja Behbudiy",
+    "title": "Padarkush",
+    "genre": "Drama",
+    "year": 2024,
+    "pages": 160,
+    "annotation": "Jaholat va tarbiyasizlikning fojiaviy oqibatlarini ko‘rsatib, ilm va ma’rifatga da’vat etadi."
+  },
+  {
+    "id": 30,
+    "author": "Oybek",
+    "title": "Navoiy",
+    "genre": "Tarixiy roman",
+    "year": 2019,
+    "pages": 576,
+    "annotation": "Alisher Navoiy hayoti, uning insoniy fazilatlari, ijodi va Husayn Boyqaro davridagi tarixiy muhit tasvirlanadi."
+  },
+  {
+    "id": 31,
+    "author": "Abdulla Qahhor",
+    "title": "Sarob",
+    "genre": "Roman",
+    "year": 2021,
+    "pages": 304,
+    "annotation": "1930-yillar muhitidagi mafkuraviy ziddiyatlar va insonning ruhiy iztiroblari tasvirlanadi."
+  },
+  {
+    "id": 32,
+    "author": "Abdulla Qahhor",
+    "title": "Sinchalak",
+    "genre": "Qissa",
+    "year": 2019,
+    "pages": 192,
+    "annotation": "Qishloq hayoti, inson xarakteri va jamiyatdagi turli illatlar hajviy-realistik ruhda ochiladi."
+  },
+  {
+    "id": 33,
+    "author": "O‘tkir Hoshimov",
+    "title": "Dunyoning ishlari",
+    "genre": "Qissa",
+    "year": 2018,
+    "pages": 208,
+    "annotation": "Ona siymosi, oila, mehr-oqibat va insoniy qadriyatlar haqidagi samimiy hikoyalardan tashkil topgan."
+  },
+  {
+    "id": 34,
+    "author": "Pirimqul Qodirov",
+    "title": "Yulduzli tunlar",
+    "genre": "Tarixiy roman",
+    "year": 2024,
+    "pages": 640,
+    "annotation": "Zahiriddin Muhammad Boburning hayoti, kurashlari, muhabbati va davlat boshqaruvidagi faoliyati haqida."
+  },
+  {
+    "id": 35,
+    "author": "Odil Yoqubov",
+    "title": "Ulug‘bek xazinasi",
+    "genre": "Tarixiy roman",
+    "year": 2019,
+    "pages": 368,
+    "annotation": "Mirzo Ulug‘bekning ilmiy faoliyati, hayoti va fojeali qismati tarixiy voqealar asosida yoritiladi."
+  },
+  {
+    "id": 36,
+    "author": "Said Ahmad",
+    "title": "Ufq",
+    "genre": "Trilogiya / roman",
+    "year": 2024,
+    "pages": 512,
+    "annotation": "Ikkinchi jahon urushi, urushdan keyingi davr va xalqning mashaqqatli hayoti turli qahramonlar taqdiri orqali tasvirlanadi."
+  },
+  {
+    "id": 37,
+    "author": "Alisher Navoiy",
+    "title": "Mahbub ul-qulub",
+    "genre": "Axloqiy-falsafiy asar",
+    "year": null,
+    "pages": null,
+    "annotation": "Inson tabiati, jamiyat, axloq, ilm, kasb va hayot haqidagi chuqur hikmat va mulohazalar majmuasi."
+  },
+  {
+    "id": 38,
+    "author": "Zahiriddin Muhammad Bobur",
+    "title": "Boburnoma",
+    "genre": "Tarixiy-memuar asar",
+    "year": null,
+    "pages": null,
+    "annotation": "Boburning hayoti, yurishlari, siyosiy voqealar, tabiat va xalqlar haqidagi kuzatuvlarini o‘z ichiga olgan bebaho manba."
+  },
+  {
+    "id": 39,
+    "author": "Xayriddin Sulton",
+    "title": "Yaldo kechasi",
+    "genre": "Tarixiy roman",
+    "year": 2025,
+    "pages": 464,
+    "annotation": "“O‘tkan kunlar”ning davomi sifatida yaratilgan roman bo‘lib, Otabekning avlodi Yodgor taqdiri orqali chor va sho‘ro mustamlakachiligi davri, milliy ozodlik va ma’rifat uchun kurash, jadidlar hayoti hamda xalqning fojeali kechmishi tasvirlanadi."
+  },
+  {
+    "id": 40,
+    "author": "Erkin A’zam",
+    "title": "Shovqin",
+    "genre": "Roman",
+    "year": null,
+    "pages": 188,
+    "annotation": "Zamonaviy jamiyatdagi ma’naviy va ijtimoiy ziddiyatlar ramziy, kinoyaviy va psixologik usullar orqali tasvirlanadi."
+  },
+  {
+    "id": 41,
+    "author": "Sharifa Salimova",
+    "title": "Qabohat saltanati yoxud qor qo‘ynida lolalar",
+    "genre": "She’riy roman",
+    "year": 2025,
+    "pages": null,
+    "annotation": "XX asrning 30-yillaridagi qatag‘onlarda jabr ko‘rgan jadid ayollarining fojeali taqdiri, iztirobi va sinmagan irodasi tasvirlanadi."
+  },
+  {
+    "id": 42,
+    "author": "Olimjon Davlatov",
+    "title": "Navoiyga qaytish",
+    "genre": "Ilmiy-adabiy / publitsistik",
+    "year": null,
+    "pages": null,
+    "annotation": "Alisher Navoiy merosini zamonaviy tafakkur nuqtayi nazaridan anglash, uning adabiy va ma’naviy olamiga qayta murojaat qilishga undaydi."
+  },
+  {
+    "id": 43,
+    "author": "Xurshid Davron",
+    "title": "Bibixonim qissasi",
+    "genre": "Tarixiy qissa",
+    "year": null,
+    "pages": null,
+    "annotation": "Amir Temur davri, Bibixonim siymosi, muhabbat, hokimiyat va tarixiy taqdirlar badiiy-falsafiy ruhda tasvirlanadi."
+  },
+  {
+    "id": 44,
+    "author": "Abduqayum Yo‘ldoshev",
+    "title": "Puankare",
+    "genre": "Qissa / hikoyalar",
+    "year": null,
+    "pages": null,
+    "annotation": "Zamonaviy insonning ruhiy kechinmalari, jamiyatdagi muammolar va insonlararo munosabatlar o‘ziga xos kinoya bilan ochiladi."
+  },
+  {
+    "id": 45,
+    "author": "Muhammad Yusuf",
+    "title": "Ulug‘imsan, Vatanim",
+    "genre": "She’rlar to‘plami",
+    "year": null,
+    "pages": null,
+    "annotation": "Vatan, xalq, ona yurt, muhabbat va milliy g‘urur tuyg‘ulari sodda, samimiy va xalqona she’riy tilda ifodalangan."
+  },
+  {
+    "id": 46,
+    "author": "Lev Tolstoy",
+    "title": "Tirilish",
+    "genre": "Ijtimoiy-psixologik roman",
+    "year": 2019,
+    "pages": 488,
+    "annotation": "Knyaz Dmitriy Nehludovning sud jarayonida yoshligida sevgan Katyusha Maslovani tanib qolishi va uning hayotini izdan chiqarganini anglab, vijdon azobi ostida kechirim va ma’naviy poklanish yo‘lini izlashini tasvirlaydi. Asarda jamiyatdagi adolatsizlik, sud-huquq tizimidagi kamchiliklar, kambag‘allik va insoniylik masalalari yoritiladi."
+  },
+  {
+    "id": 47,
+    "author": "Lev Tolstoy",
+    "title": "Urush va tinchlik",
+    "genre": "Tarixiy-falsafiy roman",
+    "year": 2016,
+    "pages": 1225,
+    "annotation": "1812-yilgi Vatan urushi voqealari fonida Rossiya jamiyatining turli qatlamlari, urush va tinchlik davridagi inson taqdiri tasvirlanadi. Asarda Per Bezuxov, Andrey Bolkonskiy, Natasha Rostova kabi qahramonlarning hayoti orqali muhabbat, oila, vatanparvarlik, hayot mazmuni va insonning tarixdagi o‘rni kabi masalalar yoritiladi."
+  },
+  {
+    "id": 48,
+    "author": "Jek London",
+    "title": "Martin Iden",
+    "genre": "Ijtimoiy-psixologik roman",
+    "year": 2023,
+    "pages": 384,
+    "annotation": "Asarda oddiy dengizchi Martin Idenning yozuvchi bo‘lish yo‘lidagi og‘ir mehnati, bilim va ma’rifatga intilishi, muhabbat va jamiyatdagi tabaqaviy tafovutlar bilan to‘qnashuvi tasvirlanadi. Martin o‘z iste’dodi va qat’iyati bilan adabiyot olamida tanilishga erishadi, biroq shuhrat va boylik uning hayotga, muhabbatga hamda jamiyatga bo‘lgan qarashlarini tubdan o‘zgartiradi."
+  },
+  {
+    "id": 49,
+    "author": "Iogann Volfgang Gyote",
+    "title": "Faust",
+    "genre": "Falsafiy tragediya",
+    "year": 2025,
+    "pages": 520,
+    "annotation": "Asarda ilm va bilimga intilgan Faustning hayot mazmunini izlash yo‘lidagi kechinmalari tasvirlanadi. U Mefistofel bilan kelishuvga borib, dunyoviy lazzatlar va tajribalarni boshdan kechiradi. Asarda yaxshilik va yovuzlik, insonning ma’naviy izlanishi, muhabbat, ilm, hayot mazmuni va insonning o‘z taqdirini yaratishi kabi falsafiy masalalar yoritiladi."
+  },
+  {
+    "id": 50,
+    "author": "Viktor Gyugo",
+    "title": "Parij Bibi Maryam ibodatxonasi",
+    "genre": "Tarixiy roman",
+    "year": 2024,
+    "pages": 592,
+    "annotation": "Roman XV asr Parijidagi voqealar, Esmeralda, Kvazimodo va Klod Frollo taqdirlari orqali muhabbat, jamiyatdagi adolatsizlik, insoniylik va ijtimoiy tengsizlik masalalarini yoritadi. Asarda o‘rta asr Parijining hayoti, xalqning og‘ir turmushi va insonning tashqi ko‘rinishiga emas, uning qalbiga baho berish g‘oyasi tasvirlanadi."
+  }
+]

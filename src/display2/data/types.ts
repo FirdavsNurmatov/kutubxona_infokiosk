@@ -7,22 +7,25 @@ import type { Localized } from '../../i18n/translations';
  * Koha API (`GET /api/signage/books`, `/events`, `/playlist`). Shu sababli
  * tuzilmalar iloji boricha sodda — faqat ekranda ko'rinadigan maydonlar.
  *
- * Matn maydonlari ko'p tilli: kutubxona ekrani uch tilda ishlaydi va API ham
- * shu shaklda qaytaradi.
+ * Tadbir matnlari ko'p tilli (`Localized`), kitob matnlari esa o'zbekcha
+ * oddiy satr: kitoblar ro'yxati `public/books.json` dan keladi va u yerda
+ * tarjima yo'q.
  */
 
 export interface SignageBook {
   id: string;
-  title: Localized;
-  author: Localized;
-  genre: Localized;
-  cover: string;
+  /** Nom, muallif va janr — `public/books.json` dagidek o'zbekcha. */
+  title: string;
+  author: string;
+  genre: string;
+  /** Muqova yo'li. Bo'lmasa ekran tipografik muqova chizadi. */
+  cover?: string;
   /** Asl nashr yili — tanlangan kitob panelida ko'rsatiladi. */
   year?: number;
   /** Sahifalar soni (odatiy nashr bo'yicha). Koha ulanganda aniq qiymat keladi. */
   pages?: number;
-  /** Bir-ikki qatorli tavsif — uzoqdan o'qish uchun qisqa bo'lishi shart. */
-  summary?: Localized;
+  /** Qisqacha annotatsiya — panelda uch qatorgacha ko'rinadi. */
+  summary?: string;
 }
 
 export interface SignageEvent {

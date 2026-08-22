@@ -12,7 +12,7 @@
  * Xatolik faqat logga yoziladi.
  */
 
-import { signageBooks } from '../data/books';
+import { localBooksReady } from '../data/books';
 import { buildSignageEvents } from '../data/events';
 import { signagePlaylist } from '../data/playlist';
 import type { SignageBook, SignageEvent, SignageSlide } from '../data/types';
@@ -58,9 +58,16 @@ async function fetchList<T>(path: string, fallback: T[]): Promise<T[]> {
   }
 }
 
-/** Ekranda ko'rsatiladigan kitoblar. */
-export function getSignageBooks(): Promise<SignageBook[]> {
-  return fetchList<SignageBook>('/signage/books', signageBooks);
+/**
+ * Ekranda ko'rsatiladigan kitoblar.
+ *
+ * Zaxira — `public/books.json` dagi ro'yxat. U fayldan o'qilgani uchun
+ * avval shu o'qish tugashini kutamiz, aks holda backend javob bermaganda
+ * zaxira ham bo'sh bo'lib qolardi.
+ */
+export async function getSignageBooks(): Promise<SignageBook[]> {
+  const local = await localBooksReady;
+  return fetchList<SignageBook>('/signage/books', local);
 }
 
 /**

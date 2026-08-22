@@ -19,7 +19,7 @@ interface BookCarouselProps {
  * harakat uzluksiz ko'rinadi va ro'yxat oxiriga yetganda sakrash bo'lmaydi.
  */
 export default function BookCarousel({ books, active }: BookCarouselProps) {
-  const { t, tr } = useI18n();
+  const { t } = useI18n();
   const { cursor, index } = useAutoCarousel('books', books.length, BOOK_INTERVAL, active);
   const focused = books[index];
 
@@ -45,11 +45,11 @@ export default function BookCarousel({ books, active }: BookCarouselProps) {
 
       {/* Tanlangan kitob — maketdagidek muqovaning o'ng yonidagi panel */}
       <div className="sg-focus-info" key={focused.id}>
-        <p className="sg-focus-genre">{tr(focused.genre)}</p>
-        <p className="sg-focus-title">{tr(focused.title)}</p>
-        <p className="sg-focus-author">{tr(focused.author)}</p>
+        <p className="sg-focus-genre">{focused.genre}</p>
+        <p className="sg-focus-title">{focused.title}</p>
+        <p className="sg-focus-author">{focused.author}</p>
 
-        {focused.summary && <p className="sg-focus-summary">{tr(focused.summary)}</p>}
+        {focused.summary && <p className="sg-focus-summary">{focused.summary}</p>}
 
         {(focused.year || focused.pages) && (
           <div className="sg-focus-meta">

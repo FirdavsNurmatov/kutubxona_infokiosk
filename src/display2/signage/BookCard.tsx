@@ -1,5 +1,4 @@
 import Media from './Media';
-import { useI18n } from '../../i18n/context';
 import { slotAttrs } from './slots';
 import type { SignageBook } from '../data/types';
 
@@ -18,19 +17,30 @@ interface BookCardProps {
  *
  * Markazdagi kitobning kichik yozuvi so'nadi: uning nomi, muallifi va janri
  * karusel ostidagi katta blokda ko'rsatiladi.
+ *
+ * Muqovasi yo'q kitob bo'sh to'rtburchak bo'lib qolmaydi: o'rniga nomi va
+ * muallifi yozilgan tipografik muqova chiziladi. Ro'yxatning yarmidan ko'pi
+ * shunday — har bir nashrning skani yo'q, ekran esa baribir to'la va
+ * o'qishli ko'rinishi kerak.
  */
 export default function BookCard({ book, offset, focused }: BookCardProps) {
-  const { tr } = useI18n();
-
   return (
     <li className={`sg-book${focused ? ' is-focus' : ''}`} {...slotAttrs(offset)}>
       <span className="sg-book-media">
-        <Media src={book.cover} alt={tr(book.title)} />
+        {book.cover ? (
+          <Media src={book.cover} alt={book.title} />
+        ) : (
+          <span className="sg-book-plate" aria-hidden="true">
+            <span className="sg-book-plate-title">{book.title}</span>
+            <span className="sg-book-plate-rule" />
+            <span className="sg-book-plate-author">{book.author}</span>
+          </span>
+        )}
       </span>
 
       <span className="sg-book-text">
-        <span className="sg-book-title">{tr(book.title)}</span>
-        <span className="sg-book-genre">{tr(book.genre)}</span>
+        <span className="sg-book-title">{book.title}</span>
+        <span className="sg-book-genre">{book.genre}</span>
       </span>
     </li>
   );
