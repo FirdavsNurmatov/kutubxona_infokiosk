@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="uz">
+  <head>
+    <meta charset="UTF-8" />
+    <!--
+      Electron nusxasining kirish nuqtasi.
+
+      Brauzerdagi `index.html` dan farqi: bu yerda faqat /ekran2 yig'iladi.
+      Kiosk, xarita va `/interface` modullari bundlega umuman tushmaydi —
+      zaldagi ekran ularni hech qachon ochmaydi, ular esa recharts va
+      o'nlab chunk'ni tortadi.
+    -->
+    <meta http-equiv="Content-Security-Policy"
+      content="default-src 'self' app:; img-src 'self' app: data: blob:; media-src 'self' app: blob:; font-src 'self' app: data:; style-src 'self' app: 'unsafe-inline'; script-src 'self' app:; connect-src *;" />
+    <title>Milliy kutubxona — Ekran</title>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/display2/main.tsx"></script>
+  </body>
+</html>

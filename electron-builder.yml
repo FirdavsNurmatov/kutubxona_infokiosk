@@ -1,0 +1,66 @@
+# ═══════════════════════════════════════════════════════════════
+#  Windows uchun paketlash sozlamalari
+# ═══════════════════════════════════════════════════════════════
+#
+#   npm run electron:build:win   → release/ ichida o'rnatuvchi va portativ exe
+#   npm run electron:pack        → paketlanmagan papka (tez sinash uchun)
+
+appId: uz.natlib.ekran2
+productName: Milliy Kutubxona Ekran
+copyright: O'zbekiston Milliy kutubxonasi
+
+directories:
+  output: release
+  buildResources: build
+
+# Ilova ichiga FAQAT kerakli narsalar tushadi.
+# `node_modules` ataylab yo'q: main process faqat Node va Electron'ning
+# o'z modullaridan foydalanadi, renderer esa allaqachon yig'ilgan.
+files:
+  - electron/**/*
+  - dist-electron/**/*
+  - package.json
+  - '!node_modules/**/*'
+
+asar: true
+
+# Videolar arxivdan tashqarida qoladi.
+# Sabab: Chromium media dekoderi oddiy fayldan o'qiganda Range so'rovlarini
+# to'g'ridan-to'g'ri diskdan bajaradi — asar ichidan o'qishga qaraganda
+# xotira ham, kechikish ham kam. Ekran kunlab video ijro etadi.
+asarUnpack:
+  - '**/videos/**'
+
+# Exe yoniga tahrirlanadigan sozlama fayli qo'yiladi.
+# Kutubxona xodimi API manzilini yoki monitor raqamini shu yerda
+# o'zgartiradi — ilovani qayta yig'ish kerak emas.
+extraFiles:
+  - from: build/config.json
+    to: config.json
+
+win:
+  icon: build/icon.ico
+  target:
+    - target: nsis
+      arch: [x64]
+    - target: portable
+      arch: [x64]
+  artifactName: MilliyKutubxonaEkran-${version}-${arch}.${ext}
+
+nsis:
+  # Kiosk mashinasiga o'rnatish — xodim papkani tanlay olsin
+  oneClick: false
+  perMachine: true
+  allowToChangeInstallationDirectory: true
+  allowElevation: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Milliy Kutubxona Ekran
+  # O'chirilganda sozlama va log qolib ketmasin
+  deleteAppDataOnUninstall: true
+
+portable:
+  artifactName: MilliyKutubxonaEkran-portable-${version}.${ext}
+
+# Ekran offlayn ishlaydi — avtomatik yangilanish serveri yo'q
+publish: null

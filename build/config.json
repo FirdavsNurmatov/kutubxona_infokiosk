@@ -1,0 +1,20 @@
+{
+  "videoSound": false,
+  "apiUrl": "",
+  "apiRefreshSeconds": 300,
+  "apiTimeoutMs": 8000,
+  "allowInsecureTls": false,
+  "displayIndex": 0,
+  "fullscreen": true,
+  "kiosk": true,
+  "alwaysOnTop": true,
+  "hideCursor": true,
+  "forceScaleFactor": 1,
+  "zoomFactor": 1,
+  "autoLaunch": true,
+  "dailyRestartHour": 4,
+  "dailyRestartMode": "relaunch",
+  "disableHardwareAcceleration": false,
+  "pinnedSlide": "",
+  "debug": false
+}

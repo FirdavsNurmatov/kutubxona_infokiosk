@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import SignageBackdrop from './SignageBackdrop';
 import IntroSlide from './IntroSlide';
 import BooksSlide from './BooksSlide';
@@ -8,7 +8,9 @@ import VideoSlide from './VideoSlide';
 import ProgressIndicator from './ProgressIndicator';
 import SignageBoundary from './SignageBoundary';
 import { pinnedSlideIndex, useSignagePlayer } from '../hooks/useSignagePlayer';
+import { getSignagePlaylist } from '../api';
 import { signagePlaylist } from '../data/playlist';
+import { useSignageResource } from '../hooks/useSignageResource';
 import { useI18n } from '../../i18n/context';
 import type { SignageSlide } from '../data/types';
 
@@ -23,9 +25,6 @@ interface SignagePlayerProps {
 /** Eski sahifa so'nib bo'lgunga qadar ketadigan vaqt (CSS bilan bir xil). */
 const FADE_OUT_MS = 700;
 
-/* URL parametri sahifa ochilganda bir marta o'qiladi. */
-const pinned = pinnedSlideIndex(signagePlaylist);
-
 /**
  * Signage pleyeri.
  *
@@ -39,7 +38,15 @@ const pinned = pinnedSlideIndex(signagePlaylist);
  */
 export default function SignagePlayer({ isPlaying = true }: SignagePlayerProps) {
   const { t } = useI18n();
-  const { index, slide, next, reset } = useSignagePlayer(signagePlaylist, isPlaying, pinned);
+
+  /* Ssenariy ham ma'lumot: backend ulanganda uni admin panelidan
+     o'zgartirish mumkin bo'ladi. Ulanmagan bo'lsa ichki ro'yxat qaytadi. */
+  const playlist = useSignageResource('playlist', getSignagePlaylist, signagePlaylist);
+  /* `?slide=` — bo'limni qotirib qo'yish. Pleylist almashsa qayta hisoblanadi:
+     qotirilgan bo'lim yangi ro'yxatda boshqa o'rinda bo'lishi mumkin. */
+  const pinned = useMemo(() => pinnedSlideIndex(playlist), [playlist]);
+
+  const { index, slide, next, reset } = useSignagePlayer(playlist, isPlaying, pinned);
 
   /* Ekranda turgan sahifa. Pleyer indeksidan orqada qoladi: eski sahifa
      so'nib ulgurishi kerak. */
@@ -56,7 +63,7 @@ export default function SignagePlayer({ isPlaying = true }: SignagePlayerProps) 
     return () => window.clearTimeout(id);
   }, [index, shown]);
 
-  const current = signagePlaylist[shown];
+  const current = playlist[shown];
   const mode = current?.type ?? 'intro';
   /* So'nayotgan sahifada karusel va soat to'xtaydi — behuda ish qilinmasin */
   const active = !leaving && isPlaying;
@@ -94,7 +101,7 @@ export default function SignagePlayer({ isPlaying = true }: SignagePlayerProps) 
         )}
       </SignageBoundary>
 
-      <ProgressIndicator count={signagePlaylist.length} index={index} duration={slide?.duration} />
+      <ProgressIndicator count={playlist.length} index={index} duration={slide?.duration} />
     </>
   );
 }

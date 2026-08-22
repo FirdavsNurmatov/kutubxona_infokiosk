@@ -1,7 +1,9 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import EventCarousel from './EventCarousel';
 import { useI18n } from '../../i18n/context';
+import { getSignageEvents } from '../api';
 import { buildSignageEvents } from '../data/events';
+import { useSignageResource } from '../hooks/useSignageResource';
 import { useToday } from '../hooks/useToday';
 
 /** 03 — YAQINLASHAYOTGAN TADBIRLAR. */
@@ -13,7 +15,9 @@ export default function EventsSlide({ active }: { active: boolean }) {
      `?slide=events` bilan qotirilgan ekran uchun — u oylab mount bo'lib
      turadi va aks holda birinchi kundagi afishani ko'rsatib qolaverardi. */
   const today = useToday();
-  const events = useMemo(() => buildSignageEvents(today), [today]);
+  const fallback = useMemo(() => buildSignageEvents(today), [today]);
+  const load = useCallback(() => getSignageEvents(today), [today]);
+  const events = useSignageResource(`events:${today}`, load, fallback);
 
   return (
     <div className="sg-section">

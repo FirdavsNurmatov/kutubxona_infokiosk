@@ -97,23 +97,150 @@ npm run typecheck  # TypeScript tekshiruvi
 npm run lint       # ESLint
 ```
 
-### Katta ekranni kioskda ochish (ovoz bilan)
+## `/ekran2` — Windows ilovasi (Electron)
 
-`/ekran2` pleylistidagi videolar **ovozi bilan** ijro etiladi. Brauzerlar ovozli
-videoni foydalanuvchi bosmasdan avtomatik ijro etishga ruxsat bermaydi, shuning
-uchun kiosk mashinasida Chrome shu flag bilan ochilishi kerak:
+Zaldagi katta ekran brauzerda emas, **alohida Windows ilovasi** sifatida
+ishlaydi. Sabab uchta:
+
+1. **Ovoz.** Brauzer foydalanuvchi bosmaguncha ovozli videoni ijro etmaydi —
+   zalda esa bosadigan odam yo'q. Ilovada ruxsat o'zida
+   (`autoplay-policy=no-user-gesture-required`).
+2. **Barqarorlik.** Ekran haftalab uzluksiz ishlaydi. Brauzer qotib qolsa yoki
+   yopilib ketsa, uni qayta ochadigan odam yo'q — quyidagi tiklanish
+   mexanizmlari shuning uchun.
+3. **Boshqaruv.** Qaysi monitor, qaysi API manzil — `config.json` da,
+   ilovani qayta yig'masdan.
+
+Ilova faqat `/ekran2` ni o'z ichiga oladi: kirish nuqtasi `electron.html` →
+`src/display2/main.tsx`. Kiosk, xarita va `/interface` kodi bundlega tushmaydi.
+
+### Buyruqlar
 
 ```bash
-google-chrome \
-  --kiosk \
+npm run electron:dev              # Vite dev server + Electron (1280×720 oyna)
+npm run electron:dev -- --fullscreen   # to'liq ekranni sinash
+npm run electron:start            # yig'ilgan sahifani paketlamasdan ochish
+npm run electron:build:win        # release/ ga Windows o'rnatuvchi va portativ exe
+```
+
+> **VS Code terminalida:** `ELECTRON_RUN_AS_NODE=1` o'zgaruvchisi Electron'ni
+> oddiy Node sifatida ishga tushiradi va ilova ochilmaydi. Yuqoridagi
+> skriptlar uni o'zi tozalaydi (`tools/electron-run.mjs`), lekin qo'lda
+> `npx electron .` yozsangiz shu xatoga duch kelasiz.
+
+Windows o'rnatuvchisi **Windows mashinasida** yig'ilgani ma'qul. Linux'da
+yig'ish uchun wine kerak (yoki `electronuserland/builder:wine` Docker obrazi).
+
+### Sozlash — `config.json`
+
+Fayl exe yonida turadi (o'rnatilgan nusxada `C:\Program Files\...`,
+portativda exe bilan bir papkada). Topilmasa `%APPDATA%` dagi nusxa olinadi,
+u ham bo'lmasa ilova birinchi ishga tushganda namunani o'zi yozadi.
+
+| Kalit | Standart | Nima qiladi |
+|---|---|---|
+| `apiUrl` | `""` | Backend manzili. Bo'sh — ichki (mock) ma'lumot |
+| `apiRefreshSeconds` | `300` | Ma'lumot necha soniyada bir yangilanadi |
+| `apiTimeoutMs` | `8000` | So'rov kutish vaqti; oshsa ichki ma'lumotga qaytiladi |
+| `allowInsecureTls` | `false` | O'z-o'zidan imzolangan sertifikatga ruxsat |
+| `videoSound` | `false` | Pleylist videosi ovozi bilan ijro etilsinmi |
+| `displayIndex` | `0` | Qaysi monitor (ikki ekranli mashinada muhim) |
+| `fullscreen` | `true` | To'liq ekran. `false` — oddiy oyna (sinash uchun) |
+| `kiosk` | `true` | Chiqib bo'lmaydigan to'liq ekran |
+| `alwaysOnTop` | `true` | Bildirishnomalar ekranni to'smasin |
+| `hideCursor` | `true` | Sichqoncha ko'rsatkichini yashirish |
+| `forceScaleFactor` | `1` | Windows displey masshtabini (125%/150%) inobatga olmaslik |
+| `zoomFactor` | `1` | Qo'shimcha masshtab — uzoqdan ko'riladigan panel uchun |
+| `autoLaunch` | `true` | Windows'ga kirganda avtomatik ishga tushish |
+| `dailyRestartHour` | `4` | Har kuni shu soatda qayta ishga tushadi (`-1` — o'chiq) |
+| `dailyRestartMode` | `relaunch` | `relaunch` — ilova, `reload` — faqat sahifa |
+| `disableHardwareAcceleration` | `false` | Muammoli videokartada yoqiladi |
+| `pinnedSlide` | `""` | Bitta bo'limda qotirib qo'yish: `intro`/`books`/`events`/`ambient` |
+| `debug` | `false` | DevTools (Ctrl+Alt+D) va kontekst menyusi |
+
+O'zgartirilgandan keyin ilovani qayta ishga tushirish kerak.
+
+### Tugmalar
+
+| Birikma | Nima qiladi |
+|---|---|
+| `Ctrl + Alt + Q` | Ilovani yopish (kiosk rejimida yagona chiqish yo'li) |
+| `Ctrl + Alt + R` | Sahifani qayta yuklash |
+| `Ctrl + Alt + D` | DevTools — faqat `debug: true` da |
+
+### Barqarorlik: nima qanday tiklanadi
+
+| Muammo | Ilova nima qiladi |
+|---|---|
+| Renderer jarayoni qulab tushdi | Sahifa qayta yuklanadi |
+| Sahifa qotdi (`unresponsive`) | Oyna yopilib, yangisi ochiladi |
+| Sahifa "tirikman" signalini 45 s yubormadi | Watchdog oynani qayta yaratadi |
+| 5 daqiqada 3 marta tiklandi | Ilovaning o'zi qaytadan ishga tushadi |
+| GPU ikki marta qulab tushdi | Grafik tezlatkichsiz qayta ishga tushadi (`state.json` da eslab qolinadi) |
+| Monitor uzildi yoki qo'shildi | Oyna to'g'ri ekranda qaytadan ochiladi |
+| Sahifa ochilmadi (fayl, tarmoq) | 3 sekunddan keyin qayta urinadi |
+| Har kuni 04:00 | Profilaktika uchun qayta ishga tushadi |
+
+Ekran uxlab qolmaydi (`powerSaveBlocker`), taymerlar sekinlashmaydi, ikkinchi
+nusxa ochilmaydi. Hamma narsa logga yoziladi:
+`%APPDATA%\Milliy Kutubxona Ekran\logs\kiosk.log` (2 MB dan oshsa aylanadi).
+
+### Sahifa qanday beriladi
+
+Yig'ilgan fayllar `app://kiosk/…` custom protokoli orqali beriladi
+(`electron/protocol.cjs`), `file://` orqali emas. Sabablari:
+
+- `file://` sahifasining origini `null` — backend ulanganda CORS ni serverda
+  to'g'rilash imkonsiz bo'lardi;
+- `app://` — "ishonchli kontekst": WebGL, media va `localStorage` cheklovsiz
+  ishlaydi;
+- lokal HTTP server ham qo'yilmadi: Windows brandmaueri birinchi ishga
+  tushirishda ruxsat so'raydi, kioskda esa uni bosadigan odam yo'q.
+
+Protokol Range so'rovlarini qo'llab-quvvatlaydi, shuning uchun `<video>`
+oldinga-orqaga sakray oladi. Videolar asar arxividan tashqarida saqlanadi
+(`asarUnpack`) — dekoder ular bilan to'g'ridan-to'g'ri ishlaydi.
+
+### Xavfsizlik
+
+`contextIsolation: true`, `nodeIntegration: false`, `sandbox: true`. Sahifa
+Node API ni ko'rmaydi; unga `preload.cjs` faqat to'rtta narsani beradi:
+sozlama, log, qayta yuklash va versiyalar. Boshqa manzilga o'tish, yangi oyna
+ochish va har qanday ruxsat so'rovi (kamera, joylashuv) bloklanadi.
+
+### Ma'lumot: mock'dan backendga
+
+Slaydlar ma'lumotni faqat `src/display2/api/` orqali oladi:
+
+| Funksiya | So'rov | Zaxira |
+|---|---|---|
+| `getSignageBooks()` | `GET {apiUrl}/signage/books` | `data/books.ts` |
+| `getSignageEvents(today)` | `GET {apiUrl}/signage/events?from=YYYY-MM-DD` | `data/events.ts` |
+| `getSignagePlaylist()` | `GET {apiUrl}/signage/playlist` | `data/playlist.ts` |
+
+Javob shakli — `src/display2/data/types.ts` dagi `SignageBook`,
+`SignageEvent`, `SignageSlide`. Matn maydonlari uch tilli: `{ uz, ru, en }`.
+
+**Ekran hech qachon bo'sh qolmaydi.** Server o'chgan, tarmoq uzilgan, javob
+buzilgan — farqi yo'q: ichki ro'yxat ishlatiladi va xato faqat logga yoziladi.
+Boshlang'ich qiymat ham ichki ro'yxat, shuning uchun "yuklanmoqda" holati
+umuman yo'q — ekran birinchi kadrdanoq to'la ko'rinadi. Ma'lumot keyin
+sezdirmay almashadi va har `apiRefreshSeconds` da yangilanadi.
+
+Brauzer nusxasi uchun manzil `.env` dan olinadi (`VITE_API_URL`), Electron
+nusxasi uchun `config.json` dan — kod ikkalasida bir xil.
+
+### Brauzerda ochish (zaxira usul)
+
+Ilova o'rnatilmagan bo'lsa ekranni Chrome orqali ham ochish mumkin:
+
+```bash
+google-chrome --kiosk --start-fullscreen \
   --autoplay-policy=no-user-gesture-required \
-  --start-fullscreen \
   http://localhost:5173/ekran2
 ```
 
-Flag bo'lmasa ekran qotib qolmaydi — video ovozsiz ijro etiladi
-(`src/display2/signage/VideoSlide.tsx`). Ovoz kartasi tizim darajasida ochiq va
-tovush balandligi 0 bo'lmasligini ham tekshirish kerak.
+Bu holda yuqoridagi tiklanish mexanizmlari ishlamaydi.
 
 ## Netlify'ga chiqarish
 

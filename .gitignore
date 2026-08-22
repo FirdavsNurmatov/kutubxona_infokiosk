@@ -24,3 +24,7 @@ video-originals
 *.sln
 *.sw?
 .env
+
+# Electron
+dist-electron
+release
