@@ -1,0 +1,279 @@
+/* ══════════════════════════════════════════════════════
+   Sensorli klaviatura — /interface, kiosk va xarita uchun umumiy.
+
+   Panel har doim to'q rangda: och sahifada ham u alohida qatlam bo'lib
+   ko'rinishi kerak, tugmalar esa eng yuqori kontrastda qolishi kerak.
+   Aksent rangni sahifadan oladi (`--m-accent` yoki `--kb-accent`),
+   shuning uchun har bir bo'limda o'z rangida ko'rinadi.
+   ══════════════════════════════════════════════════════ */
+
+.kb {
+  /* `.if-stage` `transform` bilan masshtablanadi va `fixed` uchun
+     konteyner bo'lib qoladi — shuning uchun bitta qoida ham sahna
+     ichida, ham to'g'ridan-to'g'ri oynada to'g'ri ishlaydi. */
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+
+  --kb-ink: #EEF3FF;
+  --kb-muted: #8B9AB8;
+  --kb-key: #1C2743;
+  --kb-key-edge: #2B3958;
+  --kb-key-press: #2A3757;
+  --kb-accent: var(--m-accent, #3B7BE0);
+  --kb-accent-ink: #FFFFFF;
+  --kb-gap: 10px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 18px clamp(16px, 3vw, 30px) 24px;
+  border-radius: 26px 26px 0 0;
+  background:
+    linear-gradient(180deg, #131C33 0%, #0C1425 100%);
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 -24px 60px rgba(2, 8, 20, 0.5);
+  color: var(--kb-ink);
+  animation: kb-rise 220ms cubic-bezier(0.22, 0.9, 0.3, 1) both;
+}
+
+@keyframes kb-rise {
+  from { transform: translateY(18px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kb { animation: none; }
+}
+
+/* ── Kiritish maydoni ──────────────────────────────── */
+
+.kb-field {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: none;
+  min-height: 84px;
+  padding: 0 10px 0 24px;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.kb-field-icon { flex: none; color: var(--kb-accent); }
+
+.kb-field-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.kb-field-value em {
+  font-style: normal;
+  font-weight: 500;
+  color: var(--kb-muted);
+}
+
+/* Terilayotgani ko'rinib tursin — kursor matn oxirida pulsatsiya qiladi */
+.kb-caret {
+  display: inline-block;
+  width: 3px;
+  height: 30px;
+  margin-left: 3px;
+  border-radius: 2px;
+  background: var(--kb-accent);
+  vertical-align: -5px;
+  animation: kb-blink 1.1s step-end infinite;
+}
+@keyframes kb-blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .kb-caret { animation: none; }
+}
+
+.kb-field-clear,
+.kb-field-close {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  border: 0;
+  background: transparent;
+  color: var(--kb-muted);
+  cursor: pointer;
+}
+.kb-field-clear:active,
+.kb-field-close:active { background: rgba(255, 255, 255, 0.1); color: var(--kb-ink); }
+
+/* Yopish tugmasi maydondan tashqarida turgandek ko'rinsin */
+.kb-field-close {
+  margin-left: 4px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0 16px 16px 0;
+  width: 72px;
+  height: 72px;
+  color: var(--kb-ink);
+}
+
+/* ── Tugmalar ──────────────────────────────────────── */
+
+.kb-keys {
+  display: flex;
+  flex-direction: column;
+  gap: var(--kb-gap);
+}
+
+.kb-row {
+  display: flex;
+  justify-content: center;
+  gap: var(--kb-gap);
+}
+
+.kb-key {
+  /* Barcha qatorlar bitta ritmda: tugma eni eng uzun qatorga qarab
+     hisoblanadi, shuning uchun harflar ustun bo'lib tizilib turadi va
+     qisqaroq qator tabiiy ravishda markazda qoladi. */
+  flex: 0 1 calc((100% - (var(--kb-cols) - 1) * var(--kb-gap)) / var(--kb-cols));
+  min-width: 0;
+  height: 84px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  border-radius: 15px;
+  border: 1px solid var(--kb-key-edge);
+  background: linear-gradient(180deg, #22304F 0%, var(--kb-key) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 2px 0 rgba(0, 0, 0, 0.35);
+
+  color: var(--kb-ink);
+  font-family: inherit;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+
+  transition: transform 70ms ease, background 70ms ease, box-shadow 70ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.kb-key:active {
+  transform: translateY(2px);
+  background: var(--kb-key-press);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.kb-key:focus-visible {
+  outline: 3px solid var(--kb-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kb-key { transition: none; }
+  .kb-key:active { transform: none; }
+}
+
+/* ── Pastki qator ──────────────────────────────────── */
+
+/* Bu qatordagi tugmalar o'z vaznicha joy oladi: eng kengi — bo'sh joy. */
+.kb-row-tools .kb-key { flex: 1 1 0; }
+
+.kb-key-tool {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--kb-muted);
+}
+.kb-key-tool span { text-transform: uppercase; }
+
+/* Bo'sh joy tugmasi: yozuvsiz, ichida ingichka chiziq — sensorli
+   klaviaturalarda tanish belgi va uch tilda ham tarjima talab qilmaydi. */
+.kb-key-space i {
+  display: block;
+  width: 46%;
+  max-width: 220px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--kb-muted);
+  opacity: 0.75;
+}
+
+/* O'chirish — yagona qizil tugma. Fon ham, belgi ham qizil tomonga
+   suriladi, lekin to'yingan qizil emas: klaviatura ogohlantirish paneliga
+   o'xshab qolmasligi kerak. */
+.kb-key-back {
+  border-color: rgba(239, 83, 80, 0.45);
+  background: linear-gradient(180deg, #3A2027 0%, #2C171C 100%);
+  color: #FF8A80;
+}
+.kb-key-back:active {
+  background: #4A252D;
+  color: #FFB3AC;
+}
+
+.kb-key-submit {
+  border-color: transparent;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--kb-accent) 88%, #FFFFFF) 0%,
+    var(--kb-accent) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.28),
+    0 2px 0 rgba(0, 0, 0, 0.3);
+  color: var(--kb-accent-ink);
+  font-size: 22px;
+  font-weight: 700;
+}
+.kb-key-submit:active {
+  background: var(--kb-accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15);
+}
+.kb-key-submit span { white-space: nowrap; }
+
+/* ── Ekran balandligiga moslashish ─────────────────────
+   Yuqoridagi o'lchamlar 1080×1920 portret infokiosk uchun. Asosiy kiosk
+   va xarita terminali gorizontal (1920×1080) — u yerda klaviatura shu
+   o'lchamda ekranning yarmidan ko'pini egallab qo'yardi. */
+
+@media (max-height: 1300px) {
+  .kb {
+    gap: 12px;
+    padding: 14px clamp(14px, 2.6vw, 26px) 18px;
+    --kb-gap: 8px;
+    border-radius: 22px 22px 0 0;
+  }
+  .kb-field { min-height: 66px; padding-left: 20px; }
+  .kb-field-value { font-size: 25px; }
+  .kb-caret { height: 25px; }
+  .kb-field-clear { width: 54px; height: 54px; }
+  .kb-field-close { width: 60px; height: 60px; }
+  .kb-key { height: 66px; font-size: 25px; border-radius: 13px; }
+  .kb-key-tool { font-size: 17px; }
+  .kb-key-submit { font-size: 19px; }
+}
+
+@media (max-height: 820px) {
+  .kb {
+    gap: 10px;
+    padding: 10px clamp(10px, 2vw, 20px) 14px;
+    --kb-gap: 6px;
+    border-radius: 18px 18px 0 0;
+  }
+  .kb-field { min-height: 54px; }
+  .kb-field-value { font-size: 21px; }
+  .kb-caret { height: 21px; }
+  .kb-key { height: 52px; font-size: 21px; border-radius: 10px; }
+  .kb-key-tool { font-size: 15px; }
+  .kb-key-submit { font-size: 17px; }
+  .kb-key-space i { height: 3px; }
+}

@@ -210,10 +210,11 @@
   filter: brightness(1.12);
 }
 
+/* Rasmiy lokap ikki tayyor rangda keladi (tilla / to'q) — qayta bo'yalmaydi.
+   Nisbati ~1.87:1, shuning uchun har bir joyda faqat bitta o'q beriladi. */
 .if-logo {
-  /* Emblema PNG to'q navy rangda saqlangan — modullarning barchasida
-     maketdagidek oltin bo'lib chiqishi uchun filtrdan o'tkaziladi. */
-  filter: brightness(0) invert(1) sepia(1) saturate(5.5) hue-rotate(352deg) brightness(0.88);
+  height: auto;
+  object-fit: contain;
 }
 
 .if-card {
@@ -376,43 +377,6 @@
 .if-menu-item small { font-size: 15px; line-height: 1.3; color: var(--m-muted); }
 
 /* Faqat ishlab chiqishda ko'rinadigan ekran almashtirgich */
-.if-menu-dev {
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px dashed var(--m-card-line);
-}
-.if-menu-dev > span {
-  display: block;
-  margin-bottom: 12px;
-  font-size: 15px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--m-muted);
-}
-.if-menu-dev > div {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-.if-menu-surface {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: 68px;
-  padding: 0 16px;
-  border-radius: 14px;
-  border: 1px solid var(--m-card-line);
-  background: var(--m-card);
-  color: var(--m-text);
-  font-size: 16px;
-  text-decoration: none;
-}
-.if-menu-surface code {
-  margin-left: auto;
-  font-size: 14px;
-  color: var(--m-muted);
-}
-
 /* ── Pastki navigatsiya ────────────────────────────── */
 .if-bottomnav {
   position: relative;
@@ -639,52 +603,9 @@ h3.if-sheet-lead { color: var(--m-text); }
    Kioskda fizik klaviatura yo'q, shuning uchun qidiruv
    maydoni bosilganda shu panel ochiladi. */
 
-.if-kb {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 40;
-  padding: 20px max(20px, var(--if-gap)) 26px;
-  background: #0B1226;
-  border-top: 1px solid rgba(255, 255, 255, 0.14);
-  box-shadow: 0 -20px 60px rgba(0, 0, 0, 0.5);
-  color: #EAF0FF;
-}
-
-.if-kb-preview {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  height: 76px;
-  margin-bottom: 16px;
-  padding: 0 22px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.07);
-  font-size: 26px;
-}
-.if-kb-preview span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.if-kb-preview em { color: #7C8DB0; font-style: normal; }
-
-.if-kb-row {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
-
-.if-kb-key {
-  min-width: 86px;
-  height: 84px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.1);
-  font-size: 28px;
-  font-weight: 600;
-}
-.if-kb-key:active { background: rgba(255, 255, 255, 0.24); }
-/* Keng tugmalar cheksiz cho'zilib ketmasin — keng ekranda qator markazda qoladi */
-.if-kb-key[data-wide='1'] { flex: 1; max-width: 300px; font-size: 22px; }
-.if-kb-key[data-accent='1'] { background: #2F6BD8; }
+/* Sensorli klaviatura endi umumiy komponent:
+   `src/components/OnScreenKeyboard.tsx` + `on-screen-keyboard.css`.
+   U kiosk va xarita bo'limlarida ham ishlatiladi. */
 
 /* ══ Yuklanish holati ══════════════════════════════════ */
 .if-loading {
@@ -697,4 +618,35 @@ h3.if-sheet-lead { color: var(--m-text); }
 
 @media (prefers-reduced-motion: reduce) {
   .if-tap { transition: none; }
+}
+
+/* ── Ma'lumot yuklanmaganda chiqadigan ogohlantirish ─ */
+.if-notice {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin: 0 max(32px, var(--if-gap)) 24px;
+  padding: 22px 26px;
+  border-radius: var(--m-radius);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--m-text);
+}
+.if-notice > svg { flex: none; color: #EF4444; }
+.if-notice > div { flex: 1; min-width: 0; }
+.if-notice b { display: block; font-size: 21px; font-weight: 700; }
+.if-notice span { font-size: 18px; color: var(--m-muted); line-height: 1.4; }
+.if-notice-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+  min-height: 64px;
+  padding: 0 24px;
+  border-radius: 999px;
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+  color: var(--m-text);
+  font-size: 19px;
+  font-weight: 600;
 }

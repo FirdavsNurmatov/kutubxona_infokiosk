@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/context';
 import { ALL_ROOMS, CATEGORY_COLOR } from '../data/floors';
 import type { MapText } from '../mapText';
 import type { Room, RoomCategory } from '../types';
+import OnScreenKeyboard from '../../components/OnScreenKeyboard';
 
 type Filter = 'all' | RoomCategory;
 
@@ -28,6 +29,8 @@ export default function RoomsView({ text, onShowOnMap }: RoomsViewProps) {
   const { tr } = useI18n();
   const [filter, setFilter] = useState<Filter>('all');
   const [query, setQuery] = useState('');
+  /* Xarita terminalida ham fizik klaviatura yo'q. */
+  const [keyboard, setKeyboard] = useState(false);
 
   const visible = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -76,6 +79,8 @@ export default function RoomsView({ text, onShowOnMap }: RoomsViewProps) {
             value={query}
             placeholder={text.rooms.searchPlaceholder}
             onChange={(e) => setQuery(e.target.value)}
+            onFocus={() => setKeyboard(true)}
+            onClick={() => setKeyboard(true)}
           />
           {query && (
             <button type="button" aria-label={text.detail.close} onClick={() => setQuery('')}>
@@ -125,6 +130,16 @@ export default function RoomsView({ text, onShowOnMap }: RoomsViewProps) {
             );
           })}
         </div>
+      )}
+
+      {keyboard && (
+        <OnScreenKeyboard
+          value={query}
+          placeholder={text.rooms.searchPlaceholder}
+          onChange={setQuery}
+          onSubmit={() => setKeyboard(false)}
+          onClose={() => setKeyboard(false)}
+        />
       )}
     </div>
   );

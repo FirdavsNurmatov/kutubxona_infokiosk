@@ -14,7 +14,7 @@ export const allomalarSections: EncyclopediaCategory[] = [
       en: 'Homeland, teachers and era',
     },
     icon: 'BookOpen',
-    count: 5,
+    count: 0,
     accent: '#D9A441',
   },
   {
@@ -26,7 +26,7 @@ export const allomalarSections: EncyclopediaCategory[] = [
       en: 'Books and treatises',
     },
     icon: 'ScrollText',
-    count: 5,
+    count: 0,
     accent: '#C9A227',
   },
   {
@@ -38,7 +38,7 @@ export const allomalarSections: EncyclopediaCategory[] = [
       en: 'Legacy in world science',
     },
     icon: 'Globe',
-    count: 5,
+    count: 0,
     accent: '#E0B860',
   },
   {
@@ -50,7 +50,7 @@ export const allomalarSections: EncyclopediaCategory[] = [
       en: 'Laws discovered first',
     },
     icon: 'FlaskConical',
-    count: 5,
+    count: 0,
     accent: '#CFA13B',
   },
   {
@@ -62,7 +62,7 @@ export const allomalarSections: EncyclopediaCategory[] = [
       en: 'Video and audio materials',
     },
     icon: 'PlayCircle',
-    count: 5,
+    count: 0,
     accent: '#E8C878',
   },
 ];

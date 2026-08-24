@@ -3,30 +3,34 @@ import {
   BookOpen, ChevronRight, Feather, Landmark, Music, Palette, Play,
   Search, Star, Trophy, Users,
 } from 'lucide-react';
-import type { NavigateFn } from '../../InterfaceApp';
+import type { ModuleProps } from '../../InterfaceApp';
 import { useText } from '../../i18n';
 import { useResource } from '../../api/useResource';
 import { getFigureCategories, getFigures } from '../../api';
 import { CategoryTiles, EntryDetail, FeaturedEntry } from '../../components/Encyclopedia';
 import { TopBar, BottomNav } from '../../shell/Chrome';
-import OnScreenKeyboard from '../../shell/OnScreenKeyboard';
+import OnScreenKeyboard from '../../../components/OnScreenKeyboard';
 import type { EncyclopediaEntry } from '../../api/types';
 import '../../components/encyclopedia.css';
 import './siymolar.css';
+import LibraryLogo from '../../../components/LibraryLogo';
+import DataNotice from '../../components/DataNotice';
 
 const ICONS = { BookOpen, Feather, Palette, Music, Landmark, Trophy, Star, Users };
 
 type View = 'home' | 'list';
 
-export default function SiymolarModule({ navigate }: { navigate: NavigateFn }) {
+export default function SiymolarModule({ navigate, initialQuery }: ModuleProps) {
   const { s, tr, title, lang } = useText();
   const figures = useResource(getFigures, [] as EncyclopediaEntry[]);
   const categories = useResource(getFigureCategories, []);
 
-  const [view, setView] = useState<View>('home');
+  /* Bosh sahifadagi qidiruvdan kelingan bo'lsa, modul darhol o'sha
+     so'z bo'yicha filtrlangan ro'yxat bilan ochiladi. */
+  const [view, setView] = useState<View>(initialQuery ? 'list' : 'home');
   const [categoryId, setCategoryId] = useState<string | null>(null);
   const [openId, setOpenId] = useState<string | null>(null);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState(initialQuery ?? '');
   const [keyboard, setKeyboard] = useState(false);
   const [favourites, setFavourites] = useState<string[]>([]);
   const [onlyFavourites, setOnlyFavourites] = useState(false);
@@ -72,6 +76,7 @@ export default function SiymolarModule({ navigate }: { navigate: NavigateFn }) {
             onBack={() => setView('home')}
           />
           <div className="if-scroll">
+          <DataNotice sources={[figures, categories]} />
             <div className="sy-listpage">
               <button
                 className="sy-search if-tap"
@@ -119,15 +124,12 @@ export default function SiymolarModule({ navigate }: { navigate: NavigateFn }) {
         onNavigate={navigate}
         />
         <div className="if-scroll">
+          <DataNotice sources={[figures, categories]} />
           <section className="sy-hero">
             <img className="sy-hero-bg" src="/interface/siymolar/hero.webp" alt="" />
             <div className="sy-hero-scrim" />
             <div className="sy-hero-top">
-              <img className="if-logo" src="/images/logo.png" alt="" />
-              <b>
-                O‘zbekiston
-                <span>Milliy kutubxonasi</span>
-              </b>
+              <LibraryLogo variant="gold" className="if-logo" />
               <div className="sy-hero-motto">{title('siymolarMotto')[0]}</div>
             </div>
             <div className="sy-flag" />
@@ -178,7 +180,8 @@ export default function SiymolarModule({ navigate }: { navigate: NavigateFn }) {
                 <button className="sy-all if-tap" onClick={() => openList(null)}>
                   <Users size={40} />
                   <span>— {s('fullList')} —</span>
-                  <b>100 {s('figures')}</b>
+                  {/* Bazadagi haqiqiy son — ilgari bu yerda qotib qolgan 100 turardi */}
+                  <b>{figures.data.length} {s('figures')}</b>
                   <small><ChevronRight size={20} /></small>
                 </button>
               }

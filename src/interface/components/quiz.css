@@ -72,7 +72,7 @@
   justify-content: safe center;
   overflow-y: auto;
   scrollbar-width: none;
-  padding: 40px max(44px, var(--if-gap));
+  padding: 40px max(44px, var(--if-gap)) 24px;
 }
 .qz-body > * { flex: none; }
 .qz-body::-webkit-scrollbar { display: none; }
@@ -127,18 +127,37 @@
 .qz-option[data-state='correct'][disabled],
 .qz-option[data-state='wrong'][disabled] { opacity: 1; }
 
+/* Izoh uchun ajratilgan doimiy joy: bo'sh turganda ham balandligi o'sha —
+   shu sababli javob tanlanishi savol va javoblarni joyidan qimirlatmaydi. */
+.qz-explain-dock {
+  flex: none;
+  height: 186px;
+  padding: 0 max(44px, var(--if-gap)) 24px;
+}
+
 .qz-explain {
   display: flex;
   gap: 16px;
-  margin-top: 26px;
+  height: 100%;
   padding: 22px 26px;
   border-radius: 18px;
   border: 1px solid var(--m-card-line);
   background: var(--m-card);
   font-size: 22px;
   line-height: 1.45;
+  /* Odatda izoh 1-2 qatorga sig'adi; uzunroq matn dokni cho'zmasdan aylanadi */
+  overflow-y: auto;
+  scrollbar-width: none;
+  animation: qz-explain-in 200ms ease both;
 }
+.qz-explain::-webkit-scrollbar { display: none; }
 .qz-explain b { display: block; margin-bottom: 6px; font-size: 24px; }
+
+/* Faqat shaffoflik — o'lchamga tegmaydi, aks holda dok yana siljirdi */
+@keyframes qz-explain-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
 .qz-foot {
   display: flex;

@@ -3,30 +3,30 @@ import {
   BookMarked, BookOpenText, ChevronLeft, ChevronRight, Feather,
   Search, X, ZoomIn, ZoomOut,
 } from 'lucide-react';
-import type { NavigateFn } from '../../InterfaceApp';
+import type { ModuleProps } from '../../InterfaceApp';
 import { useText } from '../../i18n';
 import { useResource } from '../../api/useResource';
 import { getHeritage, getHeritageCategories } from '../../api';
 import { merosArt } from '../../data/meros';
 import { EntryDetail, FeaturedEntry } from '../../components/Encyclopedia';
 import { TopBar, BottomNav } from '../../shell/Chrome';
-import OnScreenKeyboard from '../../shell/OnScreenKeyboard';
+import OnScreenKeyboard from '../../../components/OnScreenKeyboard';
 import type { EncyclopediaEntry } from '../../api/types';
 import '../../components/encyclopedia.css';
 import './meros.css';
+import LibraryLogo from '../../../components/LibraryLogo';
+import DataNotice from '../../components/DataNotice';
 
 const ICONS = { BookOpenText, BookMarked, Feather };
 
-/* Raqamli varaqlagich. Haqiqiy skanerlar backend bilan keladi;
-   hozircha mavjud qo'lyozma tasvirlari aylanma tarzda ko'rsatiladi,
-   shuning uchun varaqlash mexanikasi to'liq ishlaydi. */
-const DEMO_PAGES = [merosArt.boburnoma, merosArt.pageLeft, merosArt.pageRight, merosArt.heroBook];
-
+/* Raqamli varaqlagich. Faqat nashrning O'Z raqamlangan varaqlarini
+   ko'rsatadi — ilgari bu yerda umumiy demo to'plami turardi va Boburnoma
+   ham, Xamsa ham, Sahihi Buxoriy ham aynan bir xil sahifalarni ochardi. */
 function Reader({ entry, onClose }: { entry: EncyclopediaEntry; onClose: () => void }) {
   const { s, tr } = useText();
   const [page, setPage] = useState(0);
   const [zoom, setZoom] = useState(1);
-  const pages = [entry.image, ...DEMO_PAGES];
+  const pages = entry.pages ?? [entry.image];
 
   return (
     <div className="mr-reader">
@@ -38,7 +38,7 @@ function Reader({ entry, onClose }: { entry: EncyclopediaEntry; onClose: () => v
         <button className="enc-arrow if-tap" onClick={() => setZoom((z) => Math.min(2.5, z + 0.25))} aria-label="+">
           <ZoomIn size={26} />
         </button>
-        <button className="enc-arrow if-tap" onClick={onClose} aria-label="Yopish">
+        <button className="enc-arrow if-tap" onClick={onClose} aria-label={s('close')}>
           <X size={28} />
         </button>
       </div>
@@ -52,7 +52,7 @@ function Reader({ entry, onClose }: { entry: EncyclopediaEntry; onClose: () => v
           className="enc-arrow if-tap"
           onClick={() => setPage((p) => Math.max(0, p - 1))}
           disabled={page === 0}
-          aria-label="Oldingi"
+          aria-label={s('prev')}
         >
           <ChevronLeft size={30} />
         </button>
@@ -61,7 +61,7 @@ function Reader({ entry, onClose }: { entry: EncyclopediaEntry; onClose: () => v
           className="enc-arrow if-tap"
           onClick={() => setPage((p) => Math.min(pages.length - 1, p + 1))}
           disabled={page >= pages.length - 1}
-          aria-label="Keyingi"
+          aria-label={s('next')}
         >
           <ChevronRight size={30} />
         </button>
@@ -70,7 +70,7 @@ function Reader({ entry, onClose }: { entry: EncyclopediaEntry; onClose: () => v
   );
 }
 
-export default function MerosModule({ navigate }: { navigate: NavigateFn }) {
+export default function MerosModule({ navigate, initialQuery }: ModuleProps) {
   const { s, tr, title, lang } = useText();
   const entries = useResource(getHeritage, [] as EncyclopediaEntry[]);
   const categories = useResource(getHeritageCategories, []);
@@ -78,7 +78,8 @@ export default function MerosModule({ navigate }: { navigate: NavigateFn }) {
   const [categoryId, setCategoryId] = useState<string | null>('qolyozma');
   const [openId, setOpenId] = useState<string | null>(null);
   const [readerId, setReaderId] = useState<string | null>(null);
-  const [query, setQuery] = useState('');
+  /* Bosh sahifadagi qidiruvdan kelingan so'z. */
+  const [query, setQuery] = useState(initialQuery ?? '');
   const [keyboard, setKeyboard] = useState(false);
 
   const featured = entries.data.find((e) => e.id === 'boburnoma') ?? entries.data[0];
@@ -112,8 +113,9 @@ export default function MerosModule({ navigate }: { navigate: NavigateFn }) {
       />
 
       <div className="if-scroll">
+          <DataNotice sources={[entries, categories]} />
         <section className="mr-arch">
-          <img className="if-logo" src="/images/logo.png" alt="" />
+          <LibraryLogo variant="gold" className="if-logo" />
           <h1>{title('meros')[0]}<br />{title('meros')[1]}</h1>
           <div className="mr-arch-sub">{title('merosSub')[0]}</div>
           <p>{s('merosLead')}</p>
@@ -173,12 +175,14 @@ export default function MerosModule({ navigate }: { navigate: NavigateFn }) {
                 actionLabel={s('view')}
                 onOpen={() => setOpenId(featured.id)}
               />
-              <div style={{ display: 'flex', justifyContent: 'center', marginTop: 22 }}>
-                <button className="if-cta if-tap" onClick={() => setReaderId(featured.id)}>
-                  <BookOpenText size={30} />
-                  {s('openBook')}
-                </button>
-              </div>
+              {featured.pages && featured.pages.length > 0 && (
+                <div style={{ display: 'flex', justifyContent: 'center', marginTop: 22 }}>
+                  <button className="if-cta if-tap" onClick={() => setReaderId(featured.id)}>
+                    <BookOpenText size={30} />
+                    {s('openBook')}
+                  </button>
+                </div>
+              )}
             </>
           )}
         </div>

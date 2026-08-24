@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
   Baby, BookOpenText, Brain, GraduationCap, Home, Hourglass,
-  Images, Menu, Monitor, Map as MapIcon, Users, X, type LucideIcon,
+  Images, Menu, Users, X, type LucideIcon,
 } from 'lucide-react';
 import { MODULES, type ModuleId } from '../routes';
 import { useText } from '../i18n';
@@ -16,16 +16,6 @@ const ICONS: Record<string, LucideIcon> = {
   Home, BookOpenText, GraduationCap, Users, Hourglass, Images, Brain, Baby,
 };
 
-/** Ishlab chiqishda qulay bo'lsin uchun — boshqa qurilmalar ekranlari. */
-const SURFACES: { path: string; icon: LucideIcon; label: [string, string, string] }[] = [
-  { path: '/', icon: Monitor, label: ['Sensorli kiosk', 'Сенсорный киоск', 'Touch kiosk'] },
-  { path: '/ekran', icon: Monitor, label: ['Katta ekran', 'Большой экран', 'Wall screen'] },
-  { path: '/ekran2', icon: Monitor, label: ['Katta ekran (animatsion)', 'Большой экран (анимация)', 'Wall screen (animated)'] },
-  { path: '/map', icon: MapIcon, label: ['Bino xaritasi', 'Карта здания', 'Building map'] },
-];
-
-const LANG_INDEX = { uz: 0, ru: 1, en: 2 } as const;
-
 export interface ModuleMenuProps {
   current: ModuleId;
   onSelect: (id: ModuleId) => void;
@@ -33,7 +23,7 @@ export interface ModuleMenuProps {
 
 export default function ModuleMenu({ current, onSelect }: ModuleMenuProps) {
   const [open, setOpen] = useState(false);
-  const { tr, s, lang } = useText();
+  const { tr, s } = useText();
 
   return (
     <>
@@ -51,7 +41,7 @@ export default function ModuleMenu({ current, onSelect }: ModuleMenuProps) {
           <div className="if-menu-sheet" onClick={(e) => e.stopPropagation()}>
             <div className="if-menu-head">
               <b>{s('sections')}</b>
-              <button className="if-menu-close if-tap" onClick={() => setOpen(false)} aria-label="Yopish">
+              <button className="if-menu-close if-tap" onClick={() => setOpen(false)} aria-label={s('close')}>
                 <X size={30} />
               </button>
             </div>
@@ -76,24 +66,6 @@ export default function ModuleMenu({ current, onSelect }: ModuleMenuProps) {
                 );
               })}
             </div>
-
-            {import.meta.env.DEV && (
-              <div className="if-menu-dev">
-                <span>Boshqa ekranlar (faqat ishlab chiqishda)</span>
-                <div>
-                  {SURFACES.map((sf) => {
-                    const Icon = sf.icon;
-                    return (
-                      <a key={sf.path} className="if-menu-surface if-tap" href={sf.path}>
-                        <Icon size={22} />
-                        {sf.label[LANG_INDEX[lang]]}
-                        <code>{sf.path}</code>
-                      </a>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       )}

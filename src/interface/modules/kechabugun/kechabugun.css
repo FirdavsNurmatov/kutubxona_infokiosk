@@ -25,7 +25,7 @@
   background: #FBF7EF;
   box-shadow: 0 10px 40px rgba(20, 50, 47, 0.08);
 }
-.kb-arch img { width: 130px; height: 130px; object-fit: contain; }
+.kb-arch img { width: 330px; height: auto; object-fit: contain; margin-inline: auto; }
 .kb-arch h1 {
   margin: 10px 0 0;
   font-size: 58px;
@@ -91,6 +91,26 @@
 }
 .kb-compare-after { clip-path: inset(0 0 0 var(--split, 50%)); }
 
+/*
+   "OLDIN" / "HOZIR" tugmalari chegarani chekkaga suradi — bu harakat
+   ko'rinib turishi kerak. Surish paytida esa animatsiya o'chadi, aks holda
+   chegara barmoq ortidan kechikib yuradi.
+*/
+.kb-compare[data-dragging='0'] .kb-compare-after {
+  transition: clip-path 340ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.kb-compare[data-dragging='0'] .kb-divider,
+.kb-compare[data-dragging='0'] .kb-handle {
+  transition: left 340ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kb-compare-after,
+  .kb-divider,
+  .kb-handle,
+  .kb-year { transition: none !important; }
+}
+
 .kb-divider {
   position: absolute;
   top: 0;
@@ -131,6 +151,11 @@
 }
 .kb-year[data-side='l'] { left: 20px; background: rgba(40, 36, 28, 0.6); }
 .kb-year[data-side='r'] { right: 20px; background: rgba(12, 52, 74, 0.6); }
+
+/* Chegara chekkaga borganda ko'rinmay qolgan suratning yili ham so'nadi —
+   aks holda 1910-yil yozuvi bugungi surat ustida osilib qoladi. */
+.kb-year { transition: opacity 220ms ease; }
+.kb-year[data-off='1'] { opacity: 0; }
 
 .kb-place {
   position: absolute;

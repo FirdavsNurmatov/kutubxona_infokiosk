@@ -89,12 +89,13 @@ export interface ArchiveKind {
   label: { uz: string; ru: string; en: string };
   icon: string;
   accent: string;
-  count: number;
+  /** Yozuvlar soni — backend hisoblab beradi. Mock ma'lumotda yo'q. */
+  count?: number;
 }
 
 export const archiveKinds: ArchiveKind[] = [
-  { id: 'foto', label: { uz: 'Tarixiy foto arxivlar', ru: 'Исторические фотоархивы', en: 'Historical photo archives' }, icon: 'Image', accent: '#1E6FD9', count: 1240 },
-  { id: 'video', label: { uz: 'Tarixiy video arxivlar', ru: 'Исторические видеоархивы', en: 'Historical video archives' }, icon: 'Clapperboard', accent: '#0F8A6E', count: 318 },
-  { id: 'kitob', label: { uz: 'Raqamli kitoblar', ru: 'Цифровые книги', en: 'Digital books' }, icon: 'BookOpen', accent: '#6B3FBF', count: 862 },
-  { id: 'audio', label: { uz: 'Audiolar va hikoyalar', ru: 'Аудио и рассказы', en: 'Audio and stories' }, icon: 'Mic', accent: '#C87A16', count: 205 },
+  { id: 'foto', label: { uz: 'Tarixiy foto arxivlar', ru: 'Исторические фотоархивы', en: 'Historical photo archives' }, icon: 'Image', accent: '#1E6FD9' },
+  { id: 'video', label: { uz: 'Tarixiy video arxivlar', ru: 'Исторические видеоархивы', en: 'Historical video archives' }, icon: 'Clapperboard', accent: '#0F8A6E' },
+  { id: 'kitob', label: { uz: 'Raqamli kitoblar', ru: 'Цифровые книги', en: 'Digital books' }, icon: 'BookOpen', accent: '#6B3FBF' },
+  { id: 'audio', label: { uz: 'Audiolar va hikoyalar', ru: 'Аудио и рассказы', en: 'Audio and stories' }, icon: 'Mic', accent: '#C87A16' },
 ];

@@ -51,6 +51,11 @@ export interface EncyclopediaEntry {
   sections: EntrySection[];
   /** "Qiziqarli faktlar" bloki uchun. */
   facts: Localized[];
+  /**
+   * Raqamlangan sahifalar (varaqlagich uchun). Faqat raqamli nusxasi
+   * tayyor bo'lgan nashrlarda bo'ladi — bo'lmasa varaqlagich ochilmaydi.
+   */
+  pages?: string[];
 }
 
 export interface EncyclopediaCategory {
@@ -161,6 +166,8 @@ export interface HubService {
   id: string;
   label: Localized;
   icon: string;
+  /** Kartochka bosilganda ochiladigan oynadagi matn. */
+  description?: Localized;
 }
 
 export interface HubEvent {
@@ -169,6 +176,8 @@ export interface HubEvent {
   title: Localized;
   place: Localized;
   image: string;
+  /** Kartochka bosilganda ochiladigan oynadagi matn. */
+  description?: Localized;
 }
 
 export interface HubCard {
@@ -179,4 +188,15 @@ export interface HubCard {
   /** Bosilganda ochiladigan modul yo'li. */
   target: string;
   accent: string;
+}
+
+/* ══ Umumiy qidiruv ═══════════════════════════════════ */
+
+export interface SearchHit {
+  id: string;
+  /** Natija qaysi bo'limga tegishli (`ModuleId` qiymati). */
+  module: string;
+  title: Localized;
+  subtitle: Localized;
+  image?: string;
 }

@@ -19,6 +19,8 @@ interface KioskSearchProps {
   submitted: string;
   onQueryChange: (value: string) => void;
   onSearch: () => void;
+  /** Qidiruv maydoni bosilganda sensorli klaviaturani ochadi. */
+  onOpenKeyboard: () => void;
   onSelectBook: (book: Book) => void;
 }
 
@@ -27,6 +29,7 @@ export default function KioskSearch({
   submitted,
   onQueryChange,
   onSearch,
+  onOpenKeyboard,
   onSelectBook,
 }: KioskSearchProps) {
   const { t, tr, lang } = useI18n();
@@ -117,6 +120,8 @@ export default function KioskSearch({
           type="text"
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
+          onFocus={onOpenKeyboard}
+          onClick={onOpenKeyboard}
           placeholder={t.kiosk.searchPlaceholder}
           aria-label={t.aria.search}
         />

@@ -15,6 +15,8 @@ interface KioskHomeProps {
   query: string;
   onQueryChange: (value: string) => void;
   onSearch: (query?: string) => void;
+  /** Qidiruv maydoni bosilganda sensorli klaviaturani ochadi. */
+  onOpenKeyboard: () => void;
   onNavigate: (view: KioskView) => void;
   onSelectBook: (book: Book) => void;
   onHelp: () => void;
@@ -39,6 +41,7 @@ export default function KioskHome({
   query,
   onQueryChange,
   onSearch,
+  onOpenKeyboard,
   onNavigate,
   onSelectBook,
   onHelp,
@@ -83,6 +86,8 @@ export default function KioskHome({
               type="text"
               value={query}
               onChange={(e) => onQueryChange(e.target.value)}
+              onFocus={onOpenKeyboard}
+              onClick={onOpenKeyboard}
               placeholder={t.kiosk.searchPlaceholder}
               aria-label={t.aria.search}
             />

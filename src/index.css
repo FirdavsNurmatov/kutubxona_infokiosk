@@ -12,7 +12,6 @@
   --panel-head-h: 50px;
   --gap: 10px;
   --clock-size: clamp(32px, 6vh, 58px);
-  --brand-size: clamp(14px, 1.9vh, 21px);
   --nav-label-size: 13.5px;
 
   /* Ranglar (tailwind.config.js bilan bir xil) */
@@ -142,15 +141,11 @@ input[type='search']::-webkit-search-cancel-button {
   cursor: pointer;
 }
 
+/* Rasmiy lokap gorizontal (~1.87:1) — balandlik beriladi, eni o'zi chiqadi */
 .hdr-logo-mark {
-  width: clamp(44px, 7vh, 68px);
-  height: clamp(44px, 7vh, 68px);
+  height: clamp(42px, 7.2vh, 80px);
+  width: auto;
   flex-shrink: 0;
-}
-
-.hdr-brand {
-  font-size: var(--brand-size);
-  line-height: 1.2;
 }
 
 .hdr-tagline {
@@ -637,19 +632,10 @@ body[data-app='kiosk'] {
   cursor: pointer;
 }
 
-/* PNG emblema to'q fonda oq bo'lib chiqadi */
+/* Tilla lokap to'q ko'k panelda o'z rangida qoladi — filtr kerak emas */
 .k-side-mark {
-  width: clamp(44px, 6vh, 58px);
+  width: min(100%, 176px);
   height: auto;
-  filter: brightness(0) invert(1);
-}
-
-.k-side-brand {
-  font-size: clamp(10px, 1.2vh, 13px);
-  letter-spacing: 2px;
-  line-height: 1.5;
-  text-align: center;
-  font-weight: 700;
 }
 
 .k-side-nav {
@@ -1019,7 +1005,6 @@ body[data-app='kiosk'] {
     overflow-x: auto;
   }
   .k-side-logo { padding: 10px; }
-  .k-side-brand { display: none; }
   .k-side-nav { flex-direction: row; padding: 6px; }
   .k-nav-btn { width: auto; white-space: nowrap; }
   .k-lang { padding: 6px; }

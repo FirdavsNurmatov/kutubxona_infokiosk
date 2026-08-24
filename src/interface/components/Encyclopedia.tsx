@@ -25,7 +25,7 @@ export function EntryCarousel({
   const [page, setPage] = useState(0);
   const pages = Math.max(1, Math.ceil(entries.length / perPage));
   const shown = entries.slice(page * perPage, page * perPage + perPage);
-  const { tr } = useText();
+  const { tr, s } = useText();
 
   return (
     <>
@@ -34,7 +34,7 @@ export function EntryCarousel({
           className="enc-arrow if-tap"
           onClick={() => setPage((p) => Math.max(0, p - 1))}
           disabled={page === 0}
-          aria-label="Oldingi"
+          aria-label={s('prev')}
         >
           <ChevronLeft size={30} />
         </button>
@@ -70,7 +70,7 @@ export function EntryCarousel({
           className="enc-arrow if-tap"
           onClick={() => setPage((p) => Math.min(pages - 1, p + 1))}
           disabled={page >= pages - 1}
-          aria-label="Keyingi"
+          aria-label={s('next')}
         >
           <ChevronRight size={30} />
         </button>
@@ -196,7 +196,7 @@ export interface EntryDetailProps {
 
 export function EntryDetail({ entry, onClose, factsLabel }: EntryDetailProps) {
   const [tab, setTab] = useState(entry.sections[0]?.id ?? '');
-  const { tr } = useText();
+  const { tr, s } = useText();
   const section = entry.sections.find((sc) => sc.id === tab) ?? entry.sections[0];
 
   return (
@@ -208,7 +208,7 @@ export function EntryDetail({ entry, onClose, factsLabel }: EntryDetailProps) {
           className="enc-arrow if-tap"
           style={{ position: 'absolute', top: 24, right: 28 }}
           onClick={onClose}
-          aria-label="Yopish"
+          aria-label={s('close')}
         >
           <X size={32} />
         </button>

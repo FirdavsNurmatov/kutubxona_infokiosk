@@ -42,6 +42,10 @@ export interface Translation {
     clearSearch: string;
     qrCode: string;
     close: string;
+    /* Sensorli klaviatura boshqaruvlari */
+    keyboardLayout: string;
+    keyboardSpace: string;
+    keyboardBackspace: string;
     social: (network: string) => string;
   };
   /** Ichki sahifalar sarlavhalari va umumiy boshqaruv matnlari. */
@@ -260,6 +264,9 @@ export const translations: Record<Lang, Translation> = {
       clearSearch: 'Qidiruvni tozalash',
       qrCode: 'Kutubxona saytiga QR kod',
       close: 'Yopish',
+      keyboardLayout: 'Yozuv turini almashtirish',
+      keyboardSpace: 'Bo‘sh joy',
+      keyboardBackspace: 'Belgini o‘chirish',
       social: (network) => `${network} sahifamiz`,
     },
     page: {
@@ -462,6 +469,9 @@ export const translations: Record<Lang, Translation> = {
       clearSearch: 'Очистить поиск',
       qrCode: 'QR-код на сайт библиотеки',
       close: 'Закрыть',
+      keyboardLayout: 'Сменить раскладку',
+      keyboardSpace: 'Пробел',
+      keyboardBackspace: 'Удалить символ',
       social: (network) => `Наша страница в ${network}`,
     },
     page: {
@@ -692,6 +702,9 @@ export const translations: Record<Lang, Translation> = {
       clearSearch: 'Clear search',
       qrCode: 'QR code to the library website',
       close: 'Close',
+      keyboardLayout: 'Switch layout',
+      keyboardSpace: 'Space',
+      keyboardBackspace: 'Delete character',
       social: (network) => `Our ${network} page`,
     },
     page: {

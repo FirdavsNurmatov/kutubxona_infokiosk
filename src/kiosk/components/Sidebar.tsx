@@ -4,6 +4,7 @@ import { useI18n } from '../../i18n/context';
 import { LANGS, formatTime } from '../../i18n/translations';
 import type { Translation } from '../../i18n/translations';
 import type { KioskView } from '../types';
+import LibraryLogo from '../../components/LibraryLogo';
 
 type MenuKey = keyof Translation['kiosk']['menu'];
 
@@ -39,13 +40,8 @@ export default function Sidebar({ view, onNavigate, now }: SidebarProps) {
           if (e.key === 'Enter' || e.key === ' ') onNavigate('home');
         }}
       >
-        {/* Kutubxona emblemasi — to'q fonda oq bo'lib ko'rinadi */}
-        <img src="/images/logo.png" alt="" className="k-side-mark" />
-        <div className="k-side-brand">
-          {t.kiosk.brand[0]}
-          <br />
-          {t.kiosk.brand[1]}
-        </div>
+        {/* Rasmiy tilla lokap — to'q ko'k panelda o'z rangida turadi */}
+        <LibraryLogo variant="gold" className="k-side-mark" />
       </div>
 
       <nav className="k-side-nav" aria-label={t.kiosk.menu.home}>

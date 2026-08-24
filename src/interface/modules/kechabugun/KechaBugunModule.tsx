@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   BookOpen, Clapperboard, Clock, GitCompareArrows, Hourglass, Image as ImageIcon,
   MapPin, Mic, MoveHorizontal, PlayCircle, Share2, Archive, Map,
@@ -10,44 +10,73 @@ import { getArchiveKinds, getPlacePairs } from '../../api';
 import { TopBar, BottomNav } from '../../shell/Chrome';
 import type { PlacePair } from '../../api/types';
 import './kechabugun.css';
+import LibraryLogo from '../../../components/LibraryLogo';
+import DataNotice from '../../components/DataNotice';
 
 const ARCHIVE_ICONS = { Image: ImageIcon, Clapperboard, BookOpen, Mic };
 
-/* Surilma solishtirgich. Kioskda sichqoncha yo'q, shuning uchun
-   pointer hodisalari ishlatiladi — barmoq ham, sichqoncha ham bir xil yo'ldan o'tadi. */
-function Compare({ pair }: { pair: PlacePair }) {
+/*
+   Surilma solishtirgich. Kioskda sichqoncha yo'q, shuning uchun pointer
+   hodisalari ishlatiladi — barmoq ham, sichqoncha ham bir xil yo'ldan o'tadi.
+
+   Chegara holati (`split`) tashqarida — modulda — saqlanadi, chunki uni
+   "OLDIN" va "HOZIR" tugmalari ham boshqaradi. Ilgari u shu komponentning
+   ichida edi va tugmalar unga umuman yeta olmasdi: bosilganda faqat o'zlari
+   bosilgan ko'rinishga o'tardi, surat esa joyida qolardi.
+*/
+interface CompareProps {
+  pair: PlacePair;
+  /** Chegaraning chapdan foizi. 0 — faqat "hozir", 100 — faqat "oldin". */
+  split: number;
+  onSplit: (value: number) => void;
+}
+
+function Compare({ pair, split, onSplit }: CompareProps) {
   const { lang } = useText();
-  const [split, setSplit] = useState(50);
   const boxRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef(false);
+  /* Surish paytida animatsiya o'chadi — aks holda chegara barmoq
+     ortidan kechikib yuradi. */
+  const [dragging, setDragging] = useState(false);
 
   const move = useCallback((clientX: number) => {
     const box = boxRef.current;
     if (!box) return;
     const rect = box.getBoundingClientRect();
     const pct = ((clientX - rect.left) / rect.width) * 100;
-    setSplit(Math.min(98, Math.max(2, pct)));
-  }, []);
+    onSplit(Math.min(98, Math.max(2, pct)));
+  }, [onSplit]);
 
   return (
     <div
       className="kb-compare"
       ref={boxRef}
+      data-dragging={dragging ? '1' : '0'}
       style={{ ['--split' as string]: `${split}%` }}
       onPointerDown={(e) => {
-        dragging.current = true;
-        e.currentTarget.setPointerCapture(e.pointerId);
+        setDragging(true);
+        /* Ba'zi muhitlarda (masalan avtomatlashtirilgan sinov) bu chaqiruv
+           xato beradi — surish shu sababli to'xtab qolmasin. */
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {
+          /* e'tiborsiz qoldiriladi */
+        }
         move(e.clientX);
       }}
-      onPointerMove={(e) => dragging.current && move(e.clientX)}
-      onPointerUp={() => { dragging.current = false; }}
-      onPointerCancel={() => { dragging.current = false; }}
+      onPointerMove={(e) => dragging && move(e.clientX)}
+      onPointerUp={() => setDragging(false)}
+      onPointerCancel={() => setDragging(false)}
     >
       <img src={pair.before} alt="" />
       <img className="kb-compare-after" src={pair.after} alt="" />
 
-      <span className="kb-year" data-side="l"><Clock size={20} />{formatYear(pair.beforeYear, lang)}</span>
-      <span className="kb-year" data-side="r"><Clock size={20} />{formatYear(pair.afterYear, lang)}</span>
+      {/* Chegara chekkaga borganda ko'rinmay qolgan tomonning yili ham so'nadi */}
+      <span className="kb-year" data-side="l" data-off={split <= 6 ? '1' : '0'}>
+        <Clock size={20} />{formatYear(pair.beforeYear, lang)}
+      </span>
+      <span className="kb-year" data-side="r" data-off={split >= 94 ? '1' : '0'}>
+        <Clock size={20} />{formatYear(pair.afterYear, lang)}
+      </span>
 
       <div className="kb-divider" />
       <div className="kb-handle" style={{ left: `${split}%` }}>
@@ -74,9 +103,20 @@ export default function KechaBugunModule({ navigate }: { navigate: NavigateFn })
   const places = useResource(getPlacePairs, [] as PlacePair[]);
   const archives = useResource(getArchiveKinds, []);
   const [placeId, setPlaceId] = useState('registon');
-  const [side, setSide] = useState<'before' | 'after'>('before');
+  /*
+     Solishtirgich chegarasi: 0 — butunlay "hozir", 100 — butunlay "oldin".
+     Uni ham surish, ham yuqoridagi ikki tugma boshqaradi.
+  */
+  const [split, setSplit] = useState(50);
+
+  /* Chegara chekkaga yaqin bo'lsa — o'sha davr tanlangan hisoblanadi;
+     o'rtada turganda ikkala tugma ham bosilmagan ko'rinadi. */
+  const side = split >= 85 ? 'before' : split <= 15 ? 'after' : null;
 
   const pair = places.data.find((p) => p.id === placeId) ?? places.data[0];
+
+  /* Boshqa shahar tanlansa solishtirgich markazdan boshlanadi. */
+  useEffect(() => setSplit(50), [placeId]);
 
   const features = [
     { icon: GitCompareArrows, title: ['SOLISHTIRING', 'СРАВНИТЕ', 'COMPARE'], text: ['Oldin va hozir rasmlarni taqqoslab ko‘ring', 'Сравните снимки «раньше» и «сейчас»', 'Compare the before and after photographs'] },
@@ -97,8 +137,9 @@ export default function KechaBugunModule({ navigate }: { navigate: NavigateFn })
         onNavigate={navigate} />
 
       <div className="if-scroll">
+          <DataNotice sources={[places, archives]} />
         <section className="kb-arch">
-          <img className="if-logo" src="/images/logo.png" alt="" />
+          <LibraryLogo variant="dark" className="if-logo" />
           <h1>
             {title('kechabugun')[0]}
             <em>
@@ -115,7 +156,7 @@ export default function KechaBugunModule({ navigate }: { navigate: NavigateFn })
               className="kb-tab if-tap"
               data-kind="before"
               aria-pressed={side === 'before'}
-              onClick={() => setSide('before')}
+              onClick={() => setSplit(100)}
             >
               {s('before')} <Hourglass size={26} />
             </button>
@@ -123,13 +164,13 @@ export default function KechaBugunModule({ navigate }: { navigate: NavigateFn })
               className="kb-tab if-tap"
               data-kind="after"
               aria-pressed={side === 'after'}
-              onClick={() => setSide('after')}
+              onClick={() => setSplit(0)}
             >
               <Clock size={26} /> {s('after')}
             </button>
           </div>
 
-          {pair && <Compare key={pair.id} pair={pair} />}
+          {pair && <Compare pair={pair} split={split} onSplit={setSplit} />}
           <p className="kb-hint">{s('dragToCompare')}</p>
 
           <div className="kb-rule">✦ {s('citiesPlaces')} ✦</div>
@@ -154,11 +195,14 @@ export default function KechaBugunModule({ navigate }: { navigate: NavigateFn })
             {archives.data.map((a) => {
               const Icon = ARCHIVE_ICONS[a.icon as keyof typeof ARCHIVE_ICONS] ?? ImageIcon;
               return (
-                <button key={a.id} className="kb-arch-item if-tap">
+                /* Bosilmaydi: hozircha ochiladigan arxiv sahifasi yo'q,
+                   shuning uchun tugma emas, ma'lumot plitasi. Yozuvlar soni
+                   ham faqat backenddan kelsa ko'rsatiladi. */
+                <div key={a.id} className="kb-arch-item">
                   <i style={{ background: a.accent }}><Icon size={42} /></i>
                   <b>{tr(a.label)}</b>
-                  <small>{a.count}</small>
-                </button>
+                  {a.count !== undefined && <small>{a.count}</small>}
+                </div>
               );
             })}
           </div>

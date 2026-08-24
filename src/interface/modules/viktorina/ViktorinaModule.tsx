@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
-  Atom, BarChart3, BookOpen, Building2, Clock, Globe, HelpCircle,
+  Atom, BookOpen, Building2, Clock, Globe, HelpCircle,
   Landmark, Medal, Palette, Play, Star, Target, Trophy,
 } from 'lucide-react';
 import type { NavigateFn } from '../../InterfaceApp';
@@ -9,13 +9,13 @@ import { useResource } from '../../api/useResource';
 import { getQuestions, getQuizCategories, getQuizPresets } from '../../api';
 import { TopBar, BottomNav } from '../../shell/Chrome';
 import { useInfoSheet } from '../../shell/infoSheet';
+import { useSession } from '../../shell/session';
 import QuizEngine from '../../components/QuizEngine';
 import type { Question, QuizCategory, QuizPreset } from '../../api/types';
 import './viktorina.css';
+import DataNotice from '../../components/DataNotice';
 
 const ICONS = { BookOpen, Landmark, Globe, Atom, Palette, Building2 };
-
-interface Stats { played: number; score: number; correct: number; total: number; }
 
 export default function ViktorinaModule({ navigate }: { navigate: NavigateFn }) {
   const { s, tr, title } = useText();
@@ -24,7 +24,9 @@ export default function ViktorinaModule({ navigate }: { navigate: NavigateFn }) 
   const presets = useResource(getQuizPresets, [] as QuizPreset[]);
 
   const [running, setRunning] = useState<{ questions: Question[]; title: string; duration: number } | null>(null);
-  const [stats, setStats] = useState<Stats>({ played: 0, score: 0, correct: 0, total: 0 });
+  /* Natijalar sessiya darajasida — moduldan chiqib qaytilsa yo'qolmaydi,
+     kiosk bo'sh qolganda esa keyingi tashrifchi uchun tozalanadi. */
+  const { quiz: stats, addQuizResult } = useSession();
 
   const preset = presets.data[0];
   const percent = stats.total ? Math.round((stats.correct / stats.total) * 100) : 0;
@@ -46,6 +48,7 @@ export default function ViktorinaModule({ navigate }: { navigate: NavigateFn }) 
         onNavigate={navigate} />
 
       <div className="if-scroll">
+          <DataNotice sources={[categories, presets]} />
         <section className="vk-hero">
           <img className="vk-hero-img" src="/interface/viktorina/hero.webp" alt="" />
           <div>
@@ -117,11 +120,6 @@ export default function ViktorinaModule({ navigate }: { navigate: NavigateFn }) 
               <b>{percent}%</b>
               <small>{s('correctAnswers')}</small>
             </div>
-            <div className="vk-stat">
-              <BarChart3 size={40} color="#FB923C" />
-              <b>{stats.played ? Math.max(1, 4 - Math.floor(percent / 25)) : '—'}</b>
-              <small>{s('bestPlace')}</small>
-            </div>
           </div>
 
           {preset && (
@@ -165,14 +163,7 @@ export default function ViktorinaModule({ navigate }: { navigate: NavigateFn }) 
           durationSec={running.duration}
           title={running.title}
           onExit={() => setRunning(null)}
-          onFinish={(r) =>
-            setStats((prev) => ({
-              played: prev.played + 1,
-              score: prev.score + r.score,
-              correct: prev.correct + r.correct,
-              total: prev.total + r.total,
-            }))
-          }
+          onFinish={addQuizResult}
         />
       )}
     </div>

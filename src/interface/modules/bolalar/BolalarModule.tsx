@@ -9,9 +9,11 @@ import {
 import { TopBar, BottomNav } from '../../shell/Chrome';
 import QuizEngine from '../../components/QuizEngine';
 import { MemoryGame, WordGame } from './games';
+import { useSession } from '../../shell/session';
 import type { Question, QuizCategory } from '../../api/types';
 import type { MiniGame } from '../../api';
 import './bolalar.css';
+import DataNotice from '../../components/DataNotice';
 
 type Active =
   | { kind: 'quiz'; questions: Question[]; title: string }
@@ -35,11 +37,15 @@ export default function BolalarModule({ navigate }: { navigate: NavigateFn }) {
   const words = useResource(getWordPuzzles, []);
 
   const [active, setActive] = useState<Active>(null);
-  const [stars, setStars] = useState(320);
+  /* Yulduzlar sessiya davomida saqlanadi va nol'dan boshlanadi — ilgari
+     har bir bola soxta 320 yulduz bilan ochardi. */
+  const { stars, addStars } = useSession();
 
   const levels = title('bolalarLevels');
   const level = Math.min(levels.length, Math.floor(stars / 250) + 1);
-  const nextAt = level * 250 + 250;
+  /* Keyingi daraja shu ostonada boshlanadi. Ilgari bu yerda `+ 250`
+     ortiqcha qo'shilib, "keyingi darajagacha" bir daraja oshiq ko'rsatilardi. */
+  const nextAt = level * 250;
   const progress = Math.min(100, Math.round(((stars % 250) / 250) * 100));
 
   async function startTopic(categoryId: string, title: string) {
@@ -74,6 +80,7 @@ export default function BolalarModule({ navigate }: { navigate: NavigateFn }) {
         onNavigate={navigate} />
 
       <div className="if-scroll">
+          <DataNotice sources={[topics, games, memory, words]} />
         <section className="bl-hero">
           <img className="bl-hero-img" src="/interface/bolalar/hero.webp" alt="" />
           <div>
@@ -175,7 +182,7 @@ export default function BolalarModule({ navigate }: { navigate: NavigateFn }) {
           title={active.title}
           pointsPerAnswer={20}
           onExit={() => setActive(null)}
-          onFinish={(r) => setStars((v) => v + r.score)}
+          onFinish={(r) => addStars(r.score)}
         />
       )}
       {active?.kind === 'memory' && (
@@ -183,7 +190,7 @@ export default function BolalarModule({ navigate }: { navigate: NavigateFn }) {
           cards={memory.data}
           title={active.title}
           onExit={() => setActive(null)}
-          onWin={(n) => setStars((v) => v + n)}
+          onWin={addStars}
         />
       )}
       {active?.kind === 'word' && (
@@ -191,7 +198,7 @@ export default function BolalarModule({ navigate }: { navigate: NavigateFn }) {
           puzzles={words.data}
           title={active.title}
           onExit={() => setActive(null)}
-          onWin={(n) => setStars((v) => v + n)}
+          onWin={addStars}
         />
       )}
     </div>

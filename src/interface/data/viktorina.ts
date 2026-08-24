@@ -5,22 +5,25 @@ import type { QuizCategory, QuizPreset, Question, Localized } from '../api/types
 const V = '/interface/viktorina';
 const K = '/interface/bolalar';
 
+/* `questionCount` shu yerda 0 — haqiqiy son `api/index.ts` da bazadagi
+   savollardan hisoblanadi. Qo'lda yozilgan qiymat ro'yxatda "150 savol"
+   deb turib, ochilganda 6 ta savol berardi. */
 export const adultCategories: QuizCategory[] = [
-  { id: 'adabiyot', name: { uz: 'Adabiyot', ru: 'Литература', en: 'Literature' }, description: { uz: 'O‘zbek va jahon adabiyoti, yozuvchilar, asarlar', ru: 'Узбекская и мировая литература, писатели, произведения', en: 'Uzbek and world literature, writers, works' }, icon: 'BookOpen', accent: '#A855F7', questionCount: 120 },
-  { id: 'tarix', name: { uz: 'Tarix', ru: 'История', en: 'History' }, description: { uz: 'O‘zbekiston tarixi va jahon tarixi', ru: 'История Узбекистана и мира', en: 'History of Uzbekistan and the world' }, icon: 'Landmark', accent: '#3B82F6', questionCount: 150 },
-  { id: 'geografiya', name: { uz: 'Geografiya', ru: 'География', en: 'Geography' }, description: { uz: 'Dunyo va O‘zbekiston geografiyasi', ru: 'География мира и Узбекистана', en: 'World and Uzbek geography' }, icon: 'Globe', accent: '#22C55E', questionCount: 100 },
-  { id: 'fan', name: { uz: 'Fan', ru: 'Наука', en: 'Science' }, description: { uz: 'Matematika, fizika, kimyo, biologiya va boshqalar', ru: 'Математика, физика, химия, биология и другое', en: 'Maths, physics, chemistry, biology and more' }, icon: 'Atom', accent: '#22D3EE', questionCount: 180 },
-  { id: 'sanat', name: { uz: 'San’at', ru: 'Искусство', en: 'Art' }, description: { uz: 'Musiqa, rassomchilik, teatr va kino', ru: 'Музыка, живопись, театр и кино', en: 'Music, painting, theatre and cinema' }, icon: 'Palette', accent: '#F59E0B', questionCount: 90 },
-  { id: 'ozbekiston', name: { uz: 'O‘zbekiston', ru: 'Узбекистан', en: 'Uzbekistan' }, description: { uz: 'Mamlakatimiz haqida qiziqarli ma’lumotlar', ru: 'Интересные сведения о нашей стране', en: 'Fascinating facts about our country' }, icon: 'Building2', accent: '#EC4899', questionCount: 200 },
+  { id: 'adabiyot', name: { uz: 'Adabiyot', ru: 'Литература', en: 'Literature' }, description: { uz: 'O‘zbek va jahon adabiyoti, yozuvchilar, asarlar', ru: 'Узбекская и мировая литература, писатели, произведения', en: 'Uzbek and world literature, writers, works' }, icon: 'BookOpen', accent: '#A855F7', questionCount: 0 },
+  { id: 'tarix', name: { uz: 'Tarix', ru: 'История', en: 'History' }, description: { uz: 'O‘zbekiston tarixi va jahon tarixi', ru: 'История Узбекистана и мира', en: 'History of Uzbekistan and the world' }, icon: 'Landmark', accent: '#3B82F6', questionCount: 0 },
+  { id: 'geografiya', name: { uz: 'Geografiya', ru: 'География', en: 'Geography' }, description: { uz: 'Dunyo va O‘zbekiston geografiyasi', ru: 'География мира и Узбекистана', en: 'World and Uzbek geography' }, icon: 'Globe', accent: '#22C55E', questionCount: 0 },
+  { id: 'fan', name: { uz: 'Fan', ru: 'Наука', en: 'Science' }, description: { uz: 'Matematika, fizika, kimyo, biologiya va boshqalar', ru: 'Математика, физика, химия, биология и другое', en: 'Maths, physics, chemistry, biology and more' }, icon: 'Atom', accent: '#22D3EE', questionCount: 0 },
+  { id: 'sanat', name: { uz: 'San’at', ru: 'Искусство', en: 'Art' }, description: { uz: 'Musiqa, rassomchilik, teatr va kino', ru: 'Музыка, живопись, театр и кино', en: 'Music, painting, theatre and cinema' }, icon: 'Palette', accent: '#F59E0B', questionCount: 0 },
+  { id: 'ozbekiston', name: { uz: 'O‘zbekiston', ru: 'Узбекистан', en: 'Uzbekistan' }, description: { uz: 'Mamlakatimiz haqida qiziqarli ma’lumotlar', ru: 'Интересные сведения о нашей стране', en: 'Fascinating facts about our country' }, icon: 'Building2', accent: '#EC4899', questionCount: 0 },
 ];
 
 export const kidsCategories: QuizCategory[] = [
-  { id: 'k-adabiyot', name: { uz: 'Adabiyot', ru: 'Литература', en: 'Literature' }, description: { uz: 'Qiziqarli asarlar va yozuvchilar', ru: 'Интересные книги и писатели', en: 'Fun books and writers' }, icon: 'BookOpen', accent: '#6EBE4A', image: `${K}/topic-1.webp`, questionCount: 24 },
-  { id: 'k-tarix', name: { uz: 'Tarix', ru: 'История', en: 'History' }, description: { uz: 'O‘zbekiston va jahon tarixi', ru: 'История Узбекистана и мира', en: 'History of Uzbekistan and the world' }, icon: 'Landmark', accent: '#3EA6DE', image: `${K}/topic-2.webp`, questionCount: 22 },
-  { id: 'k-geografiya', name: { uz: 'Geografiya', ru: 'География', en: 'Geography' }, description: { uz: 'Davlatlar, shaharlar va tabiat', ru: 'Страны, города и природа', en: 'Countries, cities and nature' }, icon: 'Globe', accent: '#2FA36B', image: `${K}/topic-3.webp`, questionCount: 20 },
-  { id: 'k-fan', name: { uz: 'Fan', ru: 'Наука', en: 'Science' }, description: { uz: 'Matematika, fizika, kimyo va boshqalar', ru: 'Математика, физика, химия и другое', en: 'Maths, physics, chemistry and more' }, icon: 'Atom', accent: '#8B5CF6', image: `${K}/topic-4.webp`, questionCount: 26 },
-  { id: 'k-sanat', name: { uz: 'San’at', ru: 'Искусство', en: 'Art' }, description: { uz: 'Musiqa, rasmlar, kino va teatr', ru: 'Музыка, рисунки, кино и театр', en: 'Music, drawing, film and theatre' }, icon: 'Palette', accent: '#F0932B', image: `${K}/topic-5.webp`, questionCount: 18 },
-  { id: 'k-ozbekiston', name: { uz: 'O‘zbekiston', ru: 'Узбекистан', en: 'Uzbekistan' }, description: { uz: 'Bizning yurtimiz haqida', ru: 'О нашей стране', en: 'About our homeland' }, icon: 'Flag', accent: '#EC5E7C', image: `${K}/topic-6.webp`, questionCount: 25 },
+  { id: 'k-adabiyot', name: { uz: 'Adabiyot', ru: 'Литература', en: 'Literature' }, description: { uz: 'Qiziqarli asarlar va yozuvchilar', ru: 'Интересные книги и писатели', en: 'Fun books and writers' }, icon: 'BookOpen', accent: '#6EBE4A', image: `${K}/topic-1.webp`, questionCount: 0 },
+  { id: 'k-tarix', name: { uz: 'Tarix', ru: 'История', en: 'History' }, description: { uz: 'O‘zbekiston va jahon tarixi', ru: 'История Узбекистана и мира', en: 'History of Uzbekistan and the world' }, icon: 'Landmark', accent: '#3EA6DE', image: `${K}/topic-2.webp`, questionCount: 0 },
+  { id: 'k-geografiya', name: { uz: 'Geografiya', ru: 'География', en: 'Geography' }, description: { uz: 'Davlatlar, shaharlar va tabiat', ru: 'Страны, города и природа', en: 'Countries, cities and nature' }, icon: 'Globe', accent: '#2FA36B', image: `${K}/topic-3.webp`, questionCount: 0 },
+  { id: 'k-fan', name: { uz: 'Fan', ru: 'Наука', en: 'Science' }, description: { uz: 'Matematika, fizika, kimyo va boshqalar', ru: 'Математика, физика, химия и другое', en: 'Maths, physics, chemistry and more' }, icon: 'Atom', accent: '#8B5CF6', image: `${K}/topic-4.webp`, questionCount: 0 },
+  { id: 'k-sanat', name: { uz: 'San’at', ru: 'Искусство', en: 'Art' }, description: { uz: 'Musiqa, rasmlar, kino va teatr', ru: 'Музыка, рисунки, кино и театр', en: 'Music, drawing, film and theatre' }, icon: 'Palette', accent: '#F0932B', image: `${K}/topic-5.webp`, questionCount: 0 },
+  { id: 'k-ozbekiston', name: { uz: 'O‘zbekiston', ru: 'Узбекистан', en: 'Uzbekistan' }, description: { uz: 'Bizning yurtimiz haqida', ru: 'О нашей стране', en: 'About our homeland' }, icon: 'Flag', accent: '#EC5E7C', image: `${K}/topic-6.webp`, questionCount: 0 },
 ];
 
 export const quizPresets: QuizPreset[] = [
@@ -28,7 +31,7 @@ export const quizPresets: QuizPreset[] = [
     id: 'tarix-viktorina', categoryId: 'tarix',
     title: { uz: 'O‘zbekiston tarixi viktorinasi', ru: 'Викторина по истории Узбекистана', en: 'Uzbek history quiz' },
     image: `${V}/featured.webp`,
-    questionCount: 20, durationSec: 900, difficulty: 'medium',
+    questionCount: 0, durationSec: 900, difficulty: 'medium',
     description: {
       uz: 'O‘zbekiston tarixining muhim voqealari va buyuk siymolariga oid savollar.',
       ru: 'Вопросы о важных событиях и великих личностях истории Узбекистана.',
@@ -39,7 +42,7 @@ export const quizPresets: QuizPreset[] = [
     id: 'adabiyot-viktorina', categoryId: 'adabiyot',
     title: { uz: 'O‘zbek adabiyoti bo‘yicha sinov', ru: 'Тест по узбекской литературе', en: 'Uzbek literature challenge' },
     image: `${V}/hero.webp`,
-    questionCount: 15, durationSec: 600, difficulty: 'easy',
+    questionCount: 0, durationSec: 600, difficulty: 'easy',
     description: {
       uz: 'Mumtoz va zamonaviy o‘zbek adabiyoti bo‘yicha savollar to‘plami.',
       ru: 'Набор вопросов по классической и современной узбекской литературе.',

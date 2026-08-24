@@ -53,7 +53,7 @@ export default function IntroSlide({ active }: { active: boolean }) {
   useGSAP(
     () => {
       gsap.fromTo(
-        '.sg-intro-title',
+        '.sg-intro-logo',
         { opacity: 0.93 },
         { opacity: 1, duration: 9.2, ease: 'sine.inOut', repeat: -1, yoyo: true },
       );
@@ -76,16 +76,9 @@ export default function IntroSlide({ active }: { active: boolean }) {
 
       {/* Chap ustun — kutubxona shaxsiyati */}
       <div className="sg-intro-brand">
-        <LibraryLogo className="sg-intro-logo" />
-        <div>
-          <h1 className="sg-intro-title">
-            {t.libraryName[0]}
-            <br />
-            {t.libraryName[1]} {t.libraryName[2]}
-          </h1>
-          {/* Maketda shior undov belgisisiz — signage'da u ortiqcha ko'rinadi */}
-          <p className="sg-intro-tagline">{t.tagline.replace(/!$/, '')}</p>
-        </div>
+        <LibraryLogo variant="gold" className="sg-intro-logo" />
+        {/* Maketda shior undov belgisisiz — signage'da u ortiqcha ko'rinadi */}
+        <p className="sg-intro-tagline">{t.tagline.replace(/!$/, '')}</p>
       </div>
 
       {/* O'ng ustun — soat va kunlik ko'rsatkichlar */}

@@ -90,14 +90,7 @@ export default function Header() {
   return (
     <header className="hdr">
       <div className="hdr-logo">
-        <LibraryLogo className="hdr-logo-mark" />
-        <div className="hdr-brand text-white font-extrabold">
-          {t.libraryName[0]}
-          <br />
-          {t.libraryName[1]}
-          <br />
-          {t.libraryName[2]}
-        </div>
+        <LibraryLogo variant="gold" className="hdr-logo-mark" />
       </div>
 
       <div className="hdr-tagline text-amber-300 font-semibold italic flex-shrink-0">

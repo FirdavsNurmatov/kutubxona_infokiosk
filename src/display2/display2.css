@@ -669,33 +669,23 @@
 
 /* ── Chap ustun: emblema va nom ──────────────────────────── */
 
+/* Nom endi lokapning o'zida — shior uning ostiga tushadi */
 .sg-intro-brand {
   display: flex;
-  align-items: center;
-  gap: calc(var(--u) * 1.8);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(var(--u) * 0.4);
   --u: calc(var(--u0) * var(--sg-text-zoom));
 }
 
 .sg-intro-logo {
-  width: calc(var(--u) * 5.6);
-  height: calc(var(--u) * 5.6);
+  width: calc(var(--u) * 15);
+  height: auto;
   flex-shrink: 0;
-  /* Ikki qavat soya: emblema yorug' fonda ham ajralib turadi */
+  /* Ikki qavat soya: lokap yorug' fonda ham ajralib turadi */
   filter:
     drop-shadow(0 0 calc(var(--u) * 0.6) rgba(2, 11, 22, 0.95))
     drop-shadow(0 0 calc(var(--u) * 2) rgba(217, 164, 65, 0.45));
-}
-
-.sg-intro-title {
-  margin: 0;
-  font-family: var(--sg-serif);
-  font-size: calc(var(--u) * 2.15);
-  font-weight: 400;
-  line-height: 1.18;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: #f6faff;
-  text-shadow: 0 calc(var(--u) * 0.1) calc(var(--u) * 1.6) rgba(0, 8, 24, 0.92);
 }
 
 .sg-intro-tagline {

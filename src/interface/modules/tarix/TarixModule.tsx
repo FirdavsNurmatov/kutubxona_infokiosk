@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
-  ChevronRight, Flag, Hourglass, Landmark, Map as MapIcon, PlayCircle,
-  Scroll, Users, X,
+  ChevronRight, Flag, Hourglass, Landmark, Map as MapIcon, Scroll, Users, X,
 } from 'lucide-react';
 import type { NavigateFn } from '../../InterfaceApp';
 import { useText } from '../../i18n';
@@ -10,10 +9,11 @@ import { getEras, getHistoryEvents } from '../../api';
 import { TopBar, BottomNav } from '../../shell/Chrome';
 import type { Era, HistoryEvent } from '../../api/types';
 import './tarix.css';
+import DataNotice from '../../components/DataNotice';
 
 const STAT_ICONS = { Scroll, Users, Landmark };
 
-type Tab = 'lenta' | 'davrlar' | 'voqealar' | 'shaxslar' | 'xaritalar' | 'media';
+type Tab = 'lenta' | 'davrlar' | 'voqealar' | 'shaxslar' | 'xaritalar';
 
 const TABS: { id: Tab; icon: typeof Scroll; label: [string, string, string] }[] = [
   { id: 'lenta', icon: Hourglass, label: ['Vaqt lentasi', 'Лента времени', 'Timeline'] },
@@ -21,7 +21,6 @@ const TABS: { id: Tab; icon: typeof Scroll; label: [string, string, string] }[] 
   { id: 'voqealar', icon: Flag, label: ['Muhim voqealar', 'События', 'Events'] },
   { id: 'shaxslar', icon: Users, label: ['Tarixiy shaxslar', 'Личности', 'Figures'] },
   { id: 'xaritalar', icon: MapIcon, label: ['Xaritalar', 'Карты', 'Maps'] },
-  { id: 'media', icon: PlayCircle, label: ['Multimedia', 'Мультимедиа', 'Multimedia'] },
 ];
 
 const LANG_INDEX = { uz: 0, ru: 1, en: 2 } as const;
@@ -42,6 +41,13 @@ export default function TarixModule({ navigate }: { navigate: NavigateFn }) {
   );
   const openedEvent = events.data.find((e) => e.id === eventId);
 
+  /* Voqealar tanlangan davrga tegishli bo'lishi kerak — ilgari qaysi davr
+     tanlansa ham bitta ro'yxat chiqardi. */
+  const eraEvents = useMemo(
+    () => events.data.filter((e) => e.eraId === era?.id),
+    [events.data, era],
+  );
+
   return (
     <div className="if-screen">
       <TopBar title={tr({ uz: 'O‘zbekiston tarixi', ru: 'История Узбекистана', en: 'History of Uzbekistan' })} onBack={() => navigate('hub')}
@@ -49,6 +55,7 @@ export default function TarixModule({ navigate }: { navigate: NavigateFn }) {
         onNavigate={navigate} />
 
       <div className="if-scroll">
+          <DataNotice sources={[eras, events]} />
         <section className="tx-hero">
           <img src="/interface/tarix/hero.webp" alt="" />
           <div className="tx-hero-inner">
@@ -142,9 +149,22 @@ export default function TarixModule({ navigate }: { navigate: NavigateFn }) {
             </div>
           )}
 
-          {tab === 'voqealar' && (
+          {tab === 'voqealar' && (eraEvents.length === 0 ? (
+            <div className="tx-placeholder">
+              {tr({
+                uz: 'Bu davr uchun voqealar hozircha kiritilmagan. Boshqa davrni tanlab ko‘ring.',
+                ru: 'Для этого периода события пока не добавлены. Выберите другой период.',
+                en: 'No events have been added for this period yet. Try another period.',
+              })}
+              <div style={{ marginTop: 26 }}>
+                <button className="tx-cta if-tap" onClick={() => setTab('davrlar')}>
+                  {tr({ uz: 'Davrlar', ru: 'Периоды', en: 'Eras' })} <ChevronRight size={24} />
+                </button>
+              </div>
+            </div>
+          ) : (
             <div className="tx-cards">
-              {events.data.map((e) => (
+              {eraEvents.map((e) => (
                 <button key={e.id} className="tx-card if-tap" onClick={() => setEventId(e.id)}>
                   <img src={e.image} alt="" />
                   <span>
@@ -155,7 +175,7 @@ export default function TarixModule({ navigate }: { navigate: NavigateFn }) {
                 </button>
               ))}
             </div>
-          )}
+          ))}
 
           {tab === 'shaxslar' && (
             <div className="tx-placeholder">
@@ -181,16 +201,6 @@ export default function TarixModule({ navigate }: { navigate: NavigateFn }) {
                   <small>{s('viewMap')}</small>
                 </span>
               </button>
-            </div>
-          )}
-
-          {tab === 'media' && (
-            <div className="tx-placeholder">
-              {tr({
-                uz: 'Video va audio materiallar backend ulanganda shu yerda ko‘rinadi.',
-                ru: 'Видео- и аудиоматериалы появятся здесь после подключения backend.',
-                en: 'Video and audio material will appear here once the backend is connected.',
-              })}
             </div>
           )}
 

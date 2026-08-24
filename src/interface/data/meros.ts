@@ -22,7 +22,7 @@ export const merosCategories: EncyclopediaCategory[] = [
       ru: 'Рукописные копии, сохранённые веками',
       en: 'Handwritten copies preserved through the centuries',
     },
-    icon: 'BookOpenText', count: 6, accent: '#D9A441',
+    icon: 'BookOpenText', count: 0, accent: '#D9A441',
   },
   {
     id: 'noyob',
@@ -32,7 +32,7 @@ export const merosCategories: EncyclopediaCategory[] = [
       ru: 'Издания малого тиража',
       en: 'Editions printed in small runs',
     },
-    icon: 'BookMarked', count: 5, accent: '#C9A227',
+    icon: 'BookMarked', count: 0, accent: '#C9A227',
   },
   {
     id: 'tarixiy',
@@ -42,7 +42,7 @@ export const merosCategories: EncyclopediaCategory[] = [
       ru: 'Памятники государственности и просвещения',
       en: 'Monuments of statehood and enlightenment',
     },
-    icon: 'Feather', count: 4, accent: '#E0B860',
+    icon: 'Feather', count: 0, accent: '#E0B860',
   },
 ];
 
@@ -51,10 +51,12 @@ function makeMeros(o: {
   name: Localized; subtitle: Localized; summary: Localized;
   tarixi: Localized; mazmuni: Localized; holati: Localized;
   facts: Localized[];
+  /** Raqamlangan varaqlar — faqat nusxasi tayyor nashrlarda. */
+  pages?: string[];
 }): EncyclopediaEntry {
   return {
     id: o.id, name: o.name, subtitle: o.subtitle, categoryId: o.categoryId,
-    image: o.image, summary: o.summary, facts: o.facts,
+    image: o.image, summary: o.summary, facts: o.facts, pages: o.pages,
     sections: [
       { id: 'tarixi', title: { uz: 'Tarixi', ru: 'История', en: 'History' }, body: [o.tarixi] },
       { id: 'mazmuni', title: { uz: 'Mazmuni', ru: 'Содержание', en: 'Contents' }, body: [o.mazmuni] },
@@ -66,6 +68,9 @@ function makeMeros(o: {
 export const merosEntries: EncyclopediaEntry[] = [
   makeMeros({
     id: 'boburnoma', categoryId: 'qolyozma', image: `${B}/boburnoma.jpg`,
+    /* Raqamlangan varaqlar. Boshqa nashrlarda hozircha yo'q — ular uchun
+       varaqlagich ochilmaydi, ilgari esa hammasi shu sahifalarni ko'rsatardi. */
+    pages: [`${IMG}/boburnoma.webp`, `${IMG}/page-left.webp`, `${IMG}/page-right.webp`],
     name: { uz: 'Boburnoma', ru: 'Бабур-наме', en: 'Baburnama' },
     subtitle: { uz: 'Zahiriddin Muhammad Bobur • XVI asr', ru: 'Захириддин Мухаммад Бабур • XVI век', en: 'Zahiriddin Muhammad Babur • 16th c.' },
     summary: {

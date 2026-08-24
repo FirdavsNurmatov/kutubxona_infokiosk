@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * Promise qaytaruvchi ma'lumot funksiyasini React holatiga bog'laydi.
@@ -11,10 +11,15 @@ export function useResource<T>(load: () => Promise<T>, initial: T): {
   data: T;
   loading: boolean;
   error: Error | null;
+  /** Xatodan keyin qayta urinish uchun. */
+  reload: () => void;
 } {
   const [data, setData] = useState<T>(initial);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [attempt, setAttempt] = useState(0);
+
+  const reload = useCallback(() => setAttempt((n) => n + 1), []);
 
   useEffect(() => {
     let alive = true;
@@ -34,7 +39,7 @@ export function useResource<T>(load: () => Promise<T>, initial: T): {
     // `load` har renderda yangi funksiya bo'lishi mumkin, shuning uchun
     // uni bog'liqlikka qo'shmaymiz — modul o'zi qachon qayta yuklashni biladi.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [attempt]);
 
-  return { data, loading, error };
+  return { data, loading, error, reload };
 }

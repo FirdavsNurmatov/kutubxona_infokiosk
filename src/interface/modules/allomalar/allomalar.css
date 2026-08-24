@@ -27,7 +27,7 @@
   height: 100%;
   padding-inline: max(60px, var(--if-gap));
 }
-.all-logo { width: 130px; height: 130px; object-fit: contain; margin-bottom: 6px; }
+.all-logo { width: 340px; height: auto; object-fit: contain; margin-bottom: 10px; }
 .all-hero h1 {
   margin: 0;
   font-size: 82px;

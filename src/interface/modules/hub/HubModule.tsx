@@ -1,20 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  Accessibility, ArrowRight, Baby, BookMarked, Boxes, Brain, CalendarDays,
+  Accessibility, ArrowRight, Baby, BookMarked, Brain, CalendarDays,
   Clock, Coffee, GraduationCap, HelpCircle, Hourglass, Images, Layers,
   MapPin, Mic, Monitor, Navigation, PhoneCall, Printer, QrCode, Search,
-  Users, Wifi, BookOpenText,
+  Users, Wifi, X, BookOpenText,
 } from 'lucide-react';
 import type { NavigateFn } from '../../InterfaceApp';
-import type { LibraryInfo } from '../../api/types';
+import type { HubEvent, HubService, LibraryInfo, Localized, SearchHit } from '../../api/types';
 import { useI18n } from '../../../i18n/context';
-import { MODULES } from '../../routes';
+import { MODULES, type ModuleId } from '../../routes';
 import { useText } from '../../i18n';
 import { useResource } from '../../api/useResource';
-import { getFloors, getHubCards, getHubEvents, getHubServices, getLibraryInfo } from '../../api';
-import OnScreenKeyboard from '../../shell/OnScreenKeyboard';
+import { getFloors, getHubCards, getHubEvents, getHubServices, getLibraryInfo, search } from '../../api';
+import OnScreenKeyboard from '../../../components/OnScreenKeyboard';
 import ModuleMenu from '../../shell/ModuleMenu';
+import { useInfoSheet } from '../../shell/infoSheet';
 import './hub.css';
+import LibraryLogo from '../../../components/LibraryLogo';
+import DataNotice from '../../components/DataNotice';
 
 /* Modul yo'lini `lucide` ikonkasiga bog'laydi — ma'lumotda faqat nom saqlanadi,
    shunda backend ulanganda ham ikonkani matn sifatida yuborish yetarli. */
@@ -62,8 +65,19 @@ function Clock24() {
   );
 }
 
-/** Binoning 3D xaritasi alohida bo'lim (`/map`) — interfeys modullaridan tashqarida. */
-const MAP_URL = '/map';
+/** "14:00" ni bugungi sanadagi daqiqaga aylantiradi. */
+function minutesOfDay(time: string): number {
+  const [h, m] = time.split(':').map(Number);
+  return (h || 0) * 60 + (m || 0);
+}
+
+/** Xizmat yoki tadbir kartochkasi ochadigan oddiy tafsilot oynasi. */
+interface DetailSheet {
+  title: Localized;
+  body?: Localized;
+  meta?: string;
+  image?: string;
+}
 
 export default function HubModule({ navigate }: { navigate: NavigateFn }) {
   const { s, tr, title, lang } = useText();
@@ -71,6 +85,44 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
   const [floorId, setFloorId] = useState('f5');
   const [query, setQuery] = useState('');
   const [keyboard, setKeyboard] = useState(false);
+  /* Qidiruv natijalari. Klaviatura ochilishi bilan ro'yxat ham ochiladi
+     va har bir harfda yangilanadi — ilgari bu maydon umuman javob
+     bermasdi: "Qidirish" bosilsa klaviatura yopilib, ish shu bilan
+     tugardi. */
+  const [hits, setHits] = useState<SearchHit[]>([]);
+  /* Xizmat yoki tadbir kartochkasi bosilganda ochiladigan tafsilot oynasi. */
+  const [detail, setDetail] = useState<DetailSheet | null>(null);
+  const sheet = useInfoSheet();
+  /* Tadbirlar ro'yxati kun bo'yi o'zgarmasdan turardi: kechqurun ham
+     ertalabki tadbir "bugungi" bo'lib ko'rinardi. Endi vaqti o'tganlari
+     belgilanadi — daqiqada bir marta qayta hisoblanadi. */
+  const [nowMinutes, setNowMinutes] = useState(() => {
+    const d = new Date();
+    return d.getHours() * 60 + d.getMinutes();
+  });
+  useEffect(() => {
+    let alive = true;
+    if (query.trim().length < 2) {
+      setHits([]);
+      return undefined;
+    }
+    /* Har bosishda emas — terish to'xtaganda so'raladi. */
+    const id = window.setTimeout(() => {
+      search(query).then((r) => alive && setHits(r)).catch(() => alive && setHits([]));
+    }, 180);
+    return () => {
+      alive = false;
+      window.clearTimeout(id);
+    };
+  }, [query]);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const d = new Date();
+      setNowMinutes(d.getHours() * 60 + d.getMinutes());
+    }, 60_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   const floors = useResource(getFloors, []);
   const services = useResource(getHubServices, []);
@@ -88,14 +140,35 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
   /* Hub'dan tashqari modullar — pastki plitalar */
   const otherModules = MODULES.filter((m) => m.id !== 'hub');
 
-  /* Zallar va Qavatlar bino xaritasida ko'rsatiladi, Xizmatlar esa
-     shu sahifadagi "Tezkor xizmatlar" bloki. */
+  /* Infokiosk interfeysi yopiq bo'lim — bu yerdan boshqa yuzaga (`/map`,
+     `/ekran`, kiosk) chiqilmaydi. Shuning uchun kartochkalar shu sahifaning
+     o'z bloklariga olib boradi: Xizmatlar — "Tezkor xizmatlar", Zallar va
+     Qavatlar — qavat va xonalar ro'yxati. */
   function openCard(id: string) {
-    if (id === 'xizmatlar') {
-      document.getElementById('hub-services')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const target = id === 'xizmatlar' ? 'hub-services' : 'hub-floorplan';
+    document.getElementById(target)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  /* Xizmat kartochkalari. Uchtasi bo'limning mavjud oynalariga bog'lanadi,
+     qolganlari o'z tavsifini ochadi — ilgari o'ntasi ham bosilib, hech
+     narsa qilmasdi. */
+  function openService(sv: HubService) {
+    if (sv.id === 'yordam') { sheet.open('help'); return; }
+    if (sv.id === 'aloqa') { sheet.open('about'); return; }
+    if (sv.id === 'tadbir') {
+      document.getElementById('hub-events')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
       return;
     }
-    window.location.href = MAP_URL;
+    if (sv.description) setDetail({ title: sv.label, body: sv.description });
+  }
+
+  function openEvent(e: HubEvent) {
+    setDetail({
+      title: e.title,
+      body: e.description,
+      meta: `${e.time} · ${tr(e.place)}`,
+      image: e.image,
+    });
   }
 
   return (
@@ -103,12 +176,7 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
       <header className="hub-header">
         <ModuleMenu current="hub" onSelect={navigate} />
         <div className="hub-brand">
-          <img className="if-logo" src="/images/logo.png" alt="" />
-          <div className="hub-brand-text">
-            <span>O‘zbekiston</span>
-            <span>Milliy</span>
-            <span>kutubxonasi</span>
-          </div>
+          <LibraryLogo variant="gold" className="if-logo" />
         </div>
         <div style={{ flex: 1 }} />
         <div className="if-lang">
@@ -127,6 +195,7 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
       </header>
 
       <div className="if-scroll">
+          <DataNotice sources={[floors, services, events, cards, library]} />
         <section className="hub-hero">
           <img className="hub-hero-bg" src="/interface/hub/hero.webp" alt="" />
           <div className="hub-hero-scrim" />
@@ -136,9 +205,9 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
               <b>{tr({ uz: 'Yo‘nalish olish oson!', ru: 'Найти дорогу легко!', en: 'Finding your way is easy!' })}</b>
               <small>
                 {tr({
-                  uz: '3D xaritada kutubxonani oson kashf eting.',
-                  ru: 'Исследуйте библиотеку на 3D-карте.',
-                  en: 'Explore the library on the 3D map.',
+                  uz: 'Qavat va zallar ro‘yxatini quyidan ko‘ring.',
+                  ru: 'Список этажей и залов — ниже.',
+                  en: 'See the list of floors and halls below.',
                 })}
               </small>
             </div>
@@ -160,18 +229,7 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
         </section>
 
         <div className="hub-body">
-          <div className="hub-cta">
-            <button
-              className="if-cta if-tap"
-              onClick={() => { window.location.href = MAP_URL; }}
-            >
-              <Boxes size={32} />
-              {tr({ uz: '3D xaritani ochish', ru: 'Открыть 3D-карту', en: 'Open the 3D map' })}
-              <ArrowRight size={30} />
-            </button>
-          </div>
-
-          <div className="hub-split">
+          <div className="hub-split" id="hub-floorplan">
             <div className="hub-floors">
               <h3>{s('chooseFloor')}</h3>
               {floors.data.map((f) => (
@@ -243,7 +301,7 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
             {services.data.map((sv) => {
               const Icon = ICONS[sv.icon] ?? Search;
               return (
-                <button key={sv.id} className="hub-service if-tap">
+                <button key={sv.id} className="hub-service if-tap" onClick={() => openService(sv)}>
                   <Icon size={30} />
                   <span>{tr(sv.label)}</span>
                 </button>
@@ -251,23 +309,28 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
             })}
           </div>
 
-          <div className="if-section-head">
+          <div className="if-section-head" id="hub-events">
             <h2 className="if-section-title">{s('todayEvents')}</h2>
-            <button className="if-section-link if-tap">
-              {s('seeAll')} <ArrowRight size={22} />
-            </button>
           </div>
           <div className="hub-events">
-            {events.data.map((e) => (
-              <button key={e.id} className="hub-event if-tap">
-                <img src={e.image} alt="" />
-                <span>
-                  <time>{e.time}</time>
-                  <b>{tr(e.title)}</b>
-                  <small>{tr(e.place)}</small>
-                </span>
-              </button>
-            ))}
+            {events.data.map((e) => {
+              const past = minutesOfDay(e.time) < nowMinutes;
+              return (
+                <button
+                  key={e.id}
+                  className="hub-event if-tap"
+                  data-past={past ? '1' : '0'}
+                  onClick={() => openEvent(e)}
+                >
+                  <img src={e.image} alt="" />
+                  <span>
+                    <time>{e.time}{past && <i>{s('eventEnded')}</i>}</time>
+                    <b>{tr(e.title)}</b>
+                    <small>{tr(e.place)}</small>
+                  </span>
+                </button>
+              );
+            })}
           </div>
 
           <div className="hub-footer">
@@ -280,7 +343,7 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
                 ))}
               </span>
             </div>
-            <img className="if-logo" src="/images/logo.png" alt="" />
+            <LibraryLogo variant="gold" className="if-logo" />
             <div className="hub-footer-item">
               <span>
                 <b>{s('address')}</b>
@@ -292,12 +355,87 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
         </div>
       </div>
 
+      {detail && (
+        <div className="if-sheet" onClick={() => setDetail(null)}>
+          <div
+            className="if-sheet-card"
+            role="dialog"
+            aria-modal="true"
+            aria-label={tr(detail.title)}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="if-sheet-head">
+              <b>{tr(detail.title)}</b>
+              <button
+                className="if-menu-close if-tap"
+                onClick={() => setDetail(null)}
+                aria-label={s('close')}
+              >
+                <X size={30} />
+              </button>
+            </div>
+            <div className="if-sheet-body">
+              {detail.image && <img className="hub-detail-img" src={detail.image} alt="" />}
+              {detail.meta && <div className="hub-detail-meta">{detail.meta}</div>}
+              {detail.body && <p>{tr(detail.body)}</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {keyboard && (
+        <div className="hub-results" role="region" aria-label={s('search')}>
+          {query.trim().length < 2 ? (
+            <p className="hub-results-hint">{s('searchHint')}</p>
+          ) : hits.length === 0 ? (
+            <p className="hub-results-hint">{s('nothingFound')}</p>
+          ) : (
+            <>
+              <div className="hub-results-head">
+                {s('found')}: <b>{hits.length}</b>
+              </div>
+              <div className="hub-results-list">
+                {hits.map((h) => {
+                  const mod = MODULES.find((m) => m.id === h.module);
+                  return (
+                    <button
+                      key={h.id}
+                      className="hub-result if-tap"
+                      onClick={() => {
+                        setKeyboard(false);
+                        navigate(h.module as ModuleId, { query });
+                      }}
+                    >
+                      {h.image
+                        ? <img src={h.image} alt="" />
+                        : <span className="hub-result-blank"><Search size={26} /></span>}
+                      <span className="hub-result-text">
+                        <b>{tr(h.title)}</b>
+                        {tr(h.subtitle) && <small>{tr(h.subtitle)}</small>}
+                      </span>
+                      {mod && <em className="hub-result-mod">{tr(mod.title)}</em>}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
       {keyboard && (
         <OnScreenKeyboard
           value={query}
           placeholder={s('searchPlaceholder')}
           onChange={setQuery}
-          onSubmit={() => setKeyboard(false)}
+          onSubmit={() => {
+            /* Natijalar ro'yxati allaqachon ochiq — bitta natija bo'lsa
+               to'g'ridan-to'g'ri o'sha bo'lim ochiladi. */
+            if (hits.length === 1) {
+              setKeyboard(false);
+              navigate(hits[0].module as ModuleId, { query });
+            }
+          }}
           onClose={() => setKeyboard(false)}
         />
       )}

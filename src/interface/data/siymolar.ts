@@ -6,48 +6,50 @@ import type { EncyclopediaCategory, EncyclopediaEntry, Localized } from '../api/
 const IMG = '/interface/siymolar';
 const P = '/images/authors';
 
+/* `count` shu yerda 0 — haqiqiy son `api/index.ts` da yozuvlardan
+   hisoblanadi va bo'sh kategoriya umuman qaytarilmaydi. */
 export const siymoCategories: EncyclopediaCategory[] = [
   {
     id: 'olimlar',
     name: { uz: 'Olimlar', ru: 'Учёные', en: 'Scholars' },
     description: { uz: 'Ilm-fan namoyandalari', ru: 'Деятели науки', en: 'Figures of science' },
-    icon: 'BookOpen', image: `${IMG}/cat-olimlar.webp`, count: 20, accent: '#1F4E8C',
+    icon: 'BookOpen', image: `${IMG}/cat-olimlar.webp`, count: 0, accent: '#1F4E8C',
   },
   {
     id: 'adiblar',
     name: { uz: 'Adiblar', ru: 'Писатели', en: 'Writers' },
     description: { uz: 'Yozuvchi va shoirlar', ru: 'Писатели и поэты', en: 'Writers and poets' },
-    icon: 'Feather', image: `${IMG}/cat-adiblar.webp`, count: 18, accent: '#8A5A22',
+    icon: 'Feather', image: `${IMG}/cat-adiblar.webp`, count: 0, accent: '#8A5A22',
   },
   {
     id: 'sanatkorlar',
     name: { uz: 'San’atkorlar', ru: 'Деятели искусства', en: 'Artists' },
     description: { uz: 'Rassom, aktyor va rejissyorlar', ru: 'Художники, актёры и режиссёры', en: 'Painters, actors and directors' },
-    icon: 'Palette', image: `${IMG}/cat-sanat.webp`, count: 16, accent: '#6B3E8F',
+    icon: 'Palette', image: `${IMG}/cat-sanat.webp`, count: 0, accent: '#6B3E8F',
   },
   {
     id: 'bastakorlar',
     name: { uz: 'Bastakorlar', ru: 'Композиторы', en: 'Composers' },
     description: { uz: 'Musiqa ijodkorlari', ru: 'Создатели музыки', en: 'Creators of music' },
-    icon: 'Music', image: `${IMG}/cat-bastakor.webp`, count: 12, accent: '#155E52',
+    icon: 'Music', image: `${IMG}/cat-bastakor.webp`, count: 0, accent: '#155E52',
   },
   {
     id: 'memorlar',
     name: { uz: 'Me’morlar', ru: 'Архитекторы', en: 'Architects' },
     description: { uz: 'Bunyodkorlar va me’morchilar', ru: 'Зодчие и строители', en: 'Builders and architects' },
-    icon: 'Landmark', image: `${IMG}/cat-memor.webp`, count: 10, accent: '#0E6E8C',
+    icon: 'Landmark', image: `${IMG}/cat-memor.webp`, count: 0, accent: '#0E6E8C',
   },
   {
     id: 'sportchilar',
     name: { uz: 'Sportchilar', ru: 'Спортсмены', en: 'Athletes' },
     description: { uz: 'Jahon maydonlaridagi g‘oliblar', ru: 'Победители мировых арен', en: 'Champions on the world stage' },
-    icon: 'Trophy', image: `${IMG}/cat-sport.webp`, count: 14, accent: '#9B2C2C',
+    icon: 'Trophy', image: `${IMG}/cat-sport.webp`, count: 0, accent: '#9B2C2C',
   },
   {
     id: 'boshqa',
     name: { uz: 'Boshqa sohalar', ru: 'Другие сферы', en: 'Other fields' },
     description: { uz: 'Davlat va jamoat arboblari', ru: 'Государственные и общественные деятели', en: 'State and public figures' },
-    icon: 'Star', image: `${IMG}/cat-boshqa.webp`, count: 10, accent: '#4A4458',
+    icon: 'Star', image: `${IMG}/cat-boshqa.webp`, count: 0, accent: '#4A4458',
   },
 ];
 

@@ -173,7 +173,16 @@ export default function QuizEngine({
             );
           })}
         </div>
+      </div>
 
+      {/*
+         Izoh doimiy balandlikdagi dokda turadi va u HAR DOIM sahnada bo'ladi —
+         javob tanlanganda faqat ichi to'ladi. Ilgari izoh `.qz-body` ning ichida
+         edi: u `safe center` bilan markazlashgani uchun izoh chiqishi bilan
+         savol va javoblar yuqoriga sakrardi, bosilgan tugma esa barmoq ostidan
+         siljib ketardi. Dok balandligi o'zgarmasa, javoblar ham qimirlamaydi.
+      */}
+      <div className="qz-explain-dock">
         {picked !== null && (
           <div className="qz-explain">
             <Lightbulb size={30} style={{ flex: 'none', color: 'var(--m-accent)' }} />

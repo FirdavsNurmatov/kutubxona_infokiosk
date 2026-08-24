@@ -1,7 +1,10 @@
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
-import { INTERFACE_PATH, MODULES, moduleFromPath, pathFor, type ModuleId } from './routes';
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { MODULES, moduleFromPath, pathFor, type ModuleId } from './routes';
 import { useIdleReset } from './shell/useIdleReset';
 import { InfoSheetProvider } from './shell/InfoSheet';
+import { EMPTY_QUIZ_STATS, SessionContext, type QuizStats } from './shell/session';
+import { useI18n } from '../i18n/context';
+import { DEFAULT_LANG } from '../i18n/translations';
 import { useText } from './i18n';
 import './interface.css';
 
@@ -33,8 +36,20 @@ const FALLBACK_BG: Record<ModuleId, string> = {
   bolalar: '#EAF6FF',
 };
 
+/** Bo'lim ochilayotganda unga uzatiladigan niyat. */
+export interface NavigateOptions {
+  /** Qidiruv natijasidan kelingan bo'lsa — o'sha so'z. */
+  query?: string;
+}
+
 export interface NavigateFn {
-  (id: ModuleId): void;
+  (id: ModuleId, options?: NavigateOptions): void;
+}
+
+/** Qidiruv so'zini qabul qiladigan modullar shu propslarni oladi. */
+export interface ModuleProps {
+  navigate: NavigateFn;
+  initialQuery?: string;
 }
 
 /*
@@ -70,11 +85,11 @@ function measure(): StageFit {
   return { scale, width: w / scale, height: h / scale };
 }
 
-function renderModule(id: ModuleId, navigate: NavigateFn) {
+function renderModule(id: ModuleId, navigate: NavigateFn, query?: string) {
   switch (id) {
-    case 'meros': return <MerosModule navigate={navigate} />;
+    case 'meros': return <MerosModule navigate={navigate} initialQuery={query} />;
     case 'allomalar': return <AllomalarModule navigate={navigate} />;
-    case 'siymolar': return <SiymolarModule navigate={navigate} />;
+    case 'siymolar': return <SiymolarModule navigate={navigate} initialQuery={query} />;
     case 'tarix': return <TarixModule navigate={navigate} />;
     case 'kechabugun': return <KechaBugunModule navigate={navigate} />;
     case 'viktorina': return <ViktorinaModule navigate={navigate} />;
@@ -88,6 +103,7 @@ export default function InterfaceApp() {
   // Birinchi bo'yashdayoq to'g'ri bo'lishi uchun boshlang'ich qiymat ham hisoblanadi
   const [fit, setFit] = useState(measure);
   const { s } = useText();
+  const { setLang } = useI18n();
 
   // Kiosk 1080×1920 da ishlaydi, lekin ishlab chiqishda oyna har xil bo'ladi
   useEffect(() => {
@@ -116,9 +132,33 @@ export default function InterfaceApp() {
     };
   }, []);
 
-  const navigate = useCallback<NavigateFn>((id) => {
+  /* Bitta tashrifchining sessiyasi. `sessionKey` o'zgarganda butun modul
+     daraxti qaytadan quriladi — ochiq oyna, terilgan matn, varaqlangan
+     joy, hammasi tozalanadi. */
+  const [sessionKey, setSessionKey] = useState(0);
+  const [stars, setStars] = useState(0);
+  const [quiz, setQuiz] = useState<QuizStats>(EMPTY_QUIZ_STATS);
+
+  const session = useMemo(() => ({
+    stars,
+    addStars: (n: number) => setStars((v) => v + n),
+    quiz,
+    addQuizResult: (r: { score: number; correct: number; total: number }) =>
+      setQuiz((v) => ({
+        played: v.played + 1,
+        score: v.score + r.score,
+        correct: v.correct + r.correct,
+        total: v.total + r.total,
+      })),
+  }), [stars, quiz]);
+
+  /* Qidiruv natijasi bosilganda bo'lim shu so'z bilan ochiladi. */
+  const [intent, setIntent] = useState<NavigateOptions | null>(null);
+
+  const navigate = useCallback<NavigateFn>((id, options) => {
     const next = MODULES.find((m) => m.id === id) ?? MODULES[0];
     window.history.pushState(null, '', pathFor(id));
+    setIntent(options ?? null);
     setMod(next);
     // Yangi modul har doim tepadan ochilsin
     document.querySelector('.if-stage > .if-screen > .if-scroll')?.scrollTo({ top: 0 });
@@ -133,16 +173,24 @@ export default function InterfaceApp() {
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
-  // Kiosk ekrani egasiz qolganda o'zi bosh sahifaga qaytadi
+  /* Kiosk egasiz qolganda keyingi tashrifchi toza ekran ko'rishi kerak:
+     bosh sahifaga qaytiladi, til standartga tushadi, sessiya nolga qaytadi
+     va modullar qayta quriladi. Ilgari bu faqat modul ichida turgan
+     holatda ishlardi — bosh sahifada oldingi odamning izi qolib ketardi. */
   useIdleReset(
     useCallback(() => {
-      if (window.location.pathname !== INTERFACE_PATH) navigate('hub');
-    }, [navigate]),
+      navigate('hub');
+      setLang(DEFAULT_LANG);
+      setStars(0);
+      setQuiz(EMPTY_QUIZ_STATS);
+      setSessionKey((k) => k + 1);
+    }, [navigate, setLang]),
   );
 
   return (
     <div className="if-viewport" data-module={mod.id}>
       <div
+        key={sessionKey}
         className="if-stage"
         data-module={mod.id}
         style={{
@@ -153,6 +201,7 @@ export default function InterfaceApp() {
       >
         {/* "Kutubxona haqida", "Yordam" va "Til" oynasi butun bo'lim uchun
             bitta nusxada — modul ustida chiziladi. */}
+        <SessionContext.Provider value={session}>
         <InfoSheetProvider module={mod.id}>
           <Suspense
             fallback={
@@ -164,9 +213,10 @@ export default function InterfaceApp() {
               </div>
             }
           >
-            {renderModule(mod.id, navigate)}
+            {renderModule(mod.id, navigate, intent?.query)}
           </Suspense>
         </InfoSheetProvider>
+        </SessionContext.Provider>
       </div>
     </div>
   );

@@ -28,6 +28,23 @@ const TEXT: Dict = {
   entries: ['ta yozuv', 'записей', 'entries'],
 
   close: ['Yopish', 'Закрыть', 'Close'],
+  loadFailed: ['Ma’lumotni yuklab bo‘lmadi', 'Не удалось загрузить данные', 'Could not load the data'],
+  loadFailedHint: [
+    'Aloqani tekshirib, qayta urinib ko‘ring yoki kutubxona xodimiga murojaat qiling.',
+    'Проверьте соединение и попробуйте снова или обратитесь к сотруднику библиотеки.',
+    'Check the connection and try again, or ask a member of library staff.',
+  ],
+  retry: ['Qayta urinish', 'Повторить', 'Try again'],
+  eventEnded: ['tugadi', 'завершилось', 'ended'],
+  searchHint: [
+    'Kamida ikki harf yozing — kutubxona bo‘limlari bo‘yicha qidiriladi.',
+    'Введите хотя бы две буквы — поиск идёт по всем разделам библиотеки.',
+    'Type at least two letters — the search covers every library section.',
+  ],
+  found: ['Topildi', 'Найдено', 'Found'],
+  prev: ['Oldingi', 'Предыдущий', 'Previous'],
+  clearChar: ['Belgini o‘chirish', 'Удалить символ', 'Delete character'],
+  layout: ['Yozuv turini almashtirish', 'Сменить раскладку', 'Switch layout'],
   phone: ['Telefon', 'Телефон', 'Phone'],
   email: ['E-pochta', 'Эл. почта', 'Email'],
   website: ['Sayt', 'Сайт', 'Website'],

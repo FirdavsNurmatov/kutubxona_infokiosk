@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import KioskApp from './kiosk/KioskApp';
 
 /*
@@ -75,10 +75,27 @@ export default function App() {
     surfaceFromPath(window.location.pathname),
   );
 
+  /* Amaldagi yuza popstate ichidan o'qiladi, lekin tinglovchi bir marta
+     ulanadi — shuning uchun qiymat ref orqali yangilanib turadi. */
+  const surfaceRef = useRef(surface);
+  surfaceRef.current = surface;
+
   // Brauzerning "orqaga" tugmasi ekranlar orasida ham ishlashi uchun
   useEffect(() => {
     function onPopState() {
-      setSurface(surfaceFromPath(window.location.pathname));
+      const next = surfaceFromPath(window.location.pathname);
+      /*
+         `/interface` — yopiq bo'lim: undan boshqa yuzaga (kiosk, /ekran,
+         /map) o'tib bo'lmaydi. "Orqaga" bosilsa yo'l joyiga qaytariladi,
+         yuza esa o'zgarmaydi. Modullar orasidagi orqaga qaytish
+         (`/interface/...` → `/interface`) bunga tushmaydi: u ham
+         "interface", ya'ni InterfaceApp o'zi hal qiladi.
+      */
+      if (surfaceRef.current === 'interface' && next !== 'interface') {
+        window.history.pushState(null, '', INTERFACE_PATH);
+        return;
+      }
+      setSurface(next);
     }
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);

@@ -15,6 +15,7 @@ import KioskBranches from './views/KioskBranches';
 import KioskAuthors from './views/KioskAuthors';
 import EventDetail from './components/KioskEventDetail';
 import type { KioskView } from './types';
+import OnScreenKeyboard from '../components/OnScreenKeyboard';
 
 export default function KioskApp() {
   const { t, tr, lang } = useI18n();
@@ -27,6 +28,10 @@ export default function KioskApp() {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null);
   const [selectedEvent, setSelectedEvent] = useState<LibraryEvent | null>(null);
   const [overlay, setOverlay] = useState<'qr' | 'help' | null>(null);
+  /* Kioskda fizik klaviatura yo'q — qidiruv maydoni bosilganda sensorli
+     klaviatura ochiladi. U butun bo'lim uchun bitta nusxada: bosh sahifa
+     ham, qidiruv sahifasi ham shu bitta `query` holatini to'ldiradi. */
+  const [keyboard, setKeyboard] = useState(false);
   const [now, setNow] = useState(() => new Date());
 
   useEffect(() => {
@@ -35,6 +40,7 @@ export default function KioskApp() {
   }, []);
 
   const navigate = useCallback((next: KioskView) => {
+    setKeyboard(false);
     setSelectedBook(null);
     setSelectedEvent(null);
     setOverlay(null);
@@ -79,6 +85,7 @@ export default function KioskApp() {
             query={query}
             onQueryChange={setQuery}
             onSearch={runSearch}
+            onOpenKeyboard={() => setKeyboard(true)}
             onNavigate={navigate}
             onSelectBook={setSelectedBook}
             onHelp={() => setOverlay('help')}
@@ -93,6 +100,7 @@ export default function KioskApp() {
               submitted={submitted}
               onQueryChange={setQuery}
               onSearch={() => runSearch()}
+              onOpenKeyboard={() => setKeyboard(true)}
               onSelectBook={setSelectedBook}
             />
           </div>
@@ -220,6 +228,19 @@ export default function KioskApp() {
 
       {selectedEvent && (
         <EventDetail event={selectedEvent} onClose={() => setSelectedEvent(null)} />
+      )}
+
+      {keyboard && (
+        <OnScreenKeyboard
+          value={query}
+          placeholder={t.kiosk.searchPlaceholder}
+          onChange={setQuery}
+          onSubmit={() => {
+            setKeyboard(false);
+            runSearch();
+          }}
+          onClose={() => setKeyboard(false)}
+        />
       )}
 
       {overlay === 'help' && (

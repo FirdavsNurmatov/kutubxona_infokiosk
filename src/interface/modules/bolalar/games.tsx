@@ -191,7 +191,7 @@ export function WordGame({ puzzles, title, onExit, onWin }: WordGameProps) {
                 {l}
               </button>
             ))}
-            <button className="bl-letter if-tap" onClick={backspace} aria-label="O'chirish">
+            <button className="bl-letter if-tap" onClick={backspace} aria-label={s('clearChar')}>
               <Delete size={40} />
             </button>
           </div>

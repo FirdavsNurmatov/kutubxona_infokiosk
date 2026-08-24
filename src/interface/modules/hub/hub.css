@@ -16,21 +16,11 @@
   min-width: 0;
 }
 .hub-brand img {
-  width: 92px;
-  height: 92px;
+  width: 268px;
+  height: auto;
   object-fit: contain;
   flex: none;
 }
-.hub-brand-text {
-  font-size: 21px;
-  font-weight: 700;
-  line-height: 1.18;
-  letter-spacing: 0.02em;
-  color: var(--m-gold);
-  text-transform: uppercase;
-}
-.hub-brand-text span { display: block; }
-.hub-brand-text span:first-child { font-size: 17px; font-weight: 600; opacity: 0.85; }
 
 .hub-clock {
   display: flex;
@@ -146,13 +136,6 @@
 
 /* ── Bo'limlar setkasi ─────────────────────────────── */
 .hub-body { padding: 0 var(--if-edge) 40px; }
-
-.hub-cta {
-  display: flex;
-  width: 100%;
-  margin: 0 0 30px;
-}
-.hub-cta > button { width: 100%; }
 
 .hub-split {
   display: grid;
@@ -324,4 +307,135 @@
 .hub-footer-item b { display: block; font-size: 20px; color: var(--m-text); }
 .hub-footer-item small { display: block; font-size: 17px; color: var(--m-muted); line-height: 1.35; }
 .hub-footer-item:last-child { justify-content: flex-end; text-align: right; }
-.hub-footer img { width: 84px; height: 84px; object-fit: contain; }
+.hub-footer img { width: 208px; height: auto; object-fit: contain; }
+
+/* ── Xizmat va tadbir tafsiloti oynasi ─────────────── */
+.hub-detail-img {
+  display: block;
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 16px;
+}
+.hub-detail-meta {
+  margin-bottom: 12px;
+  font-size: 19px;
+  font-weight: 600;
+  color: var(--m-gold);
+}
+
+/* Vaqti o'tgan tadbir — ro'yxatda qoladi, lekin ajratib ko'rsatilmaydi */
+.hub-event[data-past='1'] { opacity: 0.55; }
+.hub-event[data-past='1'] time i {
+  margin-left: 8px;
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+}
+
+/* ── Qidiruv natijalari ────────────────────────────── */
+/* Klaviatura ekranning pastida `position: absolute` bilan turadi, natijalar
+   esa uning ustidagi bo'sh joyni egallaydi. Balandlik qotib qolgan son emas:
+   klaviaturaning o'zi `--kb-height` ni o'lchab yozadi, chunki kirill yozuvida
+   qatorlar uzunroq va panel uning tagiga kirib ketardi. */
+.hub-results {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: var(--kb-height, 620px);
+  z-index: 39;
+  display: flex;
+  flex-direction: column;
+  padding: 28px max(32px, var(--if-gap)) 20px;
+  background: var(--m-bg);
+}
+
+.hub-results-hint {
+  margin: auto;
+  max-width: 30ch;
+  text-align: center;
+  font-size: 24px;
+  line-height: 1.45;
+  color: var(--m-muted);
+}
+
+.hub-results-head {
+  flex: none;
+  margin-bottom: 16px;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-muted);
+}
+.hub-results-head b { color: var(--m-gold); }
+
+.hub-results-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hub-results-list::-webkit-scrollbar { display: none; }
+
+.hub-result {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: none;
+  min-height: 104px;
+  padding: 14px 22px 14px 14px;
+  border-radius: 18px;
+  border: 1px solid var(--m-card-line);
+  background: var(--m-card);
+  color: var(--m-text);
+  text-align: left;
+}
+.hub-result img,
+.hub-result-blank {
+  flex: none;
+  width: 76px;
+  height: 76px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+.hub-result-blank {
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.07);
+  color: var(--m-gold);
+}
+.hub-result-text { flex: 1; min-width: 0; }
+.hub-result-text b {
+  display: block;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.hub-result-text small {
+  display: block;
+  margin-top: 3px;
+  font-size: 18px;
+  line-height: 1.35;
+  color: var(--m-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hub-result-mod {
+  flex: none;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--m-gold);
+}
