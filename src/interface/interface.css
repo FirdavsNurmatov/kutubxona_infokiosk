@@ -469,9 +469,19 @@
    Pastki navigatsiyaning "Kutubxona haqida", "Yordam" va
    "Til" tugmalari shu oynani ochadi (InfoSheet.tsx). */
 
+/*
+   Oyna `.if-screen` ning ICHIDA emas, YONIDA chiziladi (u butun bo'lim
+   uchun bitta nusxada, InfoSheetProvider'da turadi). Shuning uchun u
+   `.if-screen` dagi `color: var(--m-text)` ni meros olmaydi va matn rangi
+   `body` dan — ya'ni deyarli oq rangdan — kelardi. Och mavzuli modullarda
+   (100 siymo, Kecha va bugun) bu oq fonda oq matn degani edi.
+
+   Rang shu yerda aniq beriladi: butun oyna modul mavzusidan o'qiydi.
+*/
 .if-sheet {
   position: absolute;
   inset: 0;
+  color: var(--m-text);
   /* Menyudan ham, viktorina/varaqlagich qatlamlaridan ham yuqorida */
   z-index: 70;
   display: grid;
@@ -491,6 +501,7 @@
   border-radius: var(--m-radius);
   border: 1px solid var(--m-card-line);
   background: var(--m-bg);
+  color: var(--m-text);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55);
 }
 

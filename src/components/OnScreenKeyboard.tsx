@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChevronDown, CornerDownLeft, Delete, Globe, Search, X } from 'lucide-react';
 import { useI18n } from '../i18n/context';
 import './on-screen-keyboard.css';
@@ -41,6 +41,14 @@ const LAYOUTS: Record<Layout, string[][]> = {
 
 const NEXT_LAYOUT: Record<Layout, Layout> = { uz: 'ru', ru: 'en', en: 'uz' };
 
+/*
+ * Klaviatura ochiq turib tashlab ketilsa, keyingi tashrifchi begona odamning
+ * yarim terilgan so'zini ko'radi. Shu muddat ichida hech narsa bosilmasa,
+ * klaviatura o'zi yopiladi. Bo'limning umumiy bo'sh turish taymeri (90 s)
+ * dan qisqaroq: klaviatura undan oldin yig'ishtirilsin.
+ */
+const IDLE_CLOSE_MS = 60_000;
+
 /* Eng uzun qator nechta tugmadan iborat — barcha qatorlar shu ritmda
    tekislanadi, shunda tugmalar ustun bo'lib tizilib turadi. */
 const COLUMNS: Record<Layout, number> = { uz: 10, ru: 11, en: 10 };
@@ -62,6 +70,34 @@ export default function OnScreenKeyboard({
   const { t, lang } = useI18n();
   const root = useRef<HTMLDivElement>(null);
   const [layout, setLayout] = useState<Layout>(initialLayout ?? lang);
+
+  /* Tinglovchilar bir marta ulanadi, shuning uchun eng so'nggi callback
+     ref orqali o'qiladi — aks holda eskirgan nusxa chaqirilardi. */
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  /*
+     Klaviatura har safar toza maydon bilan ochiladi. Ilgari oldingi
+     qidiruvdan qolgan matn joyida turardi va tashrifchi yangi so'zni
+     uning davomiga terib yuborardi.
+  */
+  useEffect(() => {
+    onChangeRef.current('');
+  }, []);
+
+  /* Har bir tegish taymerni noldan boshlaydi. */
+  const idleTimer = useRef<number | undefined>(undefined);
+  const bumpIdle = useCallback(() => {
+    window.clearTimeout(idleTimer.current);
+    idleTimer.current = window.setTimeout(() => onCloseRef.current(), IDLE_CLOSE_MS);
+  }, []);
+
+  useEffect(() => {
+    bumpIdle();
+    return () => window.clearTimeout(idleTimer.current);
+  }, [bumpIdle]);
 
   /*
      Klaviatura balandligi yozuv turiga qarab o'zgaradi (kirillda qator
@@ -94,6 +130,9 @@ export default function OnScreenKeyboard({
       ref={root}
       role="group"
       aria-label={placeholder}
+      /* Panel ichidagi HAR QANDAY tegish — tugma bo'ladimi, bo'sh joymi —
+         bo'sh turish taymerini qaytadan boshlaydi. */
+      onPointerDownCapture={bumpIdle}
       style={{ ['--kb-cols' as string]: COLUMNS[layout] }}
     >
       <div className="kb-field">
