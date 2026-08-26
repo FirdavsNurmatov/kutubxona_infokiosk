@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import {
   BookMarked, BookOpenText, ChevronLeft, ChevronRight, Feather,
-  Search, X, ZoomIn, ZoomOut,
+  X, ZoomIn, ZoomOut,
 } from 'lucide-react';
 import type { ModuleProps } from '../../InterfaceApp';
 import { useText } from '../../i18n';
@@ -10,7 +10,6 @@ import { getHeritage, getHeritageCategories } from '../../api';
 import { merosArt } from '../../data/meros';
 import { EntryDetail, FeaturedEntry } from '../../components/Encyclopedia';
 import { TopBar, BottomNav } from '../../shell/Chrome';
-import OnScreenKeyboard from '../../../components/OnScreenKeyboard';
 import type { EncyclopediaEntry } from '../../api/types';
 import '../../components/encyclopedia.css';
 import './meros.css';
@@ -70,34 +69,24 @@ function Reader({ entry, onClose }: { entry: EncyclopediaEntry; onClose: () => v
   );
 }
 
-export default function MerosModule({ navigate, initialQuery }: ModuleProps) {
-  const { s, tr, title, lang } = useText();
+export default function MerosModule({ navigate }: ModuleProps) {
+  const { s, tr, title } = useText();
   const entries = useResource(getHeritage, [] as EncyclopediaEntry[]);
   const categories = useResource(getHeritageCategories, []);
 
   const [categoryId, setCategoryId] = useState<string | null>('qolyozma');
   const [openId, setOpenId] = useState<string | null>(null);
   const [readerId, setReaderId] = useState<string | null>(null);
-  /* Bosh sahifadagi qidiruvdan kelingan so'z. */
-  const [query, setQuery] = useState(initialQuery ?? '');
-  const [keyboard, setKeyboard] = useState(false);
 
   const featured = entries.data.find((e) => e.id === 'boburnoma') ?? entries.data[0];
   const opened = entries.data.find((e) => e.id === openId);
   const reading = entries.data.find((e) => e.id === readerId);
 
-  const visible = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    return entries.data.filter((e) => {
-      if (needle) {
-        return (
-          e.name[lang].toLowerCase().includes(needle) ||
-          e.subtitle[lang].toLowerCase().includes(needle)
-        );
-      }
-      return !categoryId || e.categoryId === categoryId;
-    });
-  }, [entries.data, categoryId, query, lang]);
+  /* Bo'limda qidiruv yo'q: tashrifchi kategoriyani tanlaydi, xolos. */
+  const visible = useMemo(
+    () => entries.data.filter((e) => !categoryId || e.categoryId === categoryId),
+    [entries.data, categoryId],
+  );
 
   return (
     <div className="if-screen">
@@ -133,8 +122,8 @@ export default function MerosModule({ navigate, initialQuery }: ModuleProps) {
                 <button
                   key={c.id}
                   className="mr-tile if-tap"
-                  aria-pressed={c.id === categoryId && !query}
-                  onClick={() => { setQuery(''); setCategoryId(c.id); }}
+                  aria-pressed={c.id === categoryId}
+                  onClick={() => setCategoryId(c.id)}
                 >
                   <span className="mr-tile-icon"><Icon size={52} /></span>
                   <b>{tr(c.name)}</b>
@@ -142,11 +131,6 @@ export default function MerosModule({ navigate, initialQuery }: ModuleProps) {
                 </button>
               );
             })}
-            <button className="mr-tile if-tap" aria-pressed={!!query} onClick={() => setKeyboard(true)}>
-              <span className="mr-tile-icon"><Search size={52} /></span>
-              <b>{s('search')}</b>
-              <small>{query || '—'}</small>
-            </button>
           </div>
 
           <div className="mr-grid">
@@ -194,16 +178,6 @@ export default function MerosModule({ navigate, initialQuery }: ModuleProps) {
         <EntryDetail entry={opened} factsLabel={s('facts')} onClose={() => setOpenId(null)} />
       )}
       {reading && <Reader entry={reading} onClose={() => setReaderId(null)} />}
-
-      {keyboard && (
-        <OnScreenKeyboard
-          value={query}
-          placeholder={s('searchPlaceholder')}
-          onChange={setQuery}
-          onSubmit={() => setKeyboard(false)}
-          onClose={() => setKeyboard(false)}
-        />
-      )}
     </div>
   );
 }

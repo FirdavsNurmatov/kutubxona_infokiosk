@@ -6,10 +6,12 @@ import react from '@vitejs/plugin-react';
  * Ikkita chiqish:
  *
  *   vite build                  → dist/           (Netlify, brauzer, hamma ekranlar)
- *   vite build --mode electron  → dist-electron/  (Windows ilovasi, faqat /ekran2)
+ *   vite build --mode electron  → dist-electron/  (Windows ilovasi, o'sha App)
  *
- * Ikkinchisi alohida `electron.html` kirish nuqtasidan yig'iladi, shuning
- * uchun kiosk, xarita va `/interface` kodi Windows nusxasiga tushmaydi.
+ * Ikkalasi ham bir xil `src/main.tsx` → `App` ni yig'adi: qaysi ekran
+ * ochilishi ikkala nusxada ham FAQAT `src/App.tsx` da hal qilinadi.
+ * `electron.html` alohida turishining sababi — CSP sarlavhasi va chiqish
+ * papkasi, kirish nuqtasi emas.
  */
 
 /**

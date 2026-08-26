@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { CheckCircle2, ChevronRight, Lightbulb, RotateCcw, Timer, X } from 'lucide-react';
 import type { Question } from '../api/types';
 import { useText } from '../i18n';
@@ -35,6 +35,9 @@ export default function QuizEngine({
   const [correct, setCorrect] = useState(0);
   const [done, setDone] = useState(false);
   const [left, setLeft] = useState(durationSec);
+  /* Javob tanlangach "Keyingi" tugmasi ko'rinish maydonida bo'lsin: past
+     oynada (masalan dasturchi ekranida) savol ustuni scroll bo'lib qoladi. */
+  const actionsRef = useRef<HTMLDivElement>(null);
 
   const question = questions[index];
   const total = questions.length;
@@ -61,6 +64,11 @@ export default function QuizEngine({
     // Natija bir marta xabar qilinadi
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [done]);
+
+  useEffect(() => {
+    if (picked === null) return;
+    actionsRef.current?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }, [picked]);
 
   const percent = useMemo(
     () => (total ? Math.round((correct / total) * 100) : 0),
@@ -173,39 +181,45 @@ export default function QuizEngine({
             );
           })}
         </div>
-      </div>
 
-      {/*
-         Izoh doimiy balandlikdagi dokda turadi va u HAR DOIM sahnada bo'ladi —
-         javob tanlanganda faqat ichi to'ladi. Ilgari izoh `.qz-body` ning ichida
-         edi: u `safe center` bilan markazlashgani uchun izoh chiqishi bilan
-         savol va javoblar yuqoriga sakrardi, bosilgan tugma esa barmoq ostidan
-         siljib ketardi. Dok balandligi o'zgarmasa, javoblar ham qimirlamaydi.
-      */}
-      <div className="qz-explain-dock">
-        {picked !== null && (
-          <div className="qz-explain">
-            <Lightbulb size={30} style={{ flex: 'none', color: 'var(--m-accent)' }} />
-            <div>
-              <b>{picked === question.answer ? s('correct') : s('wrong')}</b>
-              {tr(question.explanation)}
+        {/*
+           Izoh doimiy balandlikdagi dokda turadi va u HAR DOIM sahnada bo'ladi —
+           javob tanlanganda faqat ichi to'ladi. Ilgari izoh oddiy shart bilan
+           qo'shilardi: u `safe center` bilan markazlashgan ustunda paydo
+           bo'lishi bilan savol va javoblar yuqoriga sakrardi, bosilgan tugma
+           esa barmoq ostidan siljib ketardi. Dok balandligi o'zgarmasa,
+           javoblar ham qimirlamaydi.
+        */}
+        <div className="qz-explain-dock">
+          {picked !== null && (
+            <div className="qz-explain">
+              <Lightbulb size={30} style={{ flex: 'none', color: 'var(--m-accent)' }} />
+              <div>
+                <b>{picked === question.answer ? s('correct') : s('wrong')}</b>
+                {tr(question.explanation)}
+              </div>
             </div>
-          </div>
-        )}
-      </div>
-
-      <div className="qz-foot">
-        <div style={{ marginRight: 'auto', fontSize: 22, color: 'var(--m-muted)' }}>
-          {title}
+          )}
         </div>
-        <button
-          className="if-cta if-tap"
-          onClick={next}
-          style={{ opacity: picked === null ? 0.45 : 1, pointerEvents: picked === null ? 'none' : 'auto' }}
-        >
-          {index + 1 >= total ? s('finish') : s('next')}
-          <ChevronRight size={28} />
-        </button>
+
+        {/*
+           "Keyingi" savol ustunining ICHIDA, javoblardan darrov keyin turadi.
+           Ilgari u ekran tubidagi tasmada edi: 1080x1920 portret panelda bu
+           taxminan 1850-piksel balandlik, ya'ni bo'yi baland tashrifchi har
+           savolda egilishi kerak edi. Ustun markazlashgani uchun tugma endi
+           javoblar bilan birga qulay balandlikka tushadi.
+        */}
+        <div className="qz-actions" ref={actionsRef}>
+          <div className="qz-actions-title">{title}</div>
+          <button
+            className="if-cta if-tap"
+            onClick={next}
+            style={{ opacity: picked === null ? 0.45 : 1, pointerEvents: picked === null ? 'none' : 'auto' }}
+          >
+            {index + 1 >= total ? s('finish') : s('next')}
+            <ChevronRight size={28} />
+          </button>
+        </div>
       </div>
     </div>
   );

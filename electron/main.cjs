@@ -138,8 +138,25 @@ function targetDisplay() {
   return wanted;
 }
 
+/**
+ * `config.route` ni normal ko'rinishga keltiradi: boshida bitta `/`,
+ * oxirida yo'q. Bo'sh qiymat — ildiz.
+ */
+function rendererRoute() {
+  const raw = String(config.route ?? '/').trim();
+  if (!raw || raw === '/') return '/';
+  return `/${raw.replace(/^\/+|\/+$/g, '')}`;
+}
+
 function rendererUrl() {
-  const base = useDevServer ? DEV_URL : `${ORIGIN}/index.html`;
+  /* Yo'l — yagona boshqaruv nuqtasi: qaysi ekran ochilishini `src/App.tsx`
+     dagi jadval hal qiladi, bu yer faqat manzilni beradi. Ildiz so'ralganda
+     protokol `index.html` ni qaytaradi, ichki yo'llarda esa SPA zaxirasi
+     ishlaydi (protocol.cjs). */
+  const route = rendererRoute();
+  const base = useDevServer
+    ? new URL(route, DEV_URL).href
+    : `${ORIGIN}${route}`;
   /* `?slide=` — pleyerni bitta bo'limda qotirib qo'yadi (useSignagePlayer).
      Sozlamadan kelgani uchun panelni sozlayotgan xodim ilovani qayta
      yig'masdan kerakli bo'limni ekranga chiqara oladi. */

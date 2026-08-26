@@ -72,7 +72,10 @@
   justify-content: safe center;
   overflow-y: auto;
   scrollbar-width: none;
-  padding: 40px max(44px, var(--if-gap)) 24px;
+  /* Pastdagi bo'shliq tepasidagidan katta: markazlashgan ustun shu qadar
+     yuqoriga suriladi. 1920px panelda "Keyingi" tugmasi taxminan ko'krak
+     balandligiga tushadi — bo'yi baland tashrifchi egilmaydi. */
+  padding: 40px max(44px, var(--if-gap)) 220px;
 }
 .qz-body > * { flex: none; }
 .qz-body::-webkit-scrollbar { display: none; }
@@ -132,7 +135,8 @@
 .qz-explain-dock {
   flex: none;
   height: 186px;
-  padding: 0 max(44px, var(--if-gap)) 24px;
+  /* Ustun ichida turadi — yon bo'shliqni `.qz-body` beradi. */
+  padding-top: 24px;
 }
 
 .qz-explain {
@@ -159,6 +163,20 @@
   to { opacity: 1; }
 }
 
+/* Javoblardan keyingi qator: chapda bo'lim nomi, o'ngda "Keyingi". */
+.qz-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 8px;
+}
+.qz-actions-title {
+  margin-right: auto;
+  font-size: 22px;
+  color: var(--m-muted);
+}
+
+/* Faqat savol topilmagan holatdagi zaxira ekranida qoldi. */
 .qz-foot {
   display: flex;
   align-items: center;

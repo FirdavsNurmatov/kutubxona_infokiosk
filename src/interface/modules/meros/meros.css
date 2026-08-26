@@ -98,7 +98,8 @@
 /* Kategoriya plitalari — ikki qavat oltin ramka */
 .mr-tiles {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  /* Uchta kategoriya. Ilgari to'rtinchi katak qidiruv edi. */
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 28px;
 }

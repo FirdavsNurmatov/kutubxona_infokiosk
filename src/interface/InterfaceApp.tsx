@@ -87,7 +87,7 @@ function measure(): StageFit {
 
 function renderModule(id: ModuleId, navigate: NavigateFn, query?: string) {
   switch (id) {
-    case 'meros': return <MerosModule navigate={navigate} initialQuery={query} />;
+    case 'meros': return <MerosModule navigate={navigate} />;
     case 'allomalar': return <AllomalarModule navigate={navigate} />;
     case 'siymolar': return <SiymolarModule navigate={navigate} initialQuery={query} />;
     case 'tarix': return <TarixModule navigate={navigate} />;

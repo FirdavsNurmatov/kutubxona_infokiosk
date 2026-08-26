@@ -5,17 +5,23 @@
     <!--
       Electron nusxasining kirish nuqtasi.
 
-      Brauzerdagi `index.html` dan farqi: bu yerda faqat /ekran2 yig'iladi.
-      Kiosk, xarita va `/interface` modullari bundlega umuman tushmaydi —
-      zaldagi ekran ularni hech qachon ochmaydi, ular esa recharts va
-      o'nlab chunk'ni tortadi.
+      Skript brauzernikiga aynan bir xil (`src/main.tsx` → `App`), shuning
+      uchun ilova qaysi yuzani ochishi FAQAT `src/App.tsx` da hal qilinadi:
+      u yerdagi yo'l jadvalini o'zgartirsangiz, exe ham o'zgaradi — bu yerga
+      tegish shart emas.
+
+      Yo'lni Electron beradi: `config.json` dagi `route` (standarti "/"),
+      sahifani esa `app://` protokoli SPA sifatida qaytaradi.
+
+      Faqat shu html alohida turishining sababi — CSP: brauzerda uni
+      Netlify sarlavhalari beradi, ilovada esa sahifaning o'zida bo'lishi kerak.
     -->
     <meta http-equiv="Content-Security-Policy"
       content="default-src 'self' app:; img-src 'self' app: data: blob:; media-src 'self' app: blob:; font-src 'self' app: data:; style-src 'self' app: 'unsafe-inline'; script-src 'self' app:; connect-src *;" />
-    <title>Milliy kutubxona — Ekran</title>
+    <title>Milliy kutubxona</title>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/display2/main.tsx"></script>
+    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

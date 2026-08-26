@@ -43,6 +43,18 @@ const DEFAULTS = {
   /** O'z-o'zidan imzolangan sertifikatli ichki serverga ulanishga ruxsat. */
   allowInsecureTls: false,
 
+  /**
+   * Ilova qaysi yuzani ochadi. Yo'llar `src/App.tsx` dagi jadval bilan bir xil:
+   *   '/'         → asosiy sahifa (App.tsx da nima turgan bo'lsa)
+   *   '/interface'→ 1080x1920 infokiosk bo'limi
+   *   '/ekran2'   → zal ekrani (signage pleyeri)
+   *   '/ekran'    → zal ekranining birinchi versiyasi
+   *   '/map'      → bino xaritasi
+   * Yuzalar ro'yxatiga tegilmagan bo'lsa, bu yerni o'zgartirish shart emas:
+   * standart '/' App.tsx qaysi ekranni asosiy qilib qo'ysa, o'shani ochadi.
+   */
+  route: '/',
+
   /** Qaysi monitorda ochilsin (0 — asosiy). Ikki ekranli mashinada muhim. */
   displayIndex: 0,
   /**

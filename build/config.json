@@ -4,6 +4,7 @@
   "apiRefreshSeconds": 300,
   "apiTimeoutMs": 8000,
   "allowInsecureTls": false,
+  "route": "/",
   "displayIndex": 0,
   "fullscreen": true,
   "kiosk": true,

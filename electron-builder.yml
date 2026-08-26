@@ -13,6 +13,11 @@ directories:
   output: release
   buildResources: build
 
+# Paketlashdan oldin `dist-electron/` qaytadan yig'iladi.
+# Sababi `tools/before-pack.cjs` da: `electron-builder` o'zi to'g'ridan-to'g'ri
+# chaqirilganda eski sahifa jimgina exe ga tushib ketmasin.
+beforePack: ./tools/before-pack.cjs
+
 # Ilova ichiga FAQAT kerakli narsalar tushadi.
 # `node_modules` ataylab yo'q: main process faqat Node va Electron'ning
 # o'z modullaridan foydalanadi, renderer esa allaqachon yig'ilgan.
