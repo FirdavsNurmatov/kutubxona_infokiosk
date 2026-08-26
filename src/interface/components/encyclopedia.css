@@ -312,3 +312,6 @@
 .enc-list-item span { padding: 14px 16px 16px; }
 .enc-list-item b { display: block; font-size: 20px; font-weight: 700; line-height: 1.22; }
 .enc-list-item small { display: block; margin-top: 4px; font-size: 16px; color: var(--m-muted); }
+
+/* Detal matni ostidagi amal tugmasi — nodir nashrni varaqlash uchun. */
+.enc-detail-action { margin: 26px 0 6px; }

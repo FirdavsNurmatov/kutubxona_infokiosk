@@ -116,6 +116,14 @@ const TEXT: Dict = {
   ],
   openBook: ['Varaqlash', 'Листать', 'Browse pages'],
   page: ['Sahifa', 'Страница', 'Page'],
+  sheets: ['varaq', 'листов', 'sheets'],
+  zoomIn: ['Kattalashtirish', 'Увеличить', 'Zoom in'],
+  zoomOut: ['Kichraytirish', 'Уменьшить', 'Zoom out'],
+  flipHint: [
+    'Varaqni burchagidan torting yoki bosing — kitob ochiladi',
+    'Потяните страницу за угол или нажмите — книга перелистнётся',
+    'Drag a page by its corner or tap it to turn',
+  ],
 
   /* Allomalar */
   allomalarLead: [

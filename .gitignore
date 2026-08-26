@@ -28,3 +28,6 @@ video-originals
 # Electron
 dist-electron
 release
+
+# Nodir fond skanerlarining asl PDF/PNG nusxalari — faqat mahalliy zaxira
+fond-originals

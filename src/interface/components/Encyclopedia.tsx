@@ -192,9 +192,11 @@ export interface EntryDetailProps {
   entry: EncyclopediaEntry;
   onClose: () => void;
   factsLabel: string;
+  /** Matn ostidagi qo'shimcha amal — masalan "Kitobni ochish" tugmasi. */
+  action?: ReactNode;
 }
 
-export function EntryDetail({ entry, onClose, factsLabel }: EntryDetailProps) {
+export function EntryDetail({ entry, onClose, factsLabel, action }: EntryDetailProps) {
   const [tab, setTab] = useState(entry.sections[0]?.id ?? '');
   const { tr, s } = useText();
   const section = entry.sections.find((sc) => sc.id === tab) ?? entry.sections[0];
@@ -237,6 +239,8 @@ export function EntryDetail({ entry, onClose, factsLabel }: EntryDetailProps) {
           {section?.body.map((paragraph, i) => (
             <p key={i}>{tr(paragraph)}</p>
           ))}
+
+          {action && <div className="enc-detail-action">{action}</div>}
 
           {entry.facts.length > 0 && (
             <div className="enc-facts">

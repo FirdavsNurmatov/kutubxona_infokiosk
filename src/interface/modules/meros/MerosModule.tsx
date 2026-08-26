@@ -1,8 +1,5 @@
 import { useMemo, useState } from 'react';
-import {
-  BookMarked, BookOpenText, ChevronLeft, ChevronRight, Feather,
-  X, ZoomIn, ZoomOut,
-} from 'lucide-react';
+import { BookMarked, BookOpenText, Feather, Layers } from 'lucide-react';
 import type { ModuleProps } from '../../InterfaceApp';
 import { useText } from '../../i18n';
 import { useResource } from '../../api/useResource';
@@ -10,7 +7,7 @@ import { getHeritage, getHeritageCategories } from '../../api';
 import { merosArt } from '../../data/meros';
 import { EntryDetail, FeaturedEntry } from '../../components/Encyclopedia';
 import { TopBar, BottomNav } from '../../shell/Chrome';
-import type { EncyclopediaEntry } from '../../api/types';
+import BookReader from './BookReader';
 import '../../components/encyclopedia.css';
 import './meros.css';
 import LibraryLogo from '../../../components/LibraryLogo';
@@ -18,60 +15,9 @@ import DataNotice from '../../components/DataNotice';
 
 const ICONS = { BookOpenText, BookMarked, Feather };
 
-/* Raqamli varaqlagich. Faqat nashrning O'Z raqamlangan varaqlarini
-   ko'rsatadi — ilgari bu yerda umumiy demo to'plami turardi va Boburnoma
-   ham, Xamsa ham, Sahihi Buxoriy ham aynan bir xil sahifalarni ochardi. */
-function Reader({ entry, onClose }: { entry: EncyclopediaEntry; onClose: () => void }) {
-  const { s, tr } = useText();
-  const [page, setPage] = useState(0);
-  const [zoom, setZoom] = useState(1);
-  const pages = entry.pages ?? [entry.image];
-
-  return (
-    <div className="mr-reader">
-      <div className="mr-reader-top">
-        <b>{tr(entry.name)}</b>
-        <button className="enc-arrow if-tap" onClick={() => setZoom((z) => Math.max(1, z - 0.25))} aria-label="-">
-          <ZoomOut size={26} />
-        </button>
-        <button className="enc-arrow if-tap" onClick={() => setZoom((z) => Math.min(2.5, z + 0.25))} aria-label="+">
-          <ZoomIn size={26} />
-        </button>
-        <button className="enc-arrow if-tap" onClick={onClose} aria-label={s('close')}>
-          <X size={28} />
-        </button>
-      </div>
-
-      <div className="mr-spread">
-        <img src={pages[page]} alt="" style={{ transform: `scale(${zoom})` }} />
-      </div>
-
-      <div className="mr-reader-bar">
-        <button
-          className="enc-arrow if-tap"
-          onClick={() => setPage((p) => Math.max(0, p - 1))}
-          disabled={page === 0}
-          aria-label={s('prev')}
-        >
-          <ChevronLeft size={30} />
-        </button>
-        <b>{s('page')} {page + 1} / {pages.length}</b>
-        <button
-          className="enc-arrow if-tap"
-          onClick={() => setPage((p) => Math.min(pages.length - 1, p + 1))}
-          disabled={page >= pages.length - 1}
-          aria-label={s('next')}
-        >
-          <ChevronRight size={30} />
-        </button>
-      </div>
-    </div>
-  );
-}
-
 export default function MerosModule({ navigate }: ModuleProps) {
   const { s, tr, title } = useText();
-  const entries = useResource(getHeritage, [] as EncyclopediaEntry[]);
+  const entries = useResource(getHeritage, []);
   const categories = useResource(getHeritageCategories, []);
 
   const [categoryId, setCategoryId] = useState<string | null>('qolyozma');
@@ -81,6 +27,7 @@ export default function MerosModule({ navigate }: ModuleProps) {
   const featured = entries.data.find((e) => e.id === 'boburnoma') ?? entries.data[0];
   const opened = entries.data.find((e) => e.id === openId);
   const reading = entries.data.find((e) => e.id === readerId);
+  const category = categories.data.find((c) => c.id === categoryId);
 
   /* Bo'limda qidiruv yo'q: tashrifchi kategoriyani tanlaydi, xolos. */
   const visible = useMemo(
@@ -133,11 +80,32 @@ export default function MerosModule({ navigate }: ModuleProps) {
             })}
           </div>
 
+          {category && (
+            <div className="mr-section">
+              <div>
+                <h2>{tr(category.name)}</h2>
+                <p>{tr(category.description)}</p>
+              </div>
+              <span className="mr-section-count">{visible.length}</span>
+            </div>
+          )}
+
           <div className="mr-grid">
             {visible.map((e) => (
               <button key={e.id} className="mr-item if-tap" onClick={() => setOpenId(e.id)}>
-                <img src={e.image} alt="" />
-                <span>
+                {/* Muqova kitob qiyofasida: cheti oltin, chap yoni — jild. */}
+                <span className="mr-item-cover">
+                  <img src={e.image} alt="" loading="lazy" />
+                  <span className="mr-item-spine" />
+                  <span className="mr-item-glare" />
+                  {e.pages && e.pages.length > 0 && (
+                    <span className="mr-item-pages">
+                      <Layers size={17} />
+                      {e.pages.length} {s('sheets')}
+                    </span>
+                  )}
+                </span>
+                <span className="mr-item-text">
                   <b>{tr(e.name)}</b>
                   <small>{tr(e.subtitle)}</small>
                 </span>
@@ -175,9 +143,20 @@ export default function MerosModule({ navigate }: ModuleProps) {
       <BottomNav onHome={() => navigate('hub')} current="home" />
 
       {opened && (
-        <EntryDetail entry={opened} factsLabel={s('facts')} onClose={() => setOpenId(null)} />
+        <EntryDetail
+          entry={opened}
+          factsLabel={s('facts')}
+          onClose={() => setOpenId(null)}
+          /* Har bir nashrning o'z skanerlari bor — varaqlagich shu yerdan ochiladi. */
+          action={opened.pages && opened.pages.length > 0 ? (
+            <button className="if-cta if-tap" onClick={() => setReaderId(opened.id)}>
+              <BookOpenText size={30} />
+              {s('openBook')}
+            </button>
+          ) : undefined}
+        />
       )}
-      {reading && <Reader entry={reading} onClose={() => setReaderId(null)} />}
+      {reading && <BookReader entry={reading} onClose={() => setReaderId(null)} />}
     </div>
   );
 }
