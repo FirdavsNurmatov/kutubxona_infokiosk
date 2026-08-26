@@ -82,6 +82,16 @@
   touch-action: none;
   user-select: none;
 }
+/*
+   Tik (portret) suratlar uchun oyna balandligi surat nisbatidan olinadi.
+   Qat'iy 620px da `cover` bunday suratning yarmini kesib tashlar edi —
+   minoraning uchi ham, poyi ham ko'rinmay qolardi.
+*/
+.kb-compare[data-aspect='1'] {
+  height: auto;
+  aspect-ratio: var(--kb-aspect);
+}
+
 .kb-compare img {
   position: absolute;
   inset: 0;

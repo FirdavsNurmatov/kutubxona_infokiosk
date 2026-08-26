@@ -7,6 +7,45 @@ const IMG = '/interface/kechabugun';
    qolgan shaharlar uchun o'sha juftlik namuna sifatida ishlatiladi —
    backend ulanganda har bir joyning o'z arxiv surati keladi. */
 export const placePairs: PlacePair[] = [
+  /* Buxoro — Poyi Kalon. Ikkala kadr ham bitta manbadan: `all_in_one.jpeg`
+     chap va o'ng yarmiga bo'lingan. "Hozir" kadrining chap chekkasidan 50px
+     kesilgan (469x608) — manzara "oldin" bilan tenglashsin uchun. Oyna
+     nisbati shu tor kadrga qo'yilgan: aks holda `cover` uni tepa-pastdan
+     kesib, pastdagi fotograf kreditini yeb qo'yardi. */
+  {
+    id: 'poikalon',
+    city: { uz: 'Buxoro', ru: 'Бухара', en: 'Bukhara' },
+    place: { uz: 'Poyi Kalon majmuasi', ru: 'Комплекс Пои Калон', en: 'Poi Kalon complex' },
+    beforeYear: '2016',
+    afterYear: '2020',
+    before: `${IMG}/poikalon-before.webp`,
+    after: `${IMG}/poikalon-after.webp`,
+    thumb: `${IMG}/poikalon-thumb.webp`,
+    aspect: '469 / 608',
+    story: {
+      uz: 'Poyi Kalon — Kalon minorasi, Kalon masjidi va Mir Arab madrasasidan iborat majmua, Buxoro tarixiy markazining yuragi. Suratlarda majmua atrofidagi savdo rastalari va eski mahallalar o‘rnini ochiq maydon egallagani ko‘rinadi.',
+      ru: 'Пои Калон — ансамбль из минарета Калон, мечети Калон и медресе Мири Араб, сердце исторического центра Бухары. На снимках видно, как торговые ряды и старые кварталы вокруг ансамбля сменились открытой площадью.',
+      en: 'Poi Kalon — the ensemble of the Kalon minaret, the Kalon mosque and the Mir-i Arab madrasa — is the heart of Bukhara’s historic centre. The photographs show the trading rows and old quarters around it giving way to open ground.',
+    },
+  },
+  /* O'sha minoraning ikki davri. Suratlar turli manbadan kelgani uchun
+     bir xil 450x600 kadrga keltirilgan (`kalon-before/after.webp`). */
+  {
+    id: 'kalon',
+    city: { uz: 'Buxoro', ru: 'Бухара', en: 'Bukhara' },
+    place: { uz: 'Kalon minorasi', ru: 'Минарет Калон', en: 'The Kalon minaret' },
+    beforeYear: '1920',
+    afterYear: '1965',
+    before: `${IMG}/kalon-before.webp`,
+    after: `${IMG}/kalon-after.webp`,
+    thumb: `${IMG}/kalon-thumb.webp`,
+    aspect: '450 / 600',
+    story: {
+      uz: 'Kalon minorasi 1127-yilda qurilgan va Buxoroning eng baland tarixiy inshooti — 46 metr. 1920-yilgi jangda minora va atrofidagi binolar zarar ko‘rgan; keyingi o‘n yilliklarda minora ta’mirlanib, atrofi tozalangan.',
+      ru: 'Минарет Калон построен в 1127 году и остаётся самым высоким историческим сооружением Бухары — 46 метров. В боях 1920 года минарет и окрестные здания пострадали; в последующие десятилетия минарет отреставрировали, а округу расчистили.',
+      en: 'Built in 1127, the Kalon minaret is Bukhara’s tallest historic structure at 46 metres. It was damaged along with the surrounding buildings in the fighting of 1920; over the following decades the minaret was restored and its surroundings cleared.',
+    },
+  },
   {
     id: 'registon',
     city: { uz: 'Samarqand', ru: 'Самарканд', en: 'Samarkand' },

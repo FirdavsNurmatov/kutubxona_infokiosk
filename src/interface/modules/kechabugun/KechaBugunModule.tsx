@@ -51,7 +51,12 @@ function Compare({ pair, split, onSplit }: CompareProps) {
       className="kb-compare"
       ref={boxRef}
       data-dragging={dragging ? '1' : '0'}
-      style={{ ['--split' as string]: `${split}%` }}
+      /* Tik suratli juftlikda oyna suratning nisbatiga moslashadi. */
+      data-aspect={pair.aspect ? '1' : '0'}
+      style={{
+        ['--split' as string]: `${split}%`,
+        ...(pair.aspect ? { ['--kb-aspect' as string]: pair.aspect } : null),
+      }}
       onPointerDown={(e) => {
         setDragging(true);
         /* Ba'zi muhitlarda (masalan avtomatlashtirilgan sinov) bu chaqiruv
@@ -102,7 +107,7 @@ export default function KechaBugunModule({ navigate }: { navigate: NavigateFn })
   const { s, tr, title, lang } = useText();
   const places = useResource(getPlacePairs, [] as PlacePair[]);
   const archives = useResource(getArchiveKinds, []);
-  const [placeId, setPlaceId] = useState('registon');
+  const [placeId, setPlaceId] = useState('poikalon');
   /*
      Solishtirgich chegarasi: 0 — butunlay "hozir", 100 — butunlay "oldin".
      Uni ham surish, ham yuqoridagi ikki tugma boshqaradi.

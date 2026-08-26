@@ -112,6 +112,13 @@ export interface PlacePair {
   before: string;
   after: string;
   thumb: string;
+  /**
+   * Solishtirgich oynasining nisbati (`width / height`, CSS `aspect-ratio`
+   * yozuvi). Berilmasa oyna standart gorizontal o'lchamda qoladi.
+   * Tik suratlar uchun kerak: aks holda `object-fit: cover` ularning
+   * yarmini kesib tashlaydi.
+   */
+  aspect?: string;
   story: Localized;
 }
 
