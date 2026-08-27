@@ -115,6 +115,7 @@ const TEXT: Dict = {
     'Browse rare books, historical manuscripts and unique collections in high quality.',
   ],
   openBook: ['Varaqlash', 'Листать', 'Browse pages'],
+  scannedPages: ['Raqamlashtirilgan varaqlar', 'Оцифрованные листы', 'Digitised pages'],
   page: ['Sahifa', 'Страница', 'Page'],
   sheets: ['varaq', 'листов', 'sheets'],
   zoomIn: ['Kattalashtirish', 'Увеличить', 'Zoom in'],

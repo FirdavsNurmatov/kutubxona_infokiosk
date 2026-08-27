@@ -196,10 +196,17 @@ export interface EntryDetailProps {
   action?: ReactNode;
 }
 
+/*
+ * To'liq detal — barcha bo'limlar birdaniga ko'rinadi.
+ *
+ * Ilgari bu yerda `tablist` turardi: uch bo'limdan bittasi ko'rinib, qolgani
+ * yashiringan edi. Yozuvlarda esa bo'limiga bittadan-ikkitadan abzats bor,
+ * ya'ni ekranning yarmi bo'sh qolar, tashrifchi esa ma'lumot shu qadar oz
+ * deb o'ylardi. Kioskda "nimadir bosib ko'rish" ham qo'shimcha to'siq —
+ * matn qisqa bo'lgani uchun hammasi bitta ustunda beriladi.
+ */
 export function EntryDetail({ entry, onClose, factsLabel, action }: EntryDetailProps) {
-  const [tab, setTab] = useState(entry.sections[0]?.id ?? '');
   const { tr, s } = useText();
-  const section = entry.sections.find((sc) => sc.id === tab) ?? entry.sections[0];
 
   return (
     <div className="enc-detail">
@@ -220,24 +227,17 @@ export function EntryDetail({ entry, onClose, factsLabel, action }: EntryDetailP
         </div>
       </div>
 
-      <div className="enc-tabs" role="tablist">
-        {entry.sections.map((sc) => (
-          <button
-            key={sc.id}
-            className="enc-tab if-tap"
-            role="tab"
-            aria-selected={sc.id === section?.id}
-            onClick={() => setTab(sc.id)}
-          >
-            {tr(sc.title)}
-          </button>
-        ))}
-      </div>
-
       <div className="if-scroll">
         <div className="enc-detail-body">
-          {section?.body.map((paragraph, i) => (
-            <p key={i}>{tr(paragraph)}</p>
+          {entry.summary && <p className="enc-detail-lead">{tr(entry.summary)}</p>}
+
+          {entry.sections.map((sc) => (
+            <section className="enc-block" key={sc.id}>
+              <h3>{tr(sc.title)}</h3>
+              {sc.body.map((paragraph, i) => (
+                <p key={i}>{tr(paragraph)}</p>
+              ))}
+            </section>
           ))}
 
           {action && <div className="enc-detail-action">{action}</div>}

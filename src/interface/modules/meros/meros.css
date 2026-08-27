@@ -32,29 +32,31 @@
   mask-image: linear-gradient(255deg, #000 20%, transparent 85%);
 }
 
-/* Sharqona ravoq */
+/* Sharqona ravoq — maket bezagi, lekin 1920px balandlikning uchdan birini
+   yeb qo'ymasligi kerak: kioskda birinchi ekranda bosiladigan narsa
+   ko'rinib turishi shart. */
 .mr-arch {
   position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   flex: none;
-  padding: 34px 60px 26px;
+  padding: 22px 60px 18px;
   /* 1080 maketda aynan 900px (0 90px chekka) — kengroq sahnada markazda qoladi */
   width: min(900px, 100% - 180px);
   margin-inline: auto;
   text-align: center;
-  border-radius: 240px 240px 26px 26px / 190px 190px 26px 26px;
+  border-radius: 240px 240px 26px 26px / 170px 170px 26px 26px;
   border: 2px solid rgba(214, 172, 92, 0.55);
   background: radial-gradient(120% 80% at 50% 0%, #123170 0%, #0A1F52 55%, #071640 100%);
   box-shadow: 0 0 50px rgba(60, 120, 240, 0.18);
 }
-.mr-arch img { width: 330px; height: auto; object-fit: contain; }
+.mr-arch img { width: 172px; height: auto; object-fit: contain; }
 .mr-arch h1 {
-  margin: 6px 0 0;
-  font-size: 88px;
+  margin: 4px 0 0;
+  font-size: 66px;
   font-weight: 800;
-  line-height: 0.92;
+  line-height: 0.94;
   letter-spacing: 0.02em;
   background: linear-gradient(180deg, #FCEFC8 12%, #E0B860 62%, #B98526 100%);
   -webkit-background-clip: text;
@@ -62,76 +64,180 @@
   color: transparent;
 }
 .mr-arch-sub {
-  margin: 14px 0 12px;
-  font-size: 27px;
+  margin: 10px 0 8px;
+  font-size: 25px;
   font-weight: 600;
   color: #F0E4C4;
 }
 .mr-arch-sub::before,
 .mr-arch-sub::after { content: ' ✧ '; color: var(--m-accent); }
 .mr-arch p {
-  max-width: 560px;
+  /* Ikki qatordan oshmasin — pastdagi kartaning joyini yeydi. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  max-width: 620px;
   margin: 0;
   font-size: 20px;
-  line-height: 1.45;
+  line-height: 1.4;
   color: #C9B98F;
 }
 
-.mr-hero {
+.mr-body { position: relative; padding: 16px var(--if-edge) 40px; }
+
+/* ── Tavsiya etilgan nashr ─────────────────────────────
+   Ilgari bu blok ro'yxatdan keyin turardi va "Varaqlash" tugmasi
+   sahifaning eng pastiga tushib ketardi. Endi u birinchi ekranda:
+   tashrifchi hech narsa surmasdan kitobni ocha oladi. */
+.mr-feature {
   position: relative;
-  flex: none;
-  height: 300px;
-  margin: 24px 0 10px;
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 26px;
+  overflow: hidden;
+  margin-bottom: 22px;
+  padding: 20px;
+  border-radius: 22px;
+  border: 1px solid rgba(214, 172, 92, 0.42);
+  background: linear-gradient(135deg, rgba(18, 49, 112, 0.9), rgba(7, 22, 64, 0.92));
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.42);
 }
-.mr-hero img {
+/* Maketdagi ochiq kitob — endi alohida 300px band emas, kartaning foni. */
+.mr-feature-art {
+  position: absolute;
+  right: -60px;
+  bottom: -70px;
+  width: 460px;
+  height: auto;
+  opacity: 0.11;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, #000 40%, transparent 100%);
+  mask-image: radial-gradient(70% 70% at 50% 50%, #000 40%, transparent 100%);
+}
+.mr-feature-media {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  border-radius: 5px 14px 14px 5px;
+  border: 1px solid rgba(214, 172, 92, 0.55);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.5);
+}
+.mr-feature-media img {
+  display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  filter: drop-shadow(0 20px 50px rgba(0, 0, 0, 0.55));
-  /* Maket kesimining to'rtburchak cheti fonga singib ketsin */
-  -webkit-mask-image: radial-gradient(78% 82% at 50% 52%, #000 55%, transparent 100%);
-  mask-image: radial-gradient(78% 82% at 50% 52%, #000 55%, transparent 100%);
+  object-fit: cover;
+}
+.mr-feature-text {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-width: 0;
+}
+.mr-feature-badge {
+  margin-bottom: 14px;
+  padding: 7px 18px;
+  border-radius: 999px;
+  border: 1px solid var(--m-accent);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+.mr-feature h2 {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.06;
+  color: #F5E8C7;
+}
+.mr-feature-sub {
+  margin: 5px 0 10px;
+  font-size: 21px;
+  color: var(--m-muted);
+}
+.mr-feature p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 0 0 18px;
+  font-size: 20px;
+  line-height: 1.45;
+  color: #D8CAA4;
+}
+.mr-feature-actions { display: flex; align-items: center; gap: 16px; }
+/* Ikkilamchi amal — oltin tugmadan farqlanadi, lekin baribir 88px baland. */
+.mr-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 88px;
+  padding: 0 30px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 172, 92, 0.55);
+  background: rgba(10, 31, 82, 0.6);
+  color: #F0E4C4;
+  font-size: 22px;
+  font-weight: 600;
 }
 
-.mr-body { position: relative; padding: 10px var(--if-edge) 40px; }
-
-/* Kategoriya plitalari — ikki qavat oltin ramka */
+/* ── Kategoriya plitalari ──────────────────────────────
+   Yopishqoq: ro'yxat 1680px oynadan uzun, shuning uchun pastda turgan
+   tashrifchi ham kategoriyani bir bosishda almashtira oladi. Fon chetdan
+   chetgacha bo'lishi uchun `mr-body` paddingi teskari margin bilan
+   qoplanadi. */
 .mr-tiles {
+  position: sticky;
+  top: 0;
+  z-index: 4;
   display: grid;
   /* Uchta kategoriya. Ilgari to'rtinchi katak qidiruv edi. */
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-bottom: 28px;
+  gap: 14px;
+  margin-inline: calc(-1 * var(--if-edge));
+  margin-bottom: 22px;
+  padding: 14px var(--if-edge);
+  background: linear-gradient(180deg, var(--m-bg) 78%, rgba(7, 22, 64, 0.94) 100%);
+  box-shadow: 0 12px 24px -14px rgba(0, 0, 0, 0.8);
 }
 .mr-tile {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 14px;
-  min-height: 190px;
-  padding: 18px 12px;
+  min-height: 96px;
+  padding: 14px 18px;
   border-radius: 18px;
-  border: 2px solid rgba(214, 172, 92, 0.55);
+  border: 2px solid rgba(214, 172, 92, 0.45);
   background: linear-gradient(180deg, rgba(16, 44, 108, 0.85), rgba(8, 26, 74, 0.85));
   color: #F2E6C6;
-  text-align: center;
+  text-align: left;
 }
 .mr-tile[aria-pressed='true'] {
   border-color: #F5D68A;
-  box-shadow: 0 0 26px rgba(233, 190, 100, 0.55), inset 0 0 34px rgba(233, 190, 100, 0.12);
+  box-shadow: 0 0 26px rgba(233, 190, 100, 0.5), inset 0 0 34px rgba(233, 190, 100, 0.12);
 }
-.mr-tile-icon { color: var(--m-accent); }
-.mr-tile b { font-size: 24px; font-weight: 600; }
-.mr-tile small { font-size: 17px; color: #B8A87F; }
+.mr-tile-icon { flex: none; color: var(--m-accent); }
+.mr-tile-text { min-width: 0; }
+.mr-tile b { display: block; font-size: 23px; font-weight: 600; line-height: 1.15; }
+.mr-tile small { display: block; margin-top: 3px; font-size: 17px; color: #B8A87F; }
 
 /* Tanlangan bo'lim sarlavhasi */
 .mr-section {
   display: flex;
   align-items: center;
   gap: 20px;
-  margin-bottom: 20px;
-  padding: 0 4px 16px;
+  /* Yopishqoq plitalar ostida qolmasin — kategoriya almashganda
+     `scrollIntoView` aynan shu chekkani hisobga oladi. */
+  scroll-margin-top: 132px;
+  margin-bottom: 16px;
+  padding: 0 4px 14px;
   border-bottom: 1px solid rgba(214, 172, 92, 0.28);
 }
 .mr-section h2 {
@@ -156,11 +262,13 @@
   color: var(--m-accent);
 }
 
-/* Yozuvlar setkasi — har bir kartochka javondagi kitob kabi */
+/* Yozuvlar setkasi — har bir kartochka javondagi kitob kabi.
+   Uch ustun: bo'limda kategoriyaga 4-5 tadan nashr to'g'ri keladi, to'rt
+   ustunda muqovalar 240px ga siqilib, uzoqdan o'qib bo'lmas edi. */
 .mr-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 22px 18px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px 20px;
   margin-bottom: 32px;
 }
 .mr-item {
@@ -171,6 +279,16 @@
   transition: transform 180ms ease;
 }
 .mr-item:active { transform: translateY(3px); }
+/* Kategoriya almashganda yangi ro'yxat sezilib turishi uchun yengil to'lqin. */
+@media (prefers-reduced-motion: no-preference) {
+  .mr-item {
+    animation: mr-rise 320ms ease-out backwards;
+    animation-delay: calc(var(--i, 0) * 40ms);
+  }
+}
+@keyframes mr-rise {
+  from { opacity: 0; transform: translateY(10px); }
+}
 .mr-item-cover {
   position: relative;
   display: block;
@@ -181,17 +299,21 @@
     0 16px 34px rgba(0, 0, 0, 0.5),
     inset 0 0 0 1px rgba(255, 236, 190, 0.14);
 }
+/* Balandlik qat'iy piksel: 1080 maketda ustun 324px, ya'ni kitobga yaqin
+   5:7 nisbat. `aspect-ratio` bo'lmaydi — Chromium uni rasm yuklanmaguncha
+   hisoblamaydi va ro'yxat bir kadrga yig'ilib, aylantirish holati
+   nolga tushib ketardi (kategoriya almashganda seziladi). */
 .mr-item-cover img {
   display: block;
   width: 100%;
-  height: 282px;
+  height: 454px;
   object-fit: cover;
 }
 /* Chap yon — jild; o'ng yon — varaqlar qirrasi. */
 .mr-item-spine {
   position: absolute;
   inset: 0 auto 0 0;
-  width: 16px;
+  width: 18px;
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.62) 0%, rgba(0, 0, 0, 0.28) 55%, transparent 100%);
   box-shadow: inset 1px 0 0 rgba(255, 226, 160, 0.28);
@@ -205,22 +327,22 @@
 }
 .mr-item-pages {
   position: absolute;
-  right: 9px;
-  bottom: 9px;
+  right: 10px;
+  bottom: 10px;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 5px 11px;
+  gap: 7px;
+  padding: 6px 13px;
   border-radius: 999px;
   border: 1px solid rgba(214, 172, 92, 0.45);
   background: rgba(5, 15, 46, 0.82);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   color: #EBD9A8;
   backdrop-filter: blur(4px);
 }
-.mr-item-text { display: block; padding: 13px 3px 0; }
-.mr-item b { display: block; font-size: 21px; font-weight: 700; line-height: 1.2; color: #F3E6C6; }
+.mr-item-text { display: block; padding: 14px 3px 0; }
+.mr-item b { display: block; font-size: 24px; font-weight: 700; line-height: 1.2; color: #F3E6C6; }
 /* Uzun shifrli qatorlar kartochkalarni bir-biridan uzoqlashtirmasin. */
 .mr-item small {
   display: -webkit-box;
@@ -228,9 +350,16 @@
   -webkit-line-clamp: 2;
   overflow: hidden;
   margin-top: 5px;
-  font-size: 16px;
+  font-size: 18px;
   line-height: 1.3;
-  color: #B0A079;
+  color: #B6A67E;
+}
+
+.mr-empty {
+  padding: 60px 0;
+  font-size: 24px;
+  text-align: center;
+  color: var(--m-muted);
 }
 
 /* ── Varaqlash oynasi (StPageFlip) ─────────────────── */
@@ -428,3 +557,55 @@
   border-radius: 6px;
   box-shadow: 0 18px 50px rgba(0, 0, 0, 0.6);
 }
+
+/* ── Detal sahifasidagi varaqlar tasmasi ───────────────
+   Bo'lim tanlagichi olib tashlangach detal matni bir ekranga sig'ib qoldi
+   va pastda bo'sh joy qolardi. U yerda endi nashrning birinchi varaqlari
+   turadi: tashrifchi "Varaqlash" nima ochishini oldindan ko'radi. Tasma
+   bosilmaydi — u ma'lumot, amal esa ostidagi bitta katta tugmada. */
+.mr-scans h3 {
+  margin: 0 0 14px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--m-accent);
+}
+.mr-scans-row {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.mr-scans-leaf {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 4px 8px 8px 4px;
+  border: 1px solid rgba(214, 172, 92, 0.4);
+  background: #EFE3C8;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.42);
+}
+.mr-scans-leaf img {
+  display: block;
+  width: 100%;
+  /* Qat'iy balandlik — `aspect-ratio` rasm yuklanmaguncha hisoblanmaydi
+     va tasma bir kadrga yig'ilib qolardi. */
+  height: 214px;
+  object-fit: cover;
+  object-position: center top;
+}
+.mr-scans-more {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 92px;
+  border-radius: 12px;
+  border: 1px solid rgba(214, 172, 92, 0.4);
+  background: rgba(12, 34, 88, 0.6);
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--m-accent);
+}
+/* Asosiy amal — tasma ostidagi butun kenglikdagi tugma. */
+.mr-scans .if-cta { width: 100%; }
