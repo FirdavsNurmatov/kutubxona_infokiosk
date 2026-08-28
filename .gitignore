@@ -31,3 +31,6 @@ release
 
 # Nodir fond skanerlarining asl PDF/PNG nusxalari — faqat mahalliy zaxira
 fond-originals
+
+# TypeScript incremental build cache
+*.tsbuildinfo

@@ -50,10 +50,12 @@ const DEFAULTS = {
    *   '/ekran2'   → zal ekrani (signage pleyeri)
    *   '/ekran'    → zal ekranining birinchi versiyasi
    *   '/map'      → bino xaritasi
-   * Yuzalar ro'yxatiga tegilmagan bo'lsa, bu yerni o'zgartirish shart emas:
-   * standart '/' App.tsx qaysi ekranni asosiy qilib qo'ysa, o'shani ochadi.
+   * Standart `/interface`: ilova sensorli portret infokiosk uchun yig'iladi.
+   * Bundlega hamma yuzaning asseti tushadi, shuning uchun boshqasiga
+   * o'tish uchun exe yonidagi `config.json` da shu qatorni o'zgartirish
+   * kifoya — qayta yig'ish shart emas.
    */
-  route: '/',
+  route: '/interface',
 
   /** Qaysi monitorda ochilsin (0 — asosiy). Ikki ekranli mashinada muhim. */
   displayIndex: 0,

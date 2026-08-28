@@ -74,3 +74,30 @@ export function pathFor(id: ModuleId): string {
   const mod = MODULES.find((m) => m.id === id) ?? MODULES[0];
   return mod.slug ? `${INTERFACE_PATH}/${mod.slug}` : INTERFACE_PATH;
 }
+
+/* Tanlangan bo'lim brauzer xotirasida saqlanadi: kiosk kompyuteri o'chib
+   yonganda yoki sahifa yangilanganda oxirgi ochilgan modul qaytadi. */
+const STORAGE_KEY = 'mk-interface-module';
+
+function isModuleId(value: unknown): value is ModuleId {
+  return MODULES.some((m) => m.id === value);
+}
+
+/** Oxirgi ochilgan modul. Xotira bo'sh yoki o'chirilgan bo'lsa — null. */
+export function readStoredModule(): ModuleDef | null {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (isModuleId(stored)) return MODULES.find((m) => m.id === stored) ?? null;
+  } catch {
+    // Kiosk brauzerida localStorage o'chirilgan bo'lishi mumkin
+  }
+  return null;
+}
+
+export function storeModule(id: ModuleId): void {
+  try {
+    localStorage.setItem(STORAGE_KEY, id);
+  } catch {
+    // e'tiborsiz qoldiriladi
+  }
+}

@@ -1,10 +1,15 @@
 import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
-import { MODULES, moduleFromPath, pathFor, type ModuleId } from './routes';
+import {
+  MODULES,
+  moduleFromPath,
+  pathFor,
+  readStoredModule,
+  storeModule,
+  type ModuleId,
+} from './routes';
 import { useIdleReset } from './shell/useIdleReset';
 import { InfoSheetProvider } from './shell/InfoSheet';
 import { EMPTY_QUIZ_STATS, SessionContext, type QuizStats } from './shell/session';
-import { useI18n } from '../i18n/context';
-import { DEFAULT_LANG } from '../i18n/translations';
 import { useText } from './i18n';
 import './interface.css';
 
@@ -99,11 +104,23 @@ function renderModule(id: ModuleId, navigate: NavigateFn, query?: string) {
 }
 
 export default function InterfaceApp() {
-  const [mod, setMod] = useState(() => moduleFromPath(window.location.pathname));
+  /* Boshlang'ich modul: manzil yo'li aniq bo'limni ko'rsatsa — o'sha,
+     aks holda (kiosk odatda "/interface" dan ochiladi) xotiradagi
+     oxirgi tanlangan bo'lim. Shu tufayli kompyuter o'chib yonganidan
+     keyin ham ekran o'sha joyidan davom etadi. */
+  const [mod, setMod] = useState(() => {
+    const fromPath = moduleFromPath(window.location.pathname);
+    if (fromPath.id !== 'hub') return fromPath;
+    const stored = readStoredModule();
+    if (stored && stored.id !== 'hub') {
+      window.history.replaceState(null, '', pathFor(stored.id));
+      return stored;
+    }
+    return fromPath;
+  });
   // Birinchi bo'yashdayoq to'g'ri bo'lishi uchun boshlang'ich qiymat ham hisoblanadi
   const [fit, setFit] = useState(measure);
   const { s } = useText();
-  const { setLang } = useI18n();
 
   // Kiosk 1080×1920 da ishlaydi, lekin ishlab chiqishda oyna har xil bo'ladi
   useEffect(() => {
@@ -158,6 +175,7 @@ export default function InterfaceApp() {
   const navigate = useCallback<NavigateFn>((id, options) => {
     const next = MODULES.find((m) => m.id === id) ?? MODULES[0];
     window.history.pushState(null, '', pathFor(id));
+    storeModule(next.id);
     setIntent(options ?? null);
     setMod(next);
     // Yangi modul har doim tepadan ochilsin
@@ -167,24 +185,24 @@ export default function InterfaceApp() {
   // Brauzerning "orqaga" tugmasi modullar orasida ham ishlashi uchun
   useEffect(() => {
     function onPopState() {
-      setMod(moduleFromPath(window.location.pathname));
+      const next = moduleFromPath(window.location.pathname);
+      storeModule(next.id);
+      setMod(next);
     }
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
   }, []);
 
   /* Kiosk egasiz qolganda keyingi tashrifchi toza ekran ko'rishi kerak:
-     bosh sahifaga qaytiladi, til standartga tushadi, sessiya nolga qaytadi
-     va modullar qayta quriladi. Ilgari bu faqat modul ichida turgan
-     holatda ishlardi — bosh sahifada oldingi odamning izi qolib ketardi. */
+     sessiya nolga qaytadi va modullar qayta quriladi (ochiq oyna,
+     terilgan matn, varaqlangan joy tozalanadi). Ochiq bo'lim va
+     tanlangan til esa o'zgarmaydi. */
   useIdleReset(
     useCallback(() => {
-      navigate('hub');
-      setLang(DEFAULT_LANG);
       setStars(0);
       setQuiz(EMPTY_QUIZ_STATS);
       setSessionKey((k) => k + 1);
-    }, [navigate, setLang]),
+    }, []),
   );
 
   return (

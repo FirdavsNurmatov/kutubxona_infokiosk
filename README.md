@@ -13,8 +13,7 @@ xizmat qiladi:
 
 ## `/interface` — portret infokiosk bo'limlari
 
-`kutubxona_rasmlar_interfeysi_1/` dagi maketlar asosida qurilgan. Har bir modul
-o'z yo'liga ega va alohida chunk bo'lib yuklanadi:
+Har bir modul o'z yo'liga ega va alohida chunk bo'lib yuklanadi:
 
 | Yo'l | Modul | Nima qiladi |
 |---|---|---|
