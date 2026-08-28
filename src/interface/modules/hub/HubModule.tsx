@@ -16,7 +16,6 @@ import OnScreenKeyboard from '../../../components/OnScreenKeyboard';
 import ModuleMenu from '../../shell/ModuleMenu';
 import { useInfoSheet } from '../../shell/infoSheet';
 import './hub.css';
-import LibraryLogo from '../../../components/LibraryLogo';
 import DataNotice from '../../components/DataNotice';
 
 /* Modul yo'lini `lucide` ikonkasiga bog'laydi — ma'lumotda faqat nom saqlanadi,
@@ -175,9 +174,7 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
     <div className="if-screen">
       <header className="hub-header">
         <ModuleMenu current="hub" onSelect={navigate} />
-        <div className="hub-brand">
-          <LibraryLogo variant="gold" className="if-logo" />
-        </div>
+        {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
         <div style={{ flex: 1 }} />
         <div className="if-lang">
           {(['uz', 'ru', 'en'] as const).map((l) => (
@@ -343,7 +340,7 @@ export default function HubModule({ navigate }: { navigate: NavigateFn }) {
                 ))}
               </span>
             </div>
-            <LibraryLogo variant="gold" className="if-logo" />
+            {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
             <div className="hub-footer-item">
               <span>
                 <b>{s('address')}</b>

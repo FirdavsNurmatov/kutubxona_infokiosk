@@ -4,7 +4,6 @@ import { useI18n } from '../../i18n/context';
 import { LANGS, formatTime } from '../../i18n/translations';
 import type { MapText } from '../mapText';
 import type { MapView } from '../types';
-import LibraryLogo from '../../components/LibraryLogo';
 
 const NAV: { view: MapView; icon: LucideIcon; key: 'map' | 'about' | 'rooms' }[] = [
   { view: 'map', icon: MapIcon, key: 'map' },
@@ -24,10 +23,7 @@ export default function MapHeader({ text, view, onNavigate, now }: MapHeaderProp
 
   return (
     <header className="m-header">
-      <div className="m-brand">
-        <LibraryLogo variant="dark" className="m-brand-mark" />
-      </div>
-
+      {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
       <nav className="m-nav" aria-label={text.nav.map}>
         {NAV.map((item) => {
           const Icon = item.icon;

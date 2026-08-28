@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from 'gsap';
 import { BookOpen, CalendarDays, Users } from 'lucide-react';
-import LibraryLogo from '../../components/LibraryLogo';
 import ClockFace from './ClockFace';
 import SectionLabel from './SectionLabel';
 import { useI18n } from '../../i18n/context';
@@ -52,11 +51,6 @@ export default function IntroSlide({ active }: { active: boolean }) {
   */
   useGSAP(
     () => {
-      gsap.fromTo(
-        '.sg-intro-logo',
-        { opacity: 0.93 },
-        { opacity: 1, duration: 9.2, ease: 'sine.inOut', repeat: -1, yoyo: true },
-      );
       /* Faqat `opacity` — u kompozitorda hisoblanadi va qayta bo'yash talab
          qilmaydi. Ilgari bu yerda `drop-shadow()` animatsiya qilinardi: filtr
          yozuvni alohida yuzaga ko'chirib, har kadrda qaytadan rasterlatardi.
@@ -76,7 +70,7 @@ export default function IntroSlide({ active }: { active: boolean }) {
 
       {/* Chap ustun — kutubxona shaxsiyati */}
       <div className="sg-intro-brand">
-        <LibraryLogo variant="gold" className="sg-intro-logo" />
+        {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
         {/* Maketda shior undov belgisisiz — signage'da u ortiqcha ko'rinadi */}
         <p className="sg-intro-tagline">{t.tagline.replace(/!$/, '')}</p>
       </div>

@@ -10,7 +10,6 @@ import { getArchiveKinds, getPlacePairs } from '../../api';
 import { TopBar, BottomNav } from '../../shell/Chrome';
 import type { PlacePair } from '../../api/types';
 import './kechabugun.css';
-import LibraryLogo from '../../../components/LibraryLogo';
 import DataNotice from '../../components/DataNotice';
 
 const ARCHIVE_ICONS = { Image: ImageIcon, Clapperboard, BookOpen, Mic };
@@ -144,7 +143,7 @@ export default function KechaBugunModule({ navigate }: { navigate: NavigateFn })
       <div className="if-scroll">
           <DataNotice sources={[places, archives]} />
         <section className="kb-arch">
-          <LibraryLogo variant="dark" className="if-logo" />
+          {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
           <h1>
             {title('kechabugun')[0]}
             <em>

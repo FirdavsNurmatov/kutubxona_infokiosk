@@ -13,7 +13,6 @@ import OnScreenKeyboard from '../../../components/OnScreenKeyboard';
 import type { EncyclopediaEntry } from '../../api/types';
 import '../../components/encyclopedia.css';
 import './siymolar.css';
-import LibraryLogo from '../../../components/LibraryLogo';
 import DataNotice from '../../components/DataNotice';
 
 const ICONS = { BookOpen, Feather, Palette, Music, Landmark, Trophy, Star, Users };
@@ -129,7 +128,7 @@ export default function SiymolarModule({ navigate, initialQuery }: ModuleProps) 
             <img className="sy-hero-bg" src="/interface/siymolar/hero.webp" alt="" />
             <div className="sy-hero-scrim" />
             <div className="sy-hero-top">
-              <LibraryLogo variant="gold" className="if-logo" />
+              {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
               <div className="sy-hero-motto">{title('siymolarMotto')[0]}</div>
             </div>
             <div className="sy-flag" />

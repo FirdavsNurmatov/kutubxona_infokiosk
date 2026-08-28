@@ -8,7 +8,6 @@ import { CategoryTiles, EntryCarousel, EntryDetail, FeaturedEntry } from '../../
 import { TopBar, BottomNav } from '../../shell/Chrome';
 import type { EncyclopediaEntry } from '../../api/types';
 import './allomalar.css';
-import LibraryLogo from '../../../components/LibraryLogo';
 import DataNotice from '../../components/DataNotice';
 
 const ICONS = { BookOpen, ScrollText, Globe, FlaskConical, PlayCircle };
@@ -40,7 +39,7 @@ export default function AllomalarModule({ navigate }: { navigate: NavigateFn }) 
           <img className="all-hero-orn" data-side="l" src="/interface/allomalar/ornament-left.webp" alt="" />
           <img className="all-hero-orn" data-side="r" src="/interface/allomalar/ornament-right.webp" alt="" />
           <div className="all-hero-inner">
-            <LibraryLogo variant="gold" className="all-logo if-logo" />
+            {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
             <h1>{title('allomalar')[0]}<br />{title('allomalar')[1]}</h1>
             <div className="all-hero-sub">{title('allomalarSub')[0]}</div>
             <p>{s('allomalarLead')}</p>

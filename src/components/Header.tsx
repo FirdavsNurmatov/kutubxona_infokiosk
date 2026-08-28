@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Globe, ChevronDown, CalendarDays } from 'lucide-react';
 import { useI18n } from '../i18n/context';
 import { LANGS, formatTime } from '../i18n/translations';
-import LibraryLogo from './LibraryLogo';
 import WeatherWidget from './WeatherWidget';
 
 function LanguageSelector() {
@@ -89,10 +88,7 @@ export default function Header() {
 
   return (
     <header className="hdr">
-      <div className="hdr-logo">
-        <LibraryLogo variant="gold" className="hdr-logo-mark" />
-      </div>
-
+      {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
       <div className="hdr-tagline text-amber-300 font-semibold italic flex-shrink-0">
         {t.tagline}
       </div>

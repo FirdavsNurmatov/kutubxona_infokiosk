@@ -10,7 +10,6 @@ import { TopBar, BottomNav } from '../../shell/Chrome';
 import BookReader from './BookReader';
 import '../../components/encyclopedia.css';
 import './meros.css';
-import LibraryLogo from '../../../components/LibraryLogo';
 import DataNotice from '../../components/DataNotice';
 
 const ICONS = { BookOpenText, BookMarked, Feather };
@@ -88,7 +87,7 @@ export default function MerosModule({ navigate }: ModuleProps) {
         <DataNotice sources={[entries, categories]} />
 
         <section className="mr-arch">
-          <LibraryLogo variant="gold" className="if-logo" />
+          {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
           <h1>{title('meros')[0]}<br />{title('meros')[1]}</h1>
           <div className="mr-arch-sub">{title('merosSub')[0]}</div>
           <p>{s('merosLead')}</p>

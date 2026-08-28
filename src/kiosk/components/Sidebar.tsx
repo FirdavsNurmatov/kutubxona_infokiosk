@@ -4,7 +4,6 @@ import { useI18n } from '../../i18n/context';
 import { LANGS, formatTime } from '../../i18n/translations';
 import type { Translation } from '../../i18n/translations';
 import type { KioskView } from '../types';
-import LibraryLogo from '../../components/LibraryLogo';
 
 type MenuKey = keyof Translation['kiosk']['menu'];
 
@@ -31,19 +30,7 @@ export default function Sidebar({ view, onNavigate, now }: SidebarProps) {
 
   return (
     <aside className="k-side">
-      <div
-        className="k-side-logo"
-        role="button"
-        tabIndex={0}
-        onClick={() => onNavigate('home')}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') onNavigate('home');
-        }}
-      >
-        {/* Rasmiy tilla lokap — to'q ko'k panelda o'z rangida turadi */}
-        <LibraryLogo variant="gold" className="k-side-mark" />
-      </div>
-
+      {/* Logotip vaqtincha olib tashlandi — yangisi tayyor bo'lganda shu joyga qo'yiladi. */}
       <nav className="k-side-nav" aria-label={t.kiosk.menu.home}>
         {NAV.map((item) => {
           const Icon = item.icon;
