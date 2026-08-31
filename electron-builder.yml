@@ -2,8 +2,14 @@
 #  Windows uchun paketlash sozlamalari
 # ═══════════════════════════════════════════════════════════════
 #
-#   npm run electron:build:win   → release/ ichida o'rnatuvchi va portativ exe
-#   npm run electron:pack        → paketlanmagan papka (tez sinash uchun)
+#   npm run build:win -- interface   → FAQAT shu yuza uchun exe (tavsiya etiladi)
+#   npm run build:win:all            → beshala variant ketma-ket
+#   npm run electron:build:win       → eski, hamma yuza bitta exe da (164 MB)
+#   npm run electron:pack            → paketlanmagan papka (tez sinash uchun)
+#
+# Variantli buildda `appId`, `productName` va `artifactName` shu yerdagi
+# qiymatlarning ustidan yoziladi — jadval `tools/surfaces.mjs` da.
+# Quyidagilar esa "hammasi bitta exe da" nusxasi uchun standart bo'lib qoladi.
 
 appId: uz.natlib.ekran2
 productName: Milliy Kutubxona Ekran

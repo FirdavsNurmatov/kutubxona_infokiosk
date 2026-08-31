@@ -1,16 +1,30 @@
 import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import KioskApp from './kiosk/KioskApp';
 
+/**
+ * Variantli build: bitta yuza uchun yig'ilgan exe.
+ *
+ * `SURFACE=map npm run build:electron` da bu satr `'map'` bo'lib qotadi
+ * (vite.config.ts dagi `define`), bo'sh bo'lsa — eski, hamma yuza bitta
+ * ilovada turadigan build. `tools/surfaces.mjs` — variantlar jadvali.
+ */
+const ONLY = (import.meta.env.VITE_SURFACE ?? '') as Surface | '';
+
 /*
  * Ikkilamchi ekranlar alohida "chunk" bo'lib yuklanadi.
  * Sabab: /ekran2 GSAP va WebGL to'lqin maydonini tortadi, /ekran esa recharts ni.
  * Bittayu bitta bundlega qo'shilsa, kiosk ham ochilishida o'sha
  * og'irlikni yuklab, tahlil qilib o'tiradi — har bir qayta yuklanishda.
+ *
+ * `ONLY` konstanta bo'lgani uchun mos kelmagan shart build vaqtidayoq
+ * `false` ga aylanadi va `import()` bilan birga butun chunk bundledan
+ * tushib qoladi — variantli exe boshqa ekranlarning kodini ko'tarib
+ * yurmaydi.
  */
-const DisplayApp = lazy(() => import('./display/DisplayApp'));
-const Display2App = lazy(() => import('./display2/Display2App'));
-const MapApp = lazy(() => import('./map/MapApp'));
-const InterfaceApp = lazy(() => import('./interface/InterfaceApp'));
+const DisplayApp = ONLY === '' || ONLY === 'display' ? lazy(() => import('./display/DisplayApp')) : null;
+const Display2App = ONLY === '' || ONLY === 'display2' ? lazy(() => import('./display2/Display2App')) : null;
+const MapApp = ONLY === '' || ONLY === 'map' ? lazy(() => import('./map/MapApp')) : null;
+const InterfaceApp = ONLY === '' || ONLY === 'interface' ? lazy(() => import('./interface/InterfaceApp')) : null;
 
 /** Devordagi katta ekran shu yo'l ostida ochiladi. */
 const DISPLAY_PATH = '/ekran';
@@ -24,6 +38,9 @@ const INTERFACE_PATH = '/interface';
 type Surface = 'kiosk' | 'display' | 'display2' | 'map' | 'interface';
 
 function surfaceFromPath(pathname: string): Surface {
+  /* Variantli buildda boshqa yuzalar umuman yig'ilmagan — yo'l nima
+     bo'lishidan qat'i nazar bittayu bitta mavjud ekran ochiladi. */
+  if (ONLY) return ONLY;
   // "/ekran2" ni "/ekran" dan oldin tekshiramiz — aks holda prefiks mos kelib ketadi
   if (pathname.startsWith(DISPLAY2_PATH)) return 'display2';
   if (pathname.startsWith(DISPLAY_PATH)) return 'display';
@@ -45,16 +62,26 @@ const FALLBACK_BG: Record<Surface, string> = {
   interface: '#061530',
 };
 
+/*
+ * `KioskApp` — yagona statik import: u eng yengil yuza va kiosk
+ * ochilishida darhol kerak, lazy qilinsa bir zumlik bo'sh fon ko'rinardi.
+ * Variantli buildda uning kodi (bir necha o'nlab KB) bundleda qolib
+ * ketadi — media fayllar oldida bu sezilmaydi.
+ *
+ * Qolganlari `null` bo'lishi mumkin: variantda faqat bittasi yig'iladi,
+ * boshqalarining o'rnida esa `null` turadi va u yerga hech qachon
+ * borilmaydi — `surfaceFromPath` `ONLY` dan boshqa qiymat qaytarmaydi.
+ */
 function renderSurface(surface: Surface) {
   switch (surface) {
     case 'display2':
-      return <Display2App />;
+      return Display2App ? <Display2App /> : null;
     case 'display':
-      return <DisplayApp />;
+      return DisplayApp ? <DisplayApp /> : null;
     case 'map':
-      return <MapApp />;
+      return MapApp ? <MapApp /> : null;
     case 'interface':
-      return <InterfaceApp />;
+      return InterfaceApp ? <InterfaceApp /> : null;
     default:
       return <KioskApp />;
   }

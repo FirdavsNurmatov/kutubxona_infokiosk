@@ -3,6 +3,11 @@
 interface ImportMetaEnv {
   /** Brauzer nusxasi uchun backend manzili (`.env` da). */
   readonly VITE_API_URL?: string;
+  /**
+   * Variantli build: shu yuza uchungina yig'ilgan (`tools/surfaces.mjs`).
+   * Bo'sh yoki yo'q — hamma yuza bitta bundleda (brauzer nusxasi shunday).
+   */
+  readonly VITE_SURFACE?: string;
 }
 
 interface ImportMeta {

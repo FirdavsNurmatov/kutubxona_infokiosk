@@ -120,7 +120,58 @@ npm run electron:dev              # Vite dev server + Electron (1280×720 oyna)
 npm run electron:dev -- --fullscreen   # to'liq ekranni sinash
 npm run electron:start            # yig'ilgan sahifani paketlamasdan ochish
 npm run electron:build:win        # release/ ga Windows o'rnatuvchi va portativ exe
+                                  # (hamma yuza bitta exe da — 164 MB)
 ```
+
+### Variantli build — har bir ekranga alohida exe
+
+Bitta exe hamma yuzani va ularning **hamma media faylini** ko'taradi: qora
+infokioskda `/interface` ishlaganda 26 MB video, 9.7 MB `ekran2` rasmi va
+4.7 MB xarita bekorga yotadi. Shuning uchun har bir yuzani alohida yig'sa
+bo'ladi — kod bazasi bitta qoladi, bo'linish faqat build vaqtida sodir
+bo'ladi.
+
+```bash
+npm run build:win -- interface    # faqat portret infokiosk
+npm run build:win -- ekran2       # faqat zal ekrani
+npm run build:win -- map          # faqat bino xaritasi
+npm run build:win -- kiosk        # faqat sensorli kiosk
+npm run build:win -- ekran        # faqat birinchi versiya ekran
+npm run build:win -- map --dir    # paketlamasdan, tez sinash uchun
+npm run build:win:all             # beshalasi ketma-ket
+```
+
+| Variant | Media | exe (taxminan) |
+|---|---|---|
+| `kiosk` | 8 MB | ~78 MB |
+| `map` | 13 MB | ~82 MB |
+| `ekran` | 34 MB | ~104 MB |
+| `interface` | 49 MB | ~116 MB |
+| `ekran2` | 44 MB | ~114 MB |
+| *hammasi bitta exe da* | 89 MB | 164 MB |
+
+Qolgan ~70 MB — Electron'ning o'zi (Chromium + Node), u kamaymaydi.
+Sahifalarning JS/CSS kodi hammasi bo'lib 1.7 MB — og'irlik media fayllarda.
+
+**Qaysi variant nima oladi** — `tools/surfaces.mjs`. U yagona manba: yo'l
+(`config.json` dagi `route`), `public/` dan ko'chiriladigan papkalar,
+Windows `appId` va exe nomi. Yangi bo'lim qo'shilsa faqat shu jadval
+to'ldiriladi.
+
+Mexanizm ikki tomonlama:
+
+- `vite.config.ts` — `SURFACE` qo'yilganda `publicDir` o'chadi va
+  `surface-assets` plagini ro'yxatdagi fayllarnigina ko'chiradi;
+- `src/App.tsx` — `import.meta.env.VITE_SURFACE` build vaqtida satrga
+  aylanadi, mos kelmagan `import()` lar esa bundledan butunlay tushadi.
+
+> **Nimadan voz kechiladi:** hamma-yuzali exe da `config.json` dagi bitta
+> `route` qatorini o'zgartirib ekranni almashtirish mumkin edi. Variantli
+> exe da bu yo'q — har mashinaga o'z buildi kerak. `route` variantga
+> qotirilgan holda yoziladi.
+
+`SURFACE` faqat Electron buildiga ta'sir qiladi. Brauzer nusxasi
+(`npm run build` → Netlify) har doim hamma yuzani beradi.
 
 > **VS Code terminalida:** `ELECTRON_RUN_AS_NODE=1` o'zgaruvchisi Electron'ni
 > oddiy Node sifatida ishga tushiradi va ilova ochilmaydi. Yuqoridagi
